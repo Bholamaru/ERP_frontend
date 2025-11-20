@@ -1,0 +1,102 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+
+.AddCycletime-header {
+  background-color: #f8f9fa; /* Light background for header */
+  border-bottom: 1px solid #dee2e6; /* Border for header */
+  padding: 10px 15px; /* Padding around header */
+  border-radius: 5px;
+}
+
+.AddCycletime-header .header-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0;
+}
+
+
+
+.AddCycletimeMain {
+  background-color: #f8f9fa; /* Light background for header */
+  border-bottom: 1px solid #dee2e6; /* Border for header */
+  padding: 10px 15px; /* Padding around header */
+  border-radius: 5px;
+}
+
+
+.AddCycletimemainbtn {
+  display: flex;
+  align-items: center;
+  border: none;
+  background-color: rgba(235, 233, 233, 0.685);
+  color: black;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.AddCycletimemainbtn i {
+  margin-right: 5px;
+}
+
+.AddCycleaside {
+  background-color: #f8f9fa; /* Light background for header */
+  border-bottom: 1px solid #dee2e6; /* Border for header */
+  padding: 10px 15px; /* Padding around header */
+  border-radius: 5px;
+}
+
+.AddCycleaside .form-label {
+  font-weight: bold;
+}
+
+.AddCycleaside .btn-primary {
+  margin-right: 10px;
+}
+
+.AddCycleaside .form-check-label {
+  margin-left: 5px;
+}
+
+.addbtn {
+  align-items: center;
+  border: none;
+  background-color: rgba(235, 233, 233, 0.685);
+  color: black;
+  padding: 10px;
+  border-radius: 10px;
+  margin-top: 30px;
+}
+
+.AddCycletable {
+  background-color: #f8f9fa; /* Light background for header */
+  border-bottom: 1px solid #dee2e6; /* Border for header */
+  padding: 10px 15px; /* Padding around header */
+  border-radius: 5px;
+}
+
+@media (max-width: 768px) {
+  .AddCycletime h5,
+  .AddCycletime p,
+  .AddCycletime .AddCycletimebtn,
+  .addbtn {
+    font-size: 14px;
+  }
+
+  .AddCycletimeMain,
+  .AddCycleaside,
+  .AddCycletable {
+    margin-top: 20px;
+  }
+}
+.record-bootom {
+  border: none;
+  background-color: rgba(235, 233, 233, 0.685);
+  color: black;
+  padding: 10px;
+  border-radius: 10px;
+  margin-top: 30px;
+}
