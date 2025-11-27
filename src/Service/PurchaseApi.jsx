@@ -676,4 +676,42 @@ export const postIndent = async (data) => {
   }
 };
 
+// POList
+
+export const deletePurchaseOrder = async (po_id) => {
+  try {
+    const response = await fetch(`http://127.0.0.1:8000/Purchase/purchase-po/delete/${po_id}/`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to delete PO");
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Delete Error:", error);
+    throw error;
+  }
+};
+
+
+// Jobwork Delete API
+
+export const deleteJobworkPO = async (po_id) => {
+  try {
+    const response = await fetch(`http://127.0.0.1:8000/Purchase/jobwork/delete/${po_id}/`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to delete jobwork PO");
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Delete Error:", error);
+    return false;
+  }
+};
 

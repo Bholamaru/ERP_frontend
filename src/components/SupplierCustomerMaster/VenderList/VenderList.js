@@ -7,7 +7,8 @@ import SideNav from "../../../SideNav/SideNav";
 import "./VenderList.css";
 import { Link } from "react-router-dom";
 import { FaEdit } from "react-icons/fa";
-import { getSupplierList } from "../../../Service/Api.jsx"; // Import the getSupplierList function
+import { getSupplierList, deleteSupplier } from "../../../Service/Api.jsx"; // Import the getSupplierList function
+import { MdDeleteForever } from "react-icons/md";
 
 const VenderList = () => {
   const [sideNavOpen, setSideNavOpen] = useState(false);
@@ -49,7 +50,7 @@ const VenderList = () => {
       const matchesType = searchType ? item.type === searchType : true;
       const matchesQuery = searchQuery
         ? item.Name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          item.number.toLowerCase().includes(searchQuery.toLowerCase())
+        item.number.toLowerCase().includes(searchQuery.toLowerCase())
         : true;
       return matchesType && matchesQuery;
     });
@@ -77,6 +78,26 @@ const VenderList = () => {
     { length: totalPages },
     (_, index) => index + 1
   );
+
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this record?")) return;
+
+    try {
+      await deleteSupplier(id);
+
+      // Refresh list after delete
+      const updatedList = supplierCustomerData.filter(item => item.id !== id);
+      setSupplierCustomerData(updatedList);
+      setFilteredData(updatedList);
+
+      alert("Record deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting:", error);
+      alert("Failed to delete.");
+    }
+  };
+
 
   return (
     <div className="VenderList">
@@ -217,6 +238,9 @@ const VenderList = () => {
                                   <th className="blue-th" scope="col">
                                     Edit
                                   </th>
+                                  <th className="blue-th" scope="col">
+                                    Delete
+                                  </th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -262,6 +286,16 @@ const VenderList = () => {
                                         <FaEdit />
                                       </Link>
                                     </td>
+
+                                    <td>
+                                      <button
+                                        className="btn btn-sm btn-danger"
+                                        onClick={() => handleDelete(item.id)}
+                                      >
+                                        <MdDeleteForever />
+                                      </button>
+                                    </td>
+
                                   </tr>
                                 ))}
                               </tbody>
@@ -288,9 +322,8 @@ const VenderList = () => {
                     {pageNumbers.map((number) => (
                       <li
                         key={number}
-                        className={`page-item ${
-                          currentPage === number ? "active" : ""
-                        }`}
+                        className={`page-item ${currentPage === number ? "active" : ""
+                          }`}
                       >
                         <button
                           className="page-link"

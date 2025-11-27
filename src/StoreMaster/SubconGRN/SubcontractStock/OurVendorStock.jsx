@@ -253,7 +253,7 @@ const OurVendorStock = () => {
                                     <td>{item.op_qty}</td> {/* OP Qty */}
                                     <td>{item.outward_qty}</td> {/* Out Qty */}
                                     <td>{item.inward_qty}</td> {/* In Qty */}
-                                    <td>{item.inward_qty}</td>{" "}
+                                    <td>{item.InQtyKg}</td>{" "}
                                     {/* Challan_InQty */}
                                     <td>{item.balance_qty}</td>{" "}
                                     {/* Balance Qty */}

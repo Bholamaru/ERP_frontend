@@ -218,7 +218,7 @@ const InwardChallanList = () => {
                                   <td>{challan.SupplierName || 'N/A'}</td>
                                   <td>{challan.VehicleNo || 'N/A'}</td>
                                   <td>{challan.Transporter || 'N/A'}</td>
-                                  <td style={{ maxWidth: '800px', wordWrap: 'break-word' }}>
+                                  <td style={{ maxWidth: '1200px', wordWrap: 'break-word' }}>
                                     {formatItemsDisplay(challan.InwardChallanTable)}
                                   </td>
                                   <td>{challan.PreparedBy || 'N/A'}</td>

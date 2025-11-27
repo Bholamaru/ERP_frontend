@@ -6,7 +6,8 @@ import SideNav from "../../../SideNav/SideNav.js";
 import { FaEdit } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import './JobworkList.css';
-import { fetchJobWorkPOList } from "../../../Service/PurchaseApi.jsx";
+import { fetchJobWorkPOList, deleteJobworkPO  } from "../../../Service/PurchaseApi.jsx";
+import { MdDeleteForever } from "react-icons/md";
 
 const JobworkList = () => {
       const [sideNavOpen, setSideNavOpen] = useState(false);
@@ -61,6 +62,21 @@ useEffect(() => {
       setPage(newPage);
     }
   };
+
+
+  const handleDelete = async (id) => {
+  if (!window.confirm("Are you sure you want to delete this PO?")) return;
+
+  const success = await deleteJobworkPO(id);
+
+  if (success) {
+    alert("Jobwork PO deleted successfully!");
+    setJobWorkData(prev => prev.filter(item => item.id !== id));
+    setFilteredData(prev => prev.filter(item => item.id !== id));
+  } else {
+    alert("Failed to delete. Please try again.");
+  }
+};
 
 
   return (
@@ -224,6 +240,7 @@ useEffect(() => {
                        
                         <th scope="col">View</th>
                          <th scope="col">Edit</th>
+                         <th scope="col">Delete</th>
                         
                       </tr>
                     </thead>
@@ -256,6 +273,15 @@ useEffect(() => {
                                 className="btn"
                               >
                                 <FaEdit />
+                              </Link>
+                                      </td>
+
+                                       <td>
+                                      <Link
+                                 onClick={() => handleDelete(item.id)}
+                                className="btn"
+                              >
+                                <MdDeleteForever />
                               </Link>
                                       </td>
                             </tr>

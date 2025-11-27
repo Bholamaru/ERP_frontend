@@ -5,8 +5,9 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 import NavBar from "../../../NavBar/NavBar";
 import SideNav from "../../../SideNav/SideNav";
 import { Link } from "react-router-dom";
-import { fetchItems, fetchMainGroupData } from "../../../Service/Api.jsx";
+import { fetchItems, fetchMainGroupData, deleteItemMaster } from "../../../Service/Api.jsx";
 import { FaEdit } from "react-icons/fa";
+import { MdDeleteForever } from "react-icons/md";
 
 // Constants
 const itemGroups = [
@@ -80,6 +81,25 @@ const ItemMaster = () => {
   const currentItems = filteredItems.slice(indexOfFirstRecord, indexOfLastRecord);
   const totalPages = Math.ceil(filteredItems.length / recordsPerPage);
 
+
+  const handleDelete = async (id) => {
+  if (!window.confirm("Are you sure you want to delete this item?")) return;
+
+  try {
+    await deleteItemMaster(id);
+
+    // Remove deleted item from UI immediately
+    const updatedList = items.filter(item => item.id !== id);
+    setItems(updatedList);
+    setFilteredItems(updatedList);
+
+    alert("Item deleted successfully!");
+  } catch (error) {
+    console.error("Error deleting item:", error);
+    alert("Failed to delete item.");
+  }
+};
+
   return (
     <div className="itemaa">
       <div className="container-fluid">
@@ -117,20 +137,20 @@ const ItemMaster = () => {
                         />
                       </div>
                       <div className="col-md-2">
-  <label>Main Group</label>
-  <select
-    className="form-select"
-    value={mainGroup}
-    onChange={(e) => setMainGroup(e.target.value)}
-  >
-    <option value="">ALL</option>
-    {mainGroups?.map((group) => (
-      <option key={group.subgroup_code} value={group.subgroup_name}>
-        {group.subgroup_name}
-      </option>
-    ))}
-  </select>
-</div>
+                        <label>Main Group</label>
+                        <select
+                          className="form-select"
+                          value={mainGroup}
+                          onChange={(e) => setMainGroup(e.target.value)}
+                        >
+                          <option value="">ALL</option>
+                          {mainGroups?.map((group) => (
+                            <option key={group.subgroup_code} value={group.subgroup_name}>
+                              {group.subgroup_name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
 
                       <div className="col-md-2">
                         <label>Item Group</label>
@@ -175,10 +195,9 @@ const ItemMaster = () => {
                             <th>HSN_SAC_Code</th>
                             <th>Auth</th>
                             <th>User</th>
-                           
-                          
                             <th>View</th>
                             <th>Edit</th>
+                            <th>Delete</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -201,33 +220,39 @@ const ItemMaster = () => {
                                 <td>{item.Store_Location}</td>
                                 <td>{item.Unit_Code}</td>
                                 <td>{item.HSN_SAC_Code}</td>
-                                   <td>
+                                <td>
                                   {item.Auth ? <i className="fas fa-check text-success"></i> : <i className="fas fa-times text-danger"></i>}
                                 </td>
-                                
-                                                                      <td>{item.User}</td>
-                                                                      
-                                                                     
-                                                                      <td>
-                                                                     
-                                <a
-                                        href={`http://127.0.0.1:8000${item.View}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="btn btn-sm btn-primary"
-                                      >
-                                        View
-                                      </a>
-                                
-                                        </td>
-                                        <td>
-                                        <Link
-                                  to={`/item-master-gernal/${item.id}`}
-                                  className="btn btn-sm btn-warning"
-                                >
-                                  <FaEdit />
-                                </Link>
-                                        </td>
+
+                                <td>{item.User}</td>
+
+
+                                <td>
+                                  <a
+                                    href={`http://127.0.0.1:8000${item.View}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="btn btn-sm btn-primary"
+                                  >
+                                    View
+                                  </a>
+                                </td>
+                                <td>
+                                  <Link
+                                    to={`/item-master-gernal/${item.id}`}
+                                    className="btn btn-sm btn-warning"
+                                  >
+                                    <FaEdit />
+                                  </Link>
+                                </td>
+                                <td>
+                                  <button
+                                    className="btn btn-sm btn-danger"
+                                   onClick={() => handleDelete(item.id)}                                  
+                                  >
+                                    <MdDeleteForever />
+                                  </button>
+                                </td>
                               </tr>
                             ))
                           )}

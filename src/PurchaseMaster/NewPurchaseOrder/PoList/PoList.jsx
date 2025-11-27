@@ -6,7 +6,8 @@ import SideNav from "../../../SideNav/SideNav.js"
 import { FaEdit } from "react-icons/fa"
 import { Link } from "react-router-dom"
 import "./PoList.css"
-import { fetchPurchaseOrders} from "../../../Service/PurchaseApi.jsx"
+import { fetchPurchaseOrders, deletePurchaseOrder } from "../../../Service/PurchaseApi.jsx"
+import { MdDeleteForever } from "react-icons/md";
 
 const PoList = () => {
   const [sideNavOpen, setSideNavOpen] = useState(false)
@@ -64,6 +65,24 @@ const PoList = () => {
   const handlePageClick = (page) => {
     setCurrentPage(page);
   };
+
+  const handleDelete = async (id) => {
+  if (!window.confirm("Are you sure you want to delete this Purchase Order?")) {
+    return;
+  }
+
+  try {
+    await deletePurchaseOrder(id);
+
+    // Remove deleted PO from state
+    setPurchaseOrders((prev) => prev.filter((item) => item.id !== id));
+
+    alert("Purchase Order Deleted Successfully!");
+  } catch (error) {
+    alert("Failed to delete Purchase Order");
+  }
+};
+
 
   return (
     <div className="POListMaster">
@@ -190,8 +209,7 @@ const PoList = () => {
                           <th scope="col">User</th>
                           <th scope="col">View</th>
                           <th scope="col">Edit</th>
-                          
-                         
+                          <th scope="col">Delete</th>                
                         </tr>
                       </thead>
                       <tbody>
@@ -223,6 +241,15 @@ const PoList = () => {
   className="btn"
 >
   <FaEdit />
+</Link>
+        </td>
+
+         <td>
+        <Link
+ onClick={() => handleDelete(order.id)}
+  className="btn"
+>
+  <MdDeleteForever />
 </Link>
         </td>
 

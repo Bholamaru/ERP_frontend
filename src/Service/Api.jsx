@@ -3105,3 +3105,34 @@ export const fetchPartCodeDropdownData = async (itemId) => {
     return []
   }
 }
+
+
+// Vender List Delete 
+
+export const deleteSupplier = async (id) => {
+  try {
+    const response = await fetch(`http://127.0.0.1:8000/All_Masters/supplier/delete/${id}`, {
+      method: "DELETE",
+    });
+
+    return response.json();
+  } catch (error) {
+    console.error("Delete error:", error);
+    throw error;
+  }
+};
+
+// Item Master delete
+
+export const deleteItemMaster = async (id) => {
+  try {
+    const response = await fetch(`http://127.0.0.1:8000/All_Masters/item/delete/${id}`, {
+      method: "DELETE",
+    });
+
+    return response.json();
+  } catch (error) {
+    console.error("Delete error:", error);
+    throw error;
+  }
+};

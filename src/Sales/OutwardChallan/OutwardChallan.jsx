@@ -9,7 +9,6 @@ import { FaPlus } from "react-icons/fa";
 import Modal from "../../components/modals/Modal.jsx";
 import VehicleModal from "../../components/modals/VehicleModal.jsx";
 import axios from "axios";
-// import { Link } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 const initialItem = {
@@ -53,7 +52,7 @@ const OutwardChallan = () => {
   const [filteredItemData, setFilteredItemData] = useState([]);
   const [showFilterDropDown, setShowFilterDropDown] = useState(false);
   const [transportData, setTransportData] = useState([]);
-  const [showTrasportDataModel, setShowTransportDataModel] = useState(false);
+  const [showTrasportDataModel, setShowTrasportDataModel] = useState(false);
   const [showVehicleModal, setShowVehicleModal] = useState(false);
   const [vehicleData, setVehicleData] = useState([]);
   const [venders, setVenders] = useState([]);
@@ -68,13 +67,12 @@ const OutwardChallan = () => {
     all_details: [],
   });
 
-  // --- START:  STATE VARIABLES ADD  ---
+  // --- STATE VARIABLES ---
   const [selectedSeries, setSelectedSeries] = useState("Select");
   const [seriesInputValue, setSeriesInputValue] = useState("");
-  // --- END:  STATE VARIABLES ---
-  // --- START: Add this new state ---
   const [fgFullResponse, setFgFullResponse] = useState(null);
-  // --- END: New state ---
+  const [fgOperations, setFgOperations] = useState([]);
+  const [showOperationDropdown, setShowOperationDropdown] = useState(false);
 
   const handleResetAll = () => {
     setCurrentItem(initialItem);
@@ -84,7 +82,6 @@ const OutwardChallan = () => {
     setSelectedItemType("FG");
     setHeatNoData([]);
     setShowHeatNoDropdown(false);
-    // ADD THESE 2 LINES
     setFgOperations([]);
     setShowOperationDropdown(false);
     setSelectedSeries("Select");
@@ -109,7 +106,6 @@ const OutwardChallan = () => {
           item.item_code.toLowerCase().includes(lowercasedKeyword)) ||
         (item.description &&
           item.description.toLowerCase().includes(lowercasedKeyword)) ||
-        //  FG search
         (item.OutAndInPart &&
           item.OutAndInPart.toLowerCase().includes(lowercasedKeyword))
     );
@@ -136,14 +132,11 @@ const OutwardChallan = () => {
     }
   };
 
-  // --- START:  LOGIC  FUNCTION   ---
   const handleSeriesChange = async (e) => {
     const series = e.target.value;
     setSelectedSeries(series);
-
-    //   values clear
     setSeriesInputValue("");
-    setChallanNumber(""); // <--
+    setChallanNumber("");
 
     let url = "";
     let numberKey = "";
@@ -191,7 +184,6 @@ const OutwardChallan = () => {
       }
     }
   };
-  // --- END:  LOGIC FUNCTION ---
 
   const fetchTransportData = async () => {
     try {
@@ -213,13 +205,11 @@ const OutwardChallan = () => {
     }
   };
 
-  const fetchItemsForVendor = async (vendorName) => {
+const fetchItemsForVendor = async (vendorName) => {
     if (!vendorName) return;
 
     try {
       let url = "";
-
-      // Choose API based on selected item type
       if (selectedItemType === "FG") {
         url = `http://127.0.0.1:8000/Purchase/jobworkpo/FG/items/?supplier=${encodeURIComponent(
           vendorName
@@ -235,18 +225,22 @@ const OutwardChallan = () => {
       }
 
       console.log("Fetching items from URL:", url);
-
       const res = await fetch(url);
+
+      // ✅ FIX: Agar 404 ya koi error aaye to yahi rook jao
+      if (!res.ok) {
+        console.warn(`Vendor data not found or API error. Status: ${res.status}`);
+        setVenderItems({ all_details: [] });
+        return; 
+      }
+
       const resData = await res.json();
       console.log("API Response for vendor:", resData);
 
-      // --- FIX START: Data Mapping Logic ---
       let finalData = [];
-
       if (selectedItemType === "FG" && Array.isArray(resData)) {
         finalData = resData.map((item) => ({
           ...item,
-
           ItemName: item.OutAndInPart,
           ItemDescription: item.OutAndInPart,
           type: "FG",
@@ -260,36 +254,46 @@ const OutwardChallan = () => {
       }
 
       setVenderItems({ all_details: finalData });
-      // --- FIX END ---
     } catch (err) {
       console.error("Error fetching items from vendor:", err);
       setVenderItems({ all_details: [] });
     }
   };
 
-  const fetchHeatNoData = async (itemCode, description) => {
-    if (!itemCode || !description) return;
+  // ✅ FIX: RM API Call (Uses Store Endpoint)
+  const fetchHeatNoDataRM = async (itemCode) => {
+    if (!itemCode) return;
     try {
-      console.log("Fetching HeatNo with:", itemCode, description);
-
+      console.log("Fetching RM HeatNo for:", itemCode);
+      
+      // ✅ URL Change: Sales hatakar Store kiya hai
       const res = await fetch(
-        `http://127.0.0.1:8000/Sales/heatno/fg/?item_code=${encodeURIComponent(
-          itemCode
-        )}&description=${encodeURIComponent(description)}`
+        `http://127.0.0.1:8000/Store/heat-no/?item_code=${encodeURIComponent(itemCode)}`
       );
-      const resData = await res.json();
-      console.log("Heat No API Response:", resData);
+      
+      if (!res.ok) {
+         console.warn("RM API Error or 404");
+         setHeatNoData([]);
+         setShowHeatNoDropdown(false);
+         return;
+      }
 
-      if (resData && Array.isArray(resData.data) && resData.data.length > 0) {
-        setHeatNoData(resData.data);
+      const resData = await res.json();
+      console.log("RM Heat No API Response:", resData);
+
+      // Backend response structure check (kabhi data me hota hai, kabhi direct array)
+      const finalData = resData.data || resData;
+
+      if (Array.isArray(finalData) && finalData.length > 0) {
+        setHeatNoData(finalData);
         setShowHeatNoDropdown(true);
       } else {
         setHeatNoData([]);
         setShowHeatNoDropdown(false);
-        toast.warning("No Heat No | Stock found for this item");
+        toast.warning("No Heat No found for this RM item");
       }
     } catch (err) {
-      console.error("Error fetching heat no data:", err);
+      console.error("Error fetching RM heat no data:", err);
       setHeatNoData([]);
       setShowHeatNoDropdown(false);
     }
@@ -297,7 +301,6 @@ const OutwardChallan = () => {
 
   useEffect(() => {
     document.body.classList.toggle("side-nav-open", sideNavOpen);
-    // ---  fetchChallanNumber()---
     fetchTransportData();
     fetchVehicleDetails();
   }, [sideNavOpen]);
@@ -314,7 +317,6 @@ const OutwardChallan = () => {
 
   useEffect(() => {
     const searchText = currentItem.type;
-
     if (!searchText || searchText.trim() === "") {
       setShowFilterDropDown(false);
       return;
@@ -333,7 +335,6 @@ const OutwardChallan = () => {
           (item.item_type === null && item.ItemName === "RM")
       );
     } else if (selectedItemType === "FG") {
-      // FG  filter - multiple formats support
       itemsByType = baseItems.filter(
         (item) =>
           item.item_type === "FG" ||
@@ -344,12 +345,7 @@ const OutwardChallan = () => {
       itemsByType = baseItems;
     }
 
-    console.log(`Base items for type '${selectedItemType}':`, itemsByType);
-
     const filtered = filterItemsByKeyword(itemsByType, searchText);
-
-    console.log("Final Filtered Result:", filtered);
-
     setFilteredItemData(filtered);
     setShowFilterDropDown(filtered.length > 0);
   }, [currentItem.type, selectedItemType, venderItems]);
@@ -374,8 +370,6 @@ const OutwardChallan = () => {
     setCurrentItem({ ...initialItem });
     setHeatNoData([]);
     setShowHeatNoDropdown(false);
-
-    // ADD THESE 2 LINES
     setFgOperations([]);
     setShowOperationDropdown(false);
   };
@@ -418,68 +412,178 @@ const OutwardChallan = () => {
     }
   };
 
-const handleSelectItemFromDropdown = async (item) => {
+  // --- FIX: Complete fetchAndMapFGData Function ---
+ const fetchAndMapFGData = async (itemCode, currentOpNo) => {
+    if (!itemCode) return;
+
+    try {
+      // API Call
+      const url = `http://127.0.0.1:8000/Sales/heatno/fg/?item=${encodeURIComponent(
+        itemCode
+      )}`;
+      console.log("Fetching URL:", url);
+
+      const res = await fetch(url);
+      const resData = await res.json();
+      setFgFullResponse(resData); // Data save 
+
+      let finalStockData = [];
+
+      // --- LOGIC START ---
+      if (currentOpNo === 10) {
+       
+        if (resData.heat_qty_summary && Array.isArray(resData.heat_qty_summary)) {
+          finalStockData = resData.heat_qty_summary.map((d) => ({
+            heat_no: d.HeatNo,
+            stock: d.Qty,
+          }));
+        }
+      } else {
+       
+        const requiredPrevOp = currentOpNo - 10;
+
+        if (resData.production_summary) {
+          const keys = Object.keys(resData.production_summary);
+         
+          const matchingKey = keys.find((k) => k.startsWith(`${requiredPrevOp}|`));
+
+          if (matchingKey) {
+            const dataList = resData.production_summary[matchingKey];
+            finalStockData = dataList.map((d) => ({
+              heat_no: d.lot_no,
+              stock: d.prod_qty,
+            }));
+          }
+        }
+      }
+      // --- LOGIC END ---
+
+      // Dropdown Update
+      if (finalStockData.length > 0) {
+        setHeatNoData(finalStockData);
+        setShowHeatNoDropdown(true);
+
+       
+        if (finalStockData.length === 1) {
+          setCurrentItem((prev) => ({
+            ...prev,
+            store: finalStockData[0].heat_no,
+            stock: finalStockData[0].stock,
+          }));
+        }
+
+        toast.success(`Data Loaded: ${finalStockData.length} Records`);
+      } else {
+        setHeatNoData([]);
+        setShowHeatNoDropdown(false);
+        toast.warning("No stock found for this Operation");
+      }
+    } catch (err) {
+      console.error("Error fetching FG data:", err);
+      setHeatNoData([]);
+    }
+  };
+
+ const handleSelectItemFromDropdown = async (item) => {
     if (item) {
-      console.log("Raw Item Selected:", item.ItemName);
+      console.log("Raw Item Selected:", item);
+      console.log("Selected Item Type:", selectedItemType);
 
       let cleanCode = "";
       let currentOpNo = 10;
 
-      if (item.ItemName && item.ItemName.includes("|")) {
-        const pipeParts = item.ItemName.split("|");
-        
-        // Part 0: "FGFG1001 - 1 - CAP OIL LOCK DF "
-        const firstSection = pipeParts[0]; 
-
-        if (firstSection.includes("-")) {
-            const dashParts = firstSection.split("-");
-            
-            if (dashParts.length >= 2) {
-                cleanCode = dashParts[1].trim(); 
-            } else {
-                cleanCode = dashParts[0].trim();
-            }
-        } else {
-
-            cleanCode = pipeParts.length > 1 ? pipeParts[1].trim() : pipeParts[0].trim();
-        }
-
-        const opPart = pipeParts.find(part => part.trim().toUpperCase().startsWith("OP:"));
-        if (opPart) {
-          const opNumberStr = opPart.split(":")[1];
-          currentOpNo = parseInt(opNumberStr);
-        }
-
-      } else {
-        cleanCode = item.ItemName;
-      }
-      // --- FIX END ---
-
-      console.log(`API WILL CALL: item=${cleanCode} (Operation: ${currentOpNo})`);
-
-      // Update State
-      setCurrentItem((prev) => ({
-        ...prev,
-        type: `${item.ItemDescription} (${item.ItemName})`,
-        description: item.ItemDescription,
-        item_code: cleanCode, // "1" save 
-        qtyNo: item.Qty || "",
-        wRate: item.Rate || "",
-        process: `OP ${currentOpNo}`
-      }));
-      
-      setShowFilterDropDown(false);
-
-      // API Call
+      // --- RM LOGIC ---
       if (selectedItemType === "RM") {
-        await fetchHeatNoData(cleanCode, item.ItemDescription);
-      } else if (selectedItemType === "FG") {
-       
+      
+        cleanCode = item.item_code || item.ItemName || "";
+        console.log("RM Clean Code:", cleanCode);
+
+        // State Update
+        setCurrentItem((prev) => ({
+          ...prev,
+          type: `${item.ItemDescription || item.description} (${item.ItemName || item.item_code})`,
+          description: item.ItemDescription || item.description,
+          item_code: cleanCode,
+          qtyNo: item.Qty || "",
+          wRate: item.Rate || item.rate || "",
+          process: "",
+          store: "",
+          stock: ""
+        }));
+
+        setShowFilterDropDown(false);
+
+      
+       if (cleanCode) {
+          console.log("Calling fetchHeatNoDataRM for:", cleanCode);
+          await fetchHeatNoDataRM(cleanCode); 
+        }
+      } 
+      // --- FG LOGIC ---
+      else if (selectedItemType === "FG") {
+        cleanCode = item.ItemName;
+
+        if (item.ItemName && item.ItemName.includes("|")) {
+          const pipeParts = item.ItemName.split("|");
+          const firstSection = pipeParts[0];
+
+          if (firstSection.includes("-")) {
+            const dashParts = firstSection.split("-");
+            if (dashParts.length >= 2) {
+              cleanCode = dashParts[1].trim();
+            } else {
+              cleanCode = dashParts[0].trim();
+            }
+          } else {
+            cleanCode = pipeParts.length > 1 ? pipeParts[1].trim() : pipeParts[0].trim();
+          }
+
+          const opPart = pipeParts.find((part) =>
+            part.trim().toUpperCase().startsWith("OP:")
+          );
+          if (opPart) {
+            const opNumberStr = opPart.split(":")[1];
+            currentOpNo = parseInt(opNumberStr);
+          }
+        }
+
+        console.log("FG Clean Code:", cleanCode, "Operation:", currentOpNo);
+
+        // State Update
+        setCurrentItem((prev) => ({
+          ...prev,
+          type: `${item.ItemDescription} (${item.ItemName})`,
+          description: item.ItemDescription,
+          item_code: cleanCode,
+          qtyNo: item.Qty || "",
+          wRate: item.Rate || "",
+          process: `OP ${currentOpNo}`,
+          store: "",
+          stock: ""
+        }));
+
+        setShowFilterDropDown(false);
+
+        
         await fetchAndMapFGData(cleanCode, currentOpNo);
+      }
+      // --- ITEM MASTER LOGIC ---
+      else {
+        cleanCode = item.item_code || item.ItemName || "";
+
+        setCurrentItem((prev) => ({
+          ...prev,
+          type: `${item.ItemDescription || item.description} (${item.ItemName || item.item_code})`,
+          description: item.ItemDescription || item.description,
+          item_code: cleanCode,
+          qtyNo: item.Qty || "",
+          wRate: item.Rate || item.rate || "",
+        }));
+
+        setShowFilterDropDown(false);
       }
     }
   };
-
 
   const handleSelectVendor = (vendor) => {
     setFooterData((prev) => ({ ...prev, vender: vendor.Name }));
@@ -500,10 +604,8 @@ const handleSelectItemFromDropdown = async (item) => {
   };
 
   const handleStoreFieldClick = async () => {
-    // ADD THIS BLOCK AT THE START
-    if (selectedItemType === "FG" && fgOperations.length > 0) {
-      // For FG items, show operations dropdown
-      setShowOperationDropdown(true);
+    if (selectedItemType === "FG") {
+      if (heatNoData.length > 0) setShowHeatNoDropdown(true);
       return;
     }
 
@@ -530,7 +632,7 @@ const handleSelectItemFromDropdown = async (item) => {
         ...prev,
         Transport_name: item.transport_name,
       }));
-      setShowTransportDataModel(false);
+      setShowTrasportDataModel(false);
     }
   };
 
@@ -547,7 +649,7 @@ const handleSelectItemFromDropdown = async (item) => {
         EWay_bill_no: eway_bill_no,
       }));
     }
-    setShowTransportDataModel(false);
+    setShowTrasportDataModel(false);
   };
 
   const handleVehicleSave = (data) => {
@@ -557,94 +659,31 @@ const handleSelectItemFromDropdown = async (item) => {
     setShowVehicleModal(false);
   };
 
-  const handleQtyChange = (e) => {
+ const handleQtyChange = (e) => {
     const value = e.target.value;
+
+    if (value === "") {
+      setCurrentItem((prev) => ({ ...prev, qtyNo: "" }));
+      return;
+    }
+
+    const enteredQty = Number(value);
     const availableStock = Number(currentItem.stock || 0);
-    if (Number(value) > availableStock) {
-      toast.error(`Quantity cannot exceed available stock (${availableStock})`);
+
+    if (availableStock <= 0) {
+       toast.warning("Stock is not available or the Heat Number has not been selected.");
+       return; 
+    }
+
+    if (enteredQty > availableStock) {
+      toast.error(`Quantity available stock (${availableStock}) It cannot be more than that !!`);
       return;
     }
     setCurrentItem((prev) => ({ ...prev, qtyNo: value }));
   };
 
-  // New state for FG operations
-  const [fgOperations, setFgOperations] = useState([]);
-  const [showOperationDropdown, setShowOperationDropdown] = useState(false);
-
-  // Updated function to fetch FG operations and store full response
- const fetchAndMapFGData = async (itemCode, currentOpNo) => {
-    if (!itemCode) return;
-
-    try {
-      // 1. API Call
-      const url = `http://127.0.0.1:8000/Sales/heatno/fg/?item=${encodeURIComponent(itemCode)}`;
-      console.log("Fetching URL:", url);
-
-      const res = await fetch(url);
-      const resData = await res.json();
-      
-      let finalStockData = [];
-
-      // --- LOGIC START ---
-      
-      if (currentOpNo === 10) {
-      
-        if (resData.heat_qty_summary && Array.isArray(resData.heat_qty_summary)) {
-          finalStockData = resData.heat_qty_summary.map(d => ({
-            heat_no: d.HeatNo,
-            stock: d.Qty
-          }));
-        }
-      } else {
-       
-        const requiredPrevOp = currentOpNo - 10; 
-        
-        if (resData.production_summary) {
-          const keys = Object.keys(resData.production_summary);
-          
-         
-          const matchingKey = keys.find(k => k.startsWith(`${requiredPrevOp}|`));
-          
-          if (matchingKey) {
-            const dataList = resData.production_summary[matchingKey];
-            finalStockData = dataList.map(d => ({
-              heat_no: d.lot_no,     // "SIR1"
-              stock: d.prod_qty      // "7079.3"
-            }));
-          }
-        }
-      }
-      // --- LOGIC END ---
-
-    
-      if (finalStockData.length > 0) {
-        setHeatNoData(finalStockData);
-        setShowHeatNoDropdown(true); 
-        
-    
-        if(finalStockData.length === 1) {
-           setCurrentItem(prev => ({
-             ...prev,
-             store: finalStockData[0].heat_no,
-             stock: finalStockData[0].stock
-           }));
-        }
-        
-        toast.success(`Data loaded for OP ${currentOpNo}`);
-      } else {
-        setHeatNoData([]);
-        setShowHeatNoDropdown(false);
-        toast.warning(`No stock found for Previous Process (OP ${currentOpNo-10})`);
-      }
-
-    } catch (err) {
-      console.error("Error fetching FG data:", err);
-      setHeatNoData([]);
-    }
-  };
-
   // Updated function to handle operation selection and map data correctly
- const handleSelectOperation = (selectedOp) => {
+  const handleSelectOperation = (selectedOp) => {
     console.log("User Selected:", selectedOp);
 
     let finalStockData = [];
@@ -656,18 +695,18 @@ const handleSelectItemFromDropdown = async (item) => {
       finalStockData = fgFullResponse.heat_qty_summary.map((item) => ({
         heat_no: item.HeatNo,
         stock: item.Qty,
-        qc_stock: 0 
+        qc_stock: 0,
       }));
     } else if (selectedOp.sourceKey) {
       // Case: OP 20, 30, 45, etc. selected
       // Use the key we stored earlier (e.g., "10|...")
       const dataList = fgFullResponse.production_summary[selectedOp.sourceKey];
-      
+
       if (dataList && Array.isArray(dataList)) {
         finalStockData = dataList.map((item) => ({
           heat_no: item.lot_no || item.HeatNo || "N/A",
           stock: item.prod_qty || item.Qty || 0,
-          qc_stock: 0
+          qc_stock: 0,
         }));
       }
     }
@@ -676,15 +715,15 @@ const handleSelectItemFromDropdown = async (item) => {
     if (finalStockData.length > 0) {
       setHeatNoData(finalStockData);
       setShowHeatNoDropdown(true);
-      
+
       // Auto-fill input with the selected Operation Name
       setCurrentItem((prev) => ({
         ...prev,
         process: selectedOp.label, // e.g., "OP 20"
         store: "", // Clear old values
-        stock: ""
+        stock: "",
       }));
-      
+
       toast.success(`${selectedOp.label} Stock Loaded`);
     } else {
       setHeatNoData([]);
@@ -694,6 +733,16 @@ const handleSelectItemFromDropdown = async (item) => {
 
     setShowOperationDropdown(false);
   };
+
+  // --- NEW CODE START ---
+  useEffect(() => {
+    if (footerData.vender) {
+      console.log("Type changed to:", selectedItemType, "- Refetching items...");
+      setVenderItems({ all_details: [] });       
+      setCurrentItem((prev) => ({ ...prev, type: "", description: "" }));
+      fetchItemsForVendor(footerData.vender);
+    }
+  }, [selectedItemType]);
 
   return (
     <div className="OutwardChallanMaster">
@@ -831,7 +880,6 @@ const handleSelectItemFromDropdown = async (item) => {
                       </div>
                     </div>
                   </div>
-
                   <div className="OutwardChallan-main">
                     <div className="OutwardChallan-tabs">
                       <div
@@ -986,72 +1034,6 @@ const handleSelectItemFromDropdown = async (item) => {
                                   />
                                 </td>
 
-                                {/* <td style={{ position: "relative" }}>
-                                  <div style={{ position: "relative" }}>
-                                    <input
-                                      type="text"
-                                      name="store"
-                                      className="form-control"
-                                      placeholder="Heat No | Stock"
-                                      value={currentItem.store}
-                                      onChange={handleItemChange}
-                                      onClick={handleStoreFieldClick}
-                                      autoComplete="off"
-                                    />
-                                    <input
-                                      type="text"
-                                      name="stock"
-                                      className="form-control mt-1"
-                                      placeholder="Stock"
-                                      value={currentItem.stock}
-                                      readOnly
-                                    />
-
-                                    {showHeatNoDropdown && heatNoData.length > 0 && (
-                                      <ul
-                                        className="dropdown-menu show"
-                                        style={{
-                                          width: "100%",
-                                          maxHeight: "200px",
-                                          overflowY: "auto",
-                                          border: "1px solid #ccc",
-                                          zIndex: 1000,
-                                          position: "absolute",
-                                          top: "100%",
-                                          left: 0,
-                                          backgroundColor: "white"
-                                        }}
-                                      >
-                                        {heatNoData.map((item, index) => (
-                                          <li
-                                            key={index}
-                                            className="dropdown-item"
-                                            onClick={() => handleSelectHeatNo(item)}
-                                            style={{
-                                              padding: "8px",
-                                              cursor: "pointer",
-                                              borderBottom: "1px solid #f0f0f0"
-                                            }}
-                                          >
-                                            <strong>Heat No:</strong> {item.heat_no} | <strong>Stock:</strong> {item.stock}
-                                           </li>
-                                        ))}
-                                      </ul>
-                                    )}
-                                  </div>
-                                  <div>
-                                    <label>Supp. Ref. No:</label>
-                                    <input
-                                      type="text"
-                                      name="suppRefNo"
-                                      className="form-control"
-                                      value={currentItem.suppRefNo}
-                                      onChange={handleItemChange}
-                                    // readOnly
-                                    />
-                                  </div>
-                                </td> */}
-
                                 <td className="position-relative">
                                   {selectedItemType === "RM" ? (
                                     <div>
@@ -1101,16 +1083,19 @@ const handleSelectItemFromDropdown = async (item) => {
                                         )}
                                     </div>
                                   ) : selectedItemType === "FG" ? (
-                                    // NEW FG BLOCK
-                                    <div>
+                                    // --- NEW FIXED FG BLOCK ---
+                                    <div className="position-relative">
                                       <input
                                         type="text"
                                         name="store"
                                         className="form-control form-control-sm mb-1"
-                                        placeholder="Operation/Heat No"
+                                        placeholder="Heat No"
                                         value={currentItem.store}
                                         onChange={handleItemChange}
-                                        onClick={handleStoreFieldClick}
+                                        onClick={() => {
+                                          if (heatNoData.length > 0)
+                                            setShowHeatNoDropdown(true);
+                                        }}
                                         autoComplete="off"
                                       />
                                       <input
@@ -1122,29 +1107,49 @@ const handleSelectItemFromDropdown = async (item) => {
                                         readOnly
                                       />
 
-{showOperationDropdown && fgOperations.length > 0 && (
-  <ul
-    className="dropdown-menu show position-absolute"
-    style={{
-      maxHeight: "200px",
-      overflowY: "auto",
-      zIndex: 1000,
-      width: "100%",
-    }}
-  >
-    {fgOperations.map((op, index) => (
-      <li
-        key={index}
-        className="dropdown-item"
-        onClick={() => handleSelectOperation(op)}
-        style={{ cursor: "pointer" }}
-      >
-        <strong>{op.label}</strong> 
-        {/* Example: OP 20 */}
-      </li>
-    ))}
-  </ul>
-)}
+                                      {showHeatNoDropdown &&
+                                        heatNoData.length > 0 && (
+                                          <ul
+                                            className="dropdown-menu show position-absolute"
+                                            style={{
+                                              maxHeight: "200px",
+                                              overflowY: "auto",
+                                              zIndex: 1000,
+                                              width: "100%",
+                                              top: "100%",
+                                              border: "1px solid #ccc",
+                                              boxShadow:
+                                                "0 4px 8px rgba(0,0,0,0.1)",
+                                            }}
+                                          >
+                                            {heatNoData.map((item, index) => (
+                                              <li
+                                                key={index}
+                                                className="dropdown-item"
+                                                onClick={() =>
+                                                  handleSelectHeatNo(item)
+                                                }
+                                                style={{
+                                                  padding: "8px",
+                                                  cursor: "pointer",
+                                                  borderBottom:
+                                                    "1px solid #f0f0f0",
+                                                }}
+                                              >
+                                                <div className="d-flex justify-content-between">
+                                                  <span>
+                                                    <strong>Heat:</strong>{" "}
+                                                    {item.heat_no}
+                                                  </span>
+                                                  <span>
+                                                    <strong>Qty:</strong>{" "}
+                                                    {item.stock}
+                                                  </span>
+                                                </div>
+                                              </li>
+                                            ))}
+                                          </ul>
+                                        )}
                                     </div>
                                   ) : (
                                     <div>
@@ -1187,7 +1192,6 @@ const handleSelectItemFromDropdown = async (item) => {
                                       name="qtyNo"
                                       className="form-control"
                                       value={currentItem.qtyNo}
-                                      // onChange={handleItemChange}
                                       onChange={handleQtyChange}
                                     />
                                   </div>
@@ -1341,8 +1345,6 @@ const handleSelectItemFromDropdown = async (item) => {
                         </div>
                       </div>
 
-                      {/* ... (Rest of your JSX code for the footer table) ... */}
-
                       <div className="row">
                         <div className="col-md-12">
                           <div className="table-responsive">
@@ -1385,7 +1387,7 @@ const handleSelectItemFromDropdown = async (item) => {
                                           color: "#6c757d",
                                         }}
                                         onClick={() => {
-                                          setShowTransportDataModel(true);
+                                          setShowTrasportDataModel(true);
                                         }}
                                       >
                                         <FaPlus></FaPlus>
@@ -1490,11 +1492,7 @@ const handleSelectItemFromDropdown = async (item) => {
                                   </td>
                                   <td rowSpan="2">Select Work Order:</td>
                                   <td rowSpan="2">
-                                    <select
-                                      className="form-control"
-                                      name=""
-                                      id=""
-                                    >
+                                    <select className="form-control">
                                       <option> Select Work Order </option>
                                     </select>
                                   </td>
@@ -1572,11 +1570,7 @@ const handleSelectItemFromDropdown = async (item) => {
                                   </td>
                                   <td>Ship To Add Code :</td>
                                   <td>
-                                    <select
-                                      className="form-select"
-                                      name=""
-                                      id=""
-                                    >
+                                    <select className="form-select">
                                       <option> </option>
                                     </select>
                                   </td>
@@ -1677,8 +1671,6 @@ const handleSelectItemFromDropdown = async (item) => {
                           />
                         </div>
                       </div>
-
-                      {/* ... (Rest of your JSX code) ... */}
                     </div>
                   </div>
                 </div>
@@ -1689,7 +1681,7 @@ const handleSelectItemFromDropdown = async (item) => {
           <Modal
             isOpen={showTrasportDataModel}
             items={transportData}
-            onClose={() => setShowTransportDataModel(false)}
+            onClose={() => setShowTrasportDataModel(false)}
             handleSelect={handleSelectTransportName}
             handleButtonClick={handleTransportSaveButtonClick}
           ></Modal>

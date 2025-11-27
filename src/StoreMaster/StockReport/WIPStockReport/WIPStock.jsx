@@ -1,84 +1,138 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import "bootstrap/dist/css/bootstrap.min.css"
-import "bootstrap/dist/js/bootstrap.bundle.min"
-import NavBar from "../../../NavBar/NavBar.js"
-import SideNav from "../../../SideNav/SideNav.js"
-import { Link } from "react-router-dom"
-import "./WIPStock.css"
-import axios from "axios"
+import { useState, useEffect } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min";
+import NavBar from "../../../NavBar/NavBar.js";
+import SideNav from "../../../SideNav/SideNav.js";
+import { Link } from "react-router-dom";
+import "./WIPStock.css";
+import axios from "axios";
+import { FaEye } from "react-icons/fa";
 
 const WIPStock = () => {
-  const [sideNavOpen, setSideNavOpen] = useState(false)
+  const [sideNavOpen, setSideNavOpen] = useState(false);
 
   const toggleSideNav = () => {
-    setSideNavOpen((prevState) => !prevState)
-  }
+    setSideNavOpen((prevState) => !prevState);
+  };
 
   useEffect(() => {
     if (sideNavOpen) {
-      document.body.classList.add("side-nav-open")
+      document.body.classList.add("side-nav-open");
     } else {
-      document.body.classList.remove("side-nav-open")
+      document.body.classList.remove("side-nav-open");
     }
-  }, [sideNavOpen])
+  }, [sideNavOpen]);
 
   // Search API Table
 
-  const [searchTerm, setSearchTerm] = useState("")
-  const [searchResults, setSearchResults] = useState([])
-  const [items, setItems] = useState([])
-  const [totals, setTotals] = useState({})
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [items, setItems] = useState([]);
+  const [totals, setTotals] = useState({});
+  const [showModal, setShowModal] = useState(false);
+  const [modalData, setModalData] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(null);
 
   const handleSearchChange = async (e) => {
-    const value = e.target.value
-    setSearchTerm(value)
+    const value = e.target.value;
+    setSearchTerm(value);
 
     if (!value.trim()) {
-      setSearchResults([])
-      return
+      setSearchResults([]);
+      return;
     }
 
     try {
-      const res = await axios.get(`http://127.0.0.1:8000/Store/api/WIPstockreport/?q=${value}`)
-      setSearchResults(res.data.data || [])
+      const res = await axios.get(
+        `http://127.0.0.1:8000/Store/api/WIPstockreport/?q=${value}`
+      );
+      setSearchResults(res.data.data || []);
     } catch (error) {
-      console.error("Error fetching search results", error)
-      setSearchResults([])
+      console.error("Error fetching search results", error);
+      setSearchResults([]);
     }
-  }
+  };
 
-const handleSelectItem = async (item) => {
-    const fullItemDisplay = `${item.part_code} | ${item.part_no} | ${item.Name_Description}`
-    setSearchTerm(fullItemDisplay)
-    setSearchResults([])
+  const handleSelectItem = async (item) => {
+    const fullItemDisplay = `${item.part_code} | ${item.part_no} | ${item.Name_Description}`;
+    setSearchTerm(fullItemDisplay);
+    setSearchResults([]);
 
     try {
-      // ✅ FIX: Use item.part_no to get the specific item's data
       const res = await axios.get(
         `http://127.0.0.1:8000/Store/api/WIPstockreport/?q=${item.part_no}`
-      )
-      
-      // ALL items from API (e.g., ['FG1001', 'FGFG1001'])
-      const allItems = res.data.data || [] 
-      
-      // ✅ NEW LINE: Filter for exact match
-      const exactItems = allItems.filter(dataItem => dataItem.part_no === item.part_no)
+      );
 
-      // Set table to only the exact items
-      setItems(exactItems) 
+      const allItems = res.data.data || [];
+
+      const exactItems = allItems.filter(
+        (dataItem) => dataItem.part_no === item.part_no
+      );
+      setItems(exactItems);
+
+      setTotals(res.data.totals || {});
+    } catch (error) {
+      console.error("Error fetching item details", error);
+    }
+  };
+
+ const handleViewHeatDetails = async (item) => {
+    if (!item) return;
+
+    setSelectedItem(item);
+    setModalData([]); 
+    setShowModal(true);
+
+    try {
+    
+      const partNo = item.part_no || item.part_code || ""; 
       
-      // You might need to update totals logic, or maybe the API does it for you
-      // If totals are wrong, you'll need to recalculate them here
-      setTotals(res.data.totals || {}) 
+      const res = await axios.get(
+        `http://127.0.0.1:8000/Production/item/op/heatqty/?item=${item.part_code}`
+      );
+
+      const data = res.data; 
+
+      let finalDisplayData = [];
+      
+      const currentOp = parseInt(item.OPNo) || 0;
+      
+      const targetPrefix = `${currentOp}|`;
+
+      const foundKey = Object.keys(data).find(key => key.startsWith(targetPrefix));
+
+      if (foundKey) {
+
+        const heatDataObj = data[foundKey] || {};
+
+        finalDisplayData = Object.entries(heatDataObj).map(([heatNo, qty]) => ({
+          display_heat: heatNo,  // Key ban gayi Heat No
+          display_qty: qty       
+        }));
+      }
+
+      setModalData(finalDisplayData);
 
     } catch (error) {
-      console.error("Error fetching item details", error)
+      console.error("Error fetching heat details", error);
+      setModalData([]); 
     }
-  }
+  };
 
-  
+
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      closeModal();
+    }
+  };
+  const closeModal = () => {
+    setShowModal(false);
+    setModalData([]);
+    setSelectedItem(null);
+  };
+
   return (
     <div className="WIPStock">
       <div className="container-fluid">
@@ -86,12 +140,17 @@ const handleSelectItem = async (item) => {
           <div className="col-md-12">
             <div className="Main-NavBar">
               <NavBar toggleSideNav={toggleSideNav} />
-              <SideNav sideNavOpen={sideNavOpen} toggleSideNav={toggleSideNav} />
+              <SideNav
+                sideNavOpen={sideNavOpen}
+                toggleSideNav={toggleSideNav}
+              />
               <main className={`main-content ${sideNavOpen ? "shifted" : ""}`}>
                 <div className="WIPStock-header">
                   <div className="row flex-nowrap align-items-center">
                     <div className="col-md-3">
-                      <h5 className="header-title text-start">WIP Stock Report</h5>
+                      <h5 className="header-title text-start">
+                        WIP Stock Report
+                      </h5>
                     </div>
 
                     <div className="col-md-9 text-end">
@@ -129,7 +188,9 @@ const handleSelectItem = async (item) => {
 
                             {/* Search PartName  */}
                             <div className="col-md-3 col-sm-6 position-relative">
-                              <label className="form-label">Search Item No Code Desc</label>
+                              <label className="form-label">
+                                Search Item No Code Desc
+                              </label>
                               <input
                                 type="text"
                                 className="form-control"
@@ -140,16 +201,24 @@ const handleSelectItem = async (item) => {
                               {searchResults.length > 0 && (
                                 <ul
                                   className="list-group position-absolute w-100"
-                                  style={{ zIndex: 1000, maxHeight: "200px", overflowY: "auto" }}
+                                  style={{
+                                    zIndex: 1000,
+                                    maxHeight: "200px",
+                                    overflowY: "auto",
+                                  }}
                                 >
                                   {searchResults.map((item, index) => (
                                     <li
                                       key={index}
                                       className="list-group-item list-group-item-action"
-                                      style={{ cursor: "pointer", padding: "8px 12px" }}
+                                      style={{
+                                        cursor: "pointer",
+                                        padding: "8px 12px",
+                                      }}
                                       onClick={() => handleSelectItem(item)}
                                     >
-                                      {item.Part_Code} | {item.part_no} | {item.Name_Description} 
+                                      {item.Part_Code} | {item.part_no} |{" "}
+                                      {item.Name_Description}
                                     </li>
                                   ))}
                                 </ul>
@@ -161,7 +230,7 @@ const handleSelectItem = async (item) => {
                                 type="button"
                                 className="vndrbtn w-100"
                                 style={{ marginTop: "35px" }}
-                                // onClick={handleSearch}
+                              // onClick={handleSearch}
                               >
                                 Search
                               </button>
@@ -193,7 +262,11 @@ const handleSelectItem = async (item) => {
                                     gap: "5px",
                                   }}
                                 >
-                                  <input type="radio" name="stockLevel" value="" />
+                                  <input
+                                    type="radio"
+                                    name="stockLevel"
+                                    value=""
+                                  />
                                   All
                                 </label>
                                 <label
@@ -203,7 +276,11 @@ const handleSelectItem = async (item) => {
                                     gap: "5px",
                                   }}
                                 >
-                                  <input type="radio" name="stockLevel" value="" />
+                                  <input
+                                    type="radio"
+                                    name="stockLevel"
+                                    value=""
+                                  />
                                   In Stock
                                 </label>
                               </div>
@@ -214,7 +291,11 @@ const handleSelectItem = async (item) => {
                             </div>
 
                             <div className="col-md-1 col-sm-6 ">
-                              <button type="submit" className="vndrbtn  w-100" style={{ marginTop: "30px" }}>
+                              <button
+                                type="submit"
+                                className="vndrbtn  w-100"
+                                style={{ marginTop: "30px" }}
+                              >
                                 Clear
                               </button>
                             </div>
@@ -238,7 +319,11 @@ const handleSelectItem = async (item) => {
                                     gap: "5px",
                                   }}
                                 >
-                                  <input type="radio" name="stockLevel" value="" />
+                                  <input
+                                    type="radio"
+                                    name="stockLevel"
+                                    value=""
+                                  />
                                   All Part Code
                                 </label>
                                 <label
@@ -248,25 +333,43 @@ const handleSelectItem = async (item) => {
                                     gap: "5px",
                                   }}
                                 >
-                                  <input type="radio" name="stockLevel" value="" />
+                                  <input
+                                    type="radio"
+                                    name="stockLevel"
+                                    value=""
+                                  />
                                   In Stock Part Code
                                 </label>
                               </div>
                             </div>
 
                             <div className="col-md-1 col-sm-6">
-                              <button type="submit" className="vndrbtn  w-100" style={{ marginTop: "35px" }}>
+                              <button
+                                type="submit"
+                                className="vndrbtn  w-100"
+                                style={{ marginTop: "35px" }}
+                              >
                                 View
                               </button>
                             </div>
 
                             <div className="col-md-2 col-sm-6">
-                              <label className="form-label">Part Code Like</label>
-                              <input type="text" className="form-control" value="" />
+                              <label className="form-label">
+                                Part Code Like
+                              </label>
+                              <input
+                                type="text"
+                                className="form-control"
+                                value=""
+                              />
                             </div>
 
                             <div className="col-md-1 col-sm-6">
-                              <button type="submit" className="vndrbtn w-100" style={{ marginTop: "35px" }}>
+                              <button
+                                type="submit"
+                                className="vndrbtn w-100"
+                                style={{ marginTop: "35px" }}
+                              >
                                 View
                               </button>
                             </div>
@@ -300,7 +403,7 @@ const handleSelectItem = async (item) => {
                           <th>TotalWt</th>
                         </tr>
                       </thead>
-                       <tbody>
+                      <tbody>
                         {items.length > 0 ? (
                           <>
                             {items.map((item, index) => (
@@ -312,7 +415,16 @@ const handleSelectItem = async (item) => {
                                 <td>{item.OPNo}</td>
                                 <td>{item.Operation || "-"}</td>
                                 <td>{item.PartCode}</td>
-                                <td>{item.prod_qty || 0}</td>
+                                <td>
+                                    {item.prod_qty || 0}
+                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+                                      <FaEye
+                                        onClick={() => handleViewHeatDetails(item)}
+                                        style={{ cursor: "pointer", color: "#0d6efd", fontSize: "18px" }}
+                                        title="View Details"
+                                      />
+                                    </div>
+                                </td>
                                 <td>{item.rework_qty || 0}</td>
                                 <td>{item.reject_qty || 0}</td>
                                 <td>{item.pending_qc || 0}</td>
@@ -353,14 +465,93 @@ const handleSelectItem = async (item) => {
                     </table>
                   </div>
                 </div>
-                
               </main>
             </div>
+
+            {/* Modal for Heat Details */}
+            {showModal && (
+              <>
+                <div
+                  className="modal-backdrop fade show"
+                  onClick={handleBackdropClick}
+                  style={{ zIndex: 1040 }}
+                ></div>
+                <div
+                  className="modal fade show"
+                  style={{ display: "block", zIndex: 1050 }}
+                  tabIndex="-1"
+                  onClick={handleBackdropClick}
+                >
+                  <div
+                    className="modal-dialog modal-lg"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="modal-content">
+                      <div className="modal-header">
+                        <div>
+                          <h5 className="header-title text-start md-1">Stock & Heat Details</h5>
+                          {selectedItem && (
+                            <small className="text-muted">
+                              Item: {selectedItem.part_no} | OP: {selectedItem.OPNo}
+                            </small>
+                          )}
+                        </div>
+                        <button
+                          type="button"
+                          className="btn-close"
+                          onClick={closeModal}
+                          aria-label="Close"
+                        > X </button>
+                      </div>
+                      <div className="modal-body">
+                        <div className="table-responsive">
+                          <table className="table table-bordered table-hover text-center">
+                            <thead className="table-light">
+                              <tr>
+                                <th>Sr No.</th>
+                                <th>Heat No / Lot No</th>
+                                <th>Qty / Stock</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {modalData.length > 0 ? (
+                                modalData.map((row, index) => (
+                                  <tr key={index}>
+                                    <td>{index + 1}</td>
+                                    <td>{row.display_heat ? row.display_heat : "-"}</td>
+                                    <td>{row.display_qty !== undefined && row.display_qty !== null ? row.display_qty : "0"}</td>
+                                  </tr>
+                                ))
+                              ) : (
+                                <tr>
+                                  <td colSpan="3" className="text-center p-3 text-muted">
+                                    No Data Found
+                                  </td>
+                                </tr>
+                              )}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                      <div className="modal-footer">
+                        <button
+                          type="button"
+                          className="btn btn-secondary"
+                          onClick={closeModal}
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default WIPStock
+export default WIPStock;
