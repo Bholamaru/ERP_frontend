@@ -570,6 +570,7 @@ const NewPurchaseOrder = () => {
                               />
                             </div>
                           )}
+                     
                           {activeTab === 1 && (
                             <div className="tab-pane fade show active" role="tabpanel">
                               <GSTDetails
@@ -579,6 +580,7 @@ const NewPurchaseOrder = () => {
                               />
                             </div>
                           )}
+                      
                           {activeTab === 2 && (
                             <div className="tab-pane fade show active" role="tabpanel">
                               <ItemOther
@@ -588,6 +590,7 @@ const NewPurchaseOrder = () => {
                               />
                             </div>
                           )}
+                      
                           {activeTab === 3 && (
                             <div className="tab-pane fade show active" role="tabpanel">
                               <Schedule
@@ -597,6 +600,7 @@ const NewPurchaseOrder = () => {
                               />
                             </div>
                           )}
+                     
                           {activeTab === 4 && (
                             <div className="tab-pane fade show active" role="tabpanel">
                               <Ship
@@ -609,6 +613,7 @@ const NewPurchaseOrder = () => {
                               />
                             </div>
                           )}
+                        
                           {activeTab === 5 && (
                             <div className="tab-pane fade show active" role="tabpanel">
                               <Poinfo

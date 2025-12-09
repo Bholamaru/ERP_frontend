@@ -79,7 +79,6 @@ const VenderList = () => {
     (_, index) => index + 1
   );
 
-
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this record?")) return;
 

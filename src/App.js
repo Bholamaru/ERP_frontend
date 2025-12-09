@@ -251,9 +251,8 @@ import RMStock from "./StoreMaster/StockReport/RMStockReport/RMStock.jsx";
 import ConsumableStock from "./StoreMaster/StockReport/ConsumableStockReport/ConsumableStock.jsx";
 import FGStock from "./StoreMaster/StockReport/FGStockReport/FGStock.jsx";
 
-
-import SubcontractStock from "./StoreMaster/SubconGRN/SubcontractStock/SubcontractStock.jsx";
-import OurVendorStock from "./StoreMaster/SubconGRN/SubcontractStock/OurVendorStock.jsx";
+// import SubcontractStock from "./StoreMaster/StockReport/SubcontractStock/SubcontractStock.jsx";
+// import OurVendorStock from "./StoreMaster/StockReport/SubcontractStock/OurVendorStock.jsx";
 
 
 
@@ -316,6 +315,7 @@ import QualityPlan from "./Quality/QualityPlan/QualityPlan.jsx";
 import PandingQCList from "./Quality/Purchase/PandingQCList/PandingQCList.jsx";
 import InwardTestCertificate from "./Quality/Purchase/InwardTestCertificate/InwardTestCertificate.jsx";
 import PaddingQCInward from "./Quality/SubconJobwork/PaddingQCInward/PaddingQCInward.jsx";
+import SubconJobworkInwardQC from "./Quality/SubconJobwork/PaddingQCInward/SubconJobworkInwardQC/SubconJobworkInwardQC.jsx";
 import InwardQCList from "./Quality/SubconJobwork/InwardQCList/InwardQCList.jsx";
 import InprocessInspection from "./Quality/InprocessQC/InprocessInspection/InprocessInspection.jsx";
 import InprocessInspectionList from "./Quality/InprocessQC/InprocessInspectionList/InprocessInspectionList.jsx";
@@ -435,6 +435,10 @@ function App() {
         <Route path="/item-master" element={<ItemMaster />} />
         <Route path="/add-new-item" element={<AddNewItem />} />
         <Route path="/item-master-gernal" element={<ItemMasterGernal />} />
+         <Route 
+          path="/item-master-gernal/:id" 
+          element={<ItemMasterGernal />} 
+        />
         {/* <Route path="/item-master-query" element={<ItemMasterQuery />} />  */}
         <Route path="/Work-center-master" element={<WorkCenterMaster />} />
         <Route path="/business-partner" element={<BusinessPartner />} />
@@ -446,6 +450,10 @@ function App() {
         <Route path="/task-master" element={<TaskMaster />} />
         <Route path="/Cut-wise" element={<Cutwise />} />
         <Route path="/Supplier-Customer-Master" element={<SupplierCustomerMaster />} />
+        <Route 
+          path="/Supplier-Customer-Master/:id" 
+          element={<SupplierCustomerMaster />} 
+        />
         <Route path="/vender-list" element={<VenderListSupplier />} />
         <Route path="/bom-routing" element={<BomRouting />} />
         <Route path="/bill-material" element={<BillMaterial />} />
@@ -565,11 +573,20 @@ function App() {
 
         <Route path="/new-indent" element={<Newindent />} />
         <Route path="/new-purchase-order" element={<NewPurchaseOrder />} />
+         <Route 
+          path="/new-purchase-order/:id" 
+          element={<NewPurchaseOrder />} 
+        />
         <Route path="/new-jobwork-order" element={<NewJobworkPurchase />} />
+        <Route 
+          path="/new-jobwork-order/:id" 
+          element={<NewJobworkPurchase />} 
+        />
         <Route path="/pendingpo" element={<PendingPo />} />
         <Route path="/pendingindent" element={<PendingIndent />} />
         <Route path="/Purchse-Mrn" element={<PurchaseMrn />} />
         <Route path="/Purchse-order-status" element={<PurchseOrderStatus />} />
+        <Route path="/Rfo" element={<Rfo />} />
         <Route path="/Rfo" element={<Rfo />} />
         <Route path="/Quoto-Comparison-Statement" element={<QuotoComparisonStatement />} />
         <Route path="/Quoto-Comparison-Pending" element={<QuotoComparisonPending />} />
@@ -605,6 +622,10 @@ function App() {
 
         <Route path="Gate-Inward-Entry" element={<GateInwardEntry />} />
         <Route path="New-Gate-Entry" element={<NewGateInward />} />
+        <Route 
+          path="/New-Gate-Entry/:id" 
+          element={<NewGateInward />} 
+        />
         <Route path="Pending-Asn-List" element={<PendingAsnList />} />
         <Route path="PDL-List" element={<PDL />} />
         <Route path="Vendor-Bill-List" element={<VendorBillList />} />
@@ -685,9 +706,12 @@ function App() {
         <Route path="RMStock" element={<RMStock />} />
         <Route path="ConsumableStock" element={<ConsumableStock />} />
         <Route path="FGStock" element={<FGStock />} />
+        
+        {/* <Route path="SubcontractStock" element={<SubcontractStock />} /> */}
+        {/* <Route path="OurVendorStock" element={<OurVendorStock />} /> */}
 
-        <Route path="SubcontractStock" element={<SubcontractStock />} />
-        <Route path="OurVendorStock" element={<OurVendorStock />} />
+
+
 
         {/* /////////////////////////////////////Production////////////////////////////////////// */}
 
@@ -707,6 +731,7 @@ function App() {
         <Route path="/ScrapRejectionEntry" element={<ScrapRejectionEntry />} />
         <Route path="/FGScrapRejectionReport" element={<FGScrapRejectionReport />} />
         <Route path="/PoList" element={<PoList />} />
+       
         <Route path="/JobworkList" element={<JobworkList />} />
         <Route path="/BreakdownTimeEntry" element={<BreakdownTimeEntry />} />
         <Route path="/BreakdownTimeReport" element={<BreakdownTimeReport />} />
@@ -752,6 +777,7 @@ function App() {
         <Route path="PandingQCList" element={<PandingQCList />} />
         <Route path="InwardTestCertificate" element={<InwardTestCertificate />} />
         <Route path="PaddingQCInward" element={<PaddingQCInward />} />
+        <Route path="SubconJobworkInwardQC" element={<SubconJobworkInwardQC />} />
         <Route path="InwardQCList" element={<InwardQCList />} />
         <Route path="InprocessInspection" element={<InprocessInspection />} />
         <Route path="InprocessInspectionList" element={<InprocessInspectionList />} />

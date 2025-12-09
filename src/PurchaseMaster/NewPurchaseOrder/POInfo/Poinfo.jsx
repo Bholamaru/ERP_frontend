@@ -416,6 +416,7 @@ const Poinfo = ({ updateFormData, paymentTermsFromSupplier ,poInfoData = {}, isE
                   </div>
                 </div>
               </div>
+              
               <div className="col-md-4">
                 <div className="row text-start">
                   <div className="col-md-4">

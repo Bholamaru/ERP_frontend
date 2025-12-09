@@ -445,5 +445,30 @@ export const getgateInward = async () => {
 
 
 
+// This is a gate entry file
+export const deleteGateInward = async (id) => {
+  try {
+    
+    const response = await fetch(`http://127.0.0.1:8000/Store/gate/entry/delete/${id}/`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error("Error deleting entry:", error);
+  }
+};
 
 
+// Add this function
+export const deleteGrn = async (id) => {
+    try {
+        await axios.delete(`http://127.0.0.1:8000/Store/grn/delete/${id}/`);
+        return true;
+    } catch (error) {
+        console.error("Error deleting GRN:", error);
+        throw error;
+    }
+};

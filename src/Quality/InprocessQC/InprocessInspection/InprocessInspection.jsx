@@ -3,12 +3,12 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import NavBar from "../../../NavBar/NavBar.js";
 import SideNav from "../../../SideNav/SideNav.js";
+import { FaEye } from "react-icons/fa";
 
 // import { FaPlus } from "react-icons/fa";
 import Cached from "@mui/icons-material/Cached.js";
 import { FaXTwitter } from "react-icons/fa6";
 import "./InprocessInspection.css";
-// import {  FaEye, FaEdit} from "react-icons/fa";
 
 const InprocessInspection = () => {
     const [sideNavOpen, setSideNavOpen] = useState(false);
@@ -37,8 +37,8 @@ const InprocessInspection = () => {
               toggleSideNav={toggleSideNav}
             />
             <main className={`main-content ${sideNavOpen ? "shifted" : ""}`}>
-              <div className="InprocessInspection mt-5">
-                <div className="InprocessInspection-header mb-4 text-start">
+              <div className="InprocessInspection">
+                <div className="InprocessInspection-header mb-2 text-start">
                   <div className="row align-items-center">
                     <div className="col-md-4">
                       <h5 className="header-title">Inprocess Inspection </h5>
@@ -50,25 +50,25 @@ const InprocessInspection = () => {
                      </div>
                   </div>
                 </div>
-                <div className="InprocessInspection-filter mb-4 mt-5">
+                <div className="InprocessInspection-filter mb-2">
                 <div className="container-fluid">
                     <div className="row  g-3 text-start mt-2 mb-3 text-start">
-                      <div className="col-sm-6 col-md-2 col-lg-1">
+                      <div className="col-sm-6 col-md-3 col-lg-2">
                         <label>Plant</label>
                         <select className="form-select">
                           <option value="SHARP">SHARP</option>
                           {/* Add more options as needed */}
                         </select>
                       </div>
-                      <div className="col-sm-6 col-md-2 col-lg-1">
+                      <div className="col-sm-6 col-md-3 col-lg-2">
                         <label>From Date</label>
                         <input type="date" className="form-control" />
                       </div>
-                      <div className="col-sm-6 col-md-2 col-lg-1">
+                      <div className="col-sm-6 col-md-3 col-lg-2">
                         <label>To Date</label>
                         <input type="date" className="form-control" />
                       </div>
-                      <div className="col-sm-6 col-md-2 col-lg-1">
+                      <div className="col-sm-6 col-md-3 col-lg-2">
                         <label>Operation :</label>
                         <select className="form-select">
                           <option>All</option>
@@ -79,32 +79,28 @@ const InprocessInspection = () => {
                           <option>Cust_Rework_In</option>
                         </select>
                       </div>
-                      <div className="col-sm-6 col-md-2 col-lg-1">
+                      <div className="col-sm-6 col-md-3 col-lg-2">
                        <div className="form-check">
                             <input type="checkbox" className="form-check-input" id="machineUtilizeCheckbox" />
                             <label htmlFor="machineUtilizeCheckbox" className="form-check-label"> Item Code: </label>
                         </div>
                         <input type="text"  placeholder="Item Code" className="form-control"/>
                       </div>
-
-                      <div className="col-sm-6 col-md-2 col-lg-1">
+                      <div className="col-sm-6 col-md-3 col-lg-2">
                       <div className="form-check">
                             <input type="checkbox" className="form-check-input" id="machineUtilizeCheckbox" />
                             <label htmlFor="machineUtilizeCheckbox" className="form-check-label">HeatCode: </label>
                         </div>
                         <input type="text" placeholder="Heat Code" className="form-control" />
                       </div>
-
-                      <div className="col-sm-6 col-md-2 col-lg-1">
+                      <div className="col-sm-6 col-md-3 col-lg-2">
                         <div className="form-check">
                             <input type="checkbox" className="form-check-input" id="machineUtilizeCheckbox" />
                             <label htmlFor="machineUtilizeCheckbox" className="form-check-label"> Prod No: </label>
                         </div>
                         <input type="text" placeholder="" className="form-control" />
                       </div>
-
-
-                      <div className="col-6 col-md-1">
+                      <div className="col-6 col-md-2">
                       <div className="form-check">
                             <input type="checkbox" className="form-check-input" id="machineUtilizeCheckbox" />
                             <label htmlFor="machineUtilizeCheckbox" className="form-check-label"> BarCode: </label>
@@ -112,17 +108,77 @@ const InprocessInspection = () => {
                           <button type="button" className="btn btn-primary">
                             Search
                           </button>
-                        </div>
+                      </div>
 
                       </div>
                     </div>
                    
                   </div>
+
+                   <div className="InprocessInspection-table table-responsive mt-2">
+                    <div className="table-striped">
+                      <table className="table">
+                        <thead>
+                          <tr>
+                            <th scope="col">Sr.</th>
+                            <th scope="col">Type</th>
+                            <th scope="col">Prod No</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Item No</th>
+                            <th scope="col">Item Code</th>
+                            <th scope="col">Item Desc</th>
+                            <th scope="col">Dia</th>
+                            <th scope="col">Operation Name</th>
+                            <th scope="col">Operation</th>
+                            <th scope="col">Shift Name</th>
+                            <th scope="col">Machine </th>
+                            <th scope="col">Heat No </th>
+                            <th scope="col">Prod Qty </th>
+                            <th scope="col">QC Pendding Qty </th>
+                            <th scope="col">Rework Qty</th>
+                            <th scope="col"> Reject Qty</th>
+                            <th scope="col"> # </th>
+                            <th scope="col"> Select </th>
+                            <th scope="col">Veiw </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {/* Example data row */}
+                          <tr>
+                            <td>1</td>
+                            <td>242512362</td>
+                            <td>02/12/24</td>
+                            <td>02/12/24 15:04</td>
+                            <td>
+                              <span className="ourf4"> Our_F4 </span>
+                            </td>
+                            <td>740</td>
+                            <td>02/12/24</td>
+                            <td>JVOO51</td>
+                            <td>Mamtal Engineering</td>
+                            <td>""</td>
+                            <td>Total Item : (2) 📝</td>
+                            <td> </td>
+                            <td> </td>
+                            <td> </td>
+                            <td> </td>
+                            <td> </td>
+                            <td> </td>
+                            <td> </td>
+                            <td> </td>
+                            <td>
+                              {" "}
+                              <FaEye />
+                            </td>                           
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
             
                   <div className="AssemblyEntry-bottom mt-5">
                     <div className="AssemblyEntry-tabs">
-                      <ul className="nav nav-tabs" id="" role="tablist" >
-                       
+                      <ul className="nav nav-tabs" id="" role="tablist" >                       
                         <li className="nav-item" role="presentation">
                           <button
                             className="nav-link"
@@ -135,7 +191,6 @@ const InprocessInspection = () => {
                             Rework  |  Reject
                           </button>
                         </li>
-
                         <li className="nav-item" role="presentation">
                           <button
                             className="nav-link active"
@@ -159,21 +214,9 @@ const InprocessInspection = () => {
                           >
                             Reject Master
                           </button>
-                        </li>
-                       
-                        {/* <li className="nav-item" role="presentation">
-                          <button
-                            className="nav-link"
-                            id="tool-die-tab"
-                            data-bs-toggle="tab"
-                            data-bs-target="#toolDie"
-                            type="button"
-                            role="tab"
-                          >
-                            Tool and Die Details
-                          </button>
-                        </li> */}
+                        </li>                                             
                       </ul>
+
                        <div className="tab-content mt-4" id="productionEntryTabsContent" >
                         {/* <div className="tab-pane fade show active" id="shift" role="tabpanel" >
                           <div className="table table-bordered table-responsive">
