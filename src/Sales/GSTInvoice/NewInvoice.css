@@ -1,184 +1,208 @@
-/* Apply borders to the table and row containers */
-.table-container {
-    /* border: 1px solid #000; */
-    padding: 10px;
+* {
+  box-sizing: border-box;
+  margin: 0px;
+  padding: 0px;
 }
 
-/* Add border to each column (cell) */
-.table-container .col-md-3 {
-    border: 1px solid #ccc;
-    padding: 5px;
-    /* margin: 5px; */
+.NewInvoice {
+  width: 100%;
+  height: 100vh;
 }
 
-/* Style the input fields */
-.table-container input[type="text"], .table-container select {
-    border: 1px solid #ccc;
-    /* padding: 5px; */
-    width: 100%;
+.NewInvoice-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6; 
+  padding: 10px 15px; 
 }
 
-/* Add a little spacing between labels and inputs */
-.table-container label {
-    display: block;
-    /* margin-bottom: 5px; */
+.header-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: blue;
+  margin: 0;
 }
 
-.NewInvoiceMaster {
-    margin-top: -10px;
-  }
-  
-  /* Header Styling */
-  .NewInvoice-header {
-    background-color: #f8f9fa; /* Light background for header */
-    border-bottom: 1px solid #dee2e6; /* Border for header */
-    padding: 10px 15px; /* Padding around header */
-    border-radius: 5px;
-  }
-  
-  .NewInvoice-header .header-title {
-    font-size: 20px;
-    font-weight: bold;
-    margin: 0;
-  }
-  
-  /* Form and Inputs */
-/* Additional spacing for table cells */
-.NewInvoiceMaster .table-bordered td, .table-bordered th {
-    padding: 8px;
-    vertical-align: middle;
+.vndrbtn {
+  display: inline-block;
+  background-color: rgba(235, 233, 233, 0.685);
+  padding: 5px 10px; 
+  margin-left: 5px;
+  text-decoration: none;
+  color: black;
+}
+.NewInvoice-Main {
+  background-color: #f8f9fa;
+  padding: 10px;
+  font-size: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.vndrbtn {
+  border: none;
+  background-color: rgba(235, 233, 233, 0.685);
+  text-decoration: none;
+  color: black;
+}
+
+.vndrbtn:hover{
+  background-color: #16bfff;
+  color: white;
+}
+
+.form-select{
+  font-size: 12px;
+}
+.form-control{
+  font-size: 12px;
+}
+
+label{
+  font-size: 12px;
+}
+
+.NewInvoice-table {
+  background-color: #f8f9fa;
+  padding: 10px;
+  font-size: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 1rem;
+  background-color: transparent;
+}
+
+.table th {
+  background-color: #16bfff;
+  color: white;
+  font-size: 14px;
+}
+
+th {
+  white-space: nowrap;
+  vertical-align: middle;
+  text-align: center;
+  padding: 10px;
+}
+
+.table td {
+  padding: 0.75rem;
+  vertical-align: top;
+  font-size: 12px;
+  border-top: 1px solid #dee2e6;
+}
+
+.table thead th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.table tbody + tbody {
+  border-top: 2px solid #dee2e6;
+}
+
+.table-sm th,
+.table-sm td {
+  padding: 0.3rem;
+}
+
+
+.pagination-container {
+  margin-top: 20px;
+}
+
+.pagination .page-item {
+  cursor: pointer;
+}
+
+.pagination .page-item.active .page-link {
+  background-color:   #16bfff;
+  border: none; 
+  border-radius: none;
+  font-size: 12px;
+  color: white;
+}
+
+.pagination .page-link {
+  color: #000;
+  font-size: 12px;
+}
+
+.pagination .page-link:hover {
+  background-color: #16bfff;
+  color: white;
+}
+
+
+/* Mobile devices (up to 576px) */
+@media (max-width: 576px) {
+  .header-title {
+    font-size: 16px;
     text-align: center;
   }
-  
-  /* Adjust icon button sizes for consistent appearance */
- .NewInvoiceMaster .btn-outline-secondary {
-    padding: 4px 8px;
-    font-size: 1rem;
-  }
-  
-  /* Responsive font and padding adjustments */
-  .NewInvoice-main label {
-    font-size: 0.875rem;
-  }
-/* General Styling */
-body {
-    font-family: Arial, sans-serif;
-   
-    margin: 0;
-    padding: 0;
-  }
-  
-  .NewInvoice-main {
-    padding: 20px;
-    background-color: #f8f9fa;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  .NewInvoice-bottom{
-    padding: 20px;
-    background-color: #f8f9fa;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  .NewInvoice-tabs .nav-tabs {
-    border-bottom: 2px solid #dee2e6;
-  }
-  
-  .NewInvoice-tabs .nav-tabs .nav-link {
-    font-weight: bold;
-    color: #495057;
-    padding: 10px 15px;
-    border: 1px solid transparent;
-    border-radius: 5px 5px 0 0;
-  }
-  
-  .NewInvoice-tabs .nav-tabs .nav-link.active {
-    color: #ffffff;
-    background-color: #007bff;
-    border-color: #007bff;
-    padding: 5px;
-    border-radius: 5px;
-    border: none;
-  }
-  
-  .NewInvoice .tab-content {
-    background-color: #f8f9fa;
-    padding: 15px;
-    border: none;
-    
-    border-radius: 0 0 10px 10px;
 
-  }
-  
- .NewInvoice-main label {
-    font-weight: bold;
-    margin-bottom: 5px;
+  .vndrbtn {
+    padding: 4px 8px;
+    margin: 5px 0;
+    text-align: center;
     display: block;
-  }
-  
-.NewInvoice-main  input, select {
     width: 100%;
-    border-radius: 5px;
   }
-  
- 
-  
- .NewInvoice-main input.form-control,
- .NewInvoice-main select.form-control {
-    padding: 8px;
- 
+
+  .form-select,
+  .form-control,
+  label {
+    font-size: 10px;
   }
-  
- 
-  
-  /* Table Styling */
-  .NewInvoice-main .table {
-    width: 100%;
-    border-collapse: collapse;
+
+  .table th,
+  .table td {
+    font-size: 10px;
+    padding: 0.4rem;
   }
-  
-  .NewInvoice-main   .table th,
-  .NewInvoice-main .table td {
-    text-align: left;
-    padding: 8px;
-    
+}
+
+/* Tablets (577px to 768px) */
+@media (min-width: 577px) and (max-width: 768px) {
+  .header-title {
+    font-size: 18px;
   }
-  
-  .NewInvoice-main .table th {
-  
-    font-weight: bold;
+
+  .vndrbtn {
+    padding: 5px 10px;
   }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .tab-content .row {
-      flex-direction: column;
-    }
-  
-    .row .col-md-4 {
-      width: 100%;
-      margin-bottom: 15px;
-    }
-  
-    .btn {
-      width: auto;
-      margin: 0 5px;
-    }
-  
-    .NewInvoice-tabs .nav-tabs .nav-link {
-      font-size: 12px;
-      padding: 8px;
-    }
+
+  .form-select,
+  .form-control,
+  label {
+    font-size: 11px;
   }
-  
-  @media (max-width: 576px) {
-    .NewInvoice-main {
-      padding: 10px;
-    }
-  
-    .table th, .table td {
-      font-size: 12px;
-      padding: 5px;
-    }
+
+  .table th,
+  .table td {
+    font-size: 11px;
   }
-  
+}
+
+/* Laptops and desktops (769px and above) */
+@media (min-width: 769px) {
+  .header-title {
+    font-size: 20px;
+  }
+
+  .form-select,
+  .form-control,
+  label {
+    font-size: 12px;
+  }
+
+  .table th,
+  .table td {
+    font-size: 12px;
+  }
+}

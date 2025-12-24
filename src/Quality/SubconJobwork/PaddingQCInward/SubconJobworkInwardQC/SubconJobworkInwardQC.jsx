@@ -73,11 +73,11 @@ const SubconJobworkInwardQC = () => {
 
                   <div className="AssemblyEntry-bottom mt-1">
                     <div className="AssemblyEntry-tabs">
-                      <ul className="nav nav-tabs" id="" role="tablist">
+                      <ul className="nav nav-tabs" role="tablist">
                         <li className="nav-item" role="presentation">
                           <button
-                            className="nav-link"
-                            id="dimensional"
+                            className="nav-link active"
+                            id="dimensional-tab"
                             data-bs-toggle="tab"
                             data-bs-target="#dimensional"
                             type="button"
@@ -86,10 +86,11 @@ const SubconJobworkInwardQC = () => {
                             A. Dimensional
                           </button>
                         </li>
+
                         <li className="nav-item" role="presentation">
                           <button
-                            className="nav-link active"
-                            id="visualinspection"
+                            className="nav-link"
+                            id="visualinspection-tab"
                             data-bs-toggle="tab"
                             data-bs-target="#visualinspection"
                             type="button"
@@ -98,6 +99,7 @@ const SubconJobworkInwardQC = () => {
                             B. Visual Inspection
                           </button>
                         </li>
+
                         <li className="nav-item" role="presentation">
                           <button
                             className="nav-link"
@@ -110,6 +112,7 @@ const SubconJobworkInwardQC = () => {
                             C. Rework & Reject Qty
                           </button>
                         </li>
+
                         <li className="nav-item" role="presentation">
                           <button
                             className="nav-link"
@@ -128,8 +131,13 @@ const SubconJobworkInwardQC = () => {
                         className="tab-content mt-4"
                         id="productionEntryTabsContent"
                       >
-                        
-                        <div  className="tab-pane fade show active"  id="dimensional"  role="tabpanel">
+                        {/* A. Dimensional */}
+                        <div
+                          className="tab-pane fade show active"
+                          id="dimensional"
+                          role="tabpanel"
+                          aria-labelledby="dimensional-tab"
+                        >
                           <div className="table table-bordered table-responsive">
                             <table>
                               <thead>
@@ -313,498 +321,151 @@ const SubconJobworkInwardQC = () => {
                           </div>
                         </div>
 
-                        <div className="tab-pane fade" id="visualinspection" role="tabpanel">
-                          
-                        </div> 
+                        {/* B. Visual Inspection */}
+                        <div
+                          className="tab-pane fade"
+                          id="visualinspection"
+                          role="tabpanel"
+                          aria-labelledby="visualinspection-tab"
+                        >
+                          {/* Visual Inspection content */}
+                        </div>
 
-                         <div className="tab-pane fade" id="reworkRej" role="tabpanel">
-                          
-                        </div> 
+                        {/* C. Rework */}
+                        <div
+                          className="tab-pane fade"
+                          id="reworkRej"
+                          role="tabpanel"
+                          aria-labelledby="rework-rej-tab"
+                        >
+                          {/* Rework content */}
+                        </div>
 
-                        <div  className="tab-pane fade"  id="qcInfo"  role="tabpanel">
-                          
+                        {/* D. QC Info */}
+                        <div
+                          className="tab-pane fade"
+                          id="qcInfo"
+                          role="tabpanel"
+                          aria-labelledby="qc-info-tab"
+                        >
                           <div className="row">
                             <div className="col-md-4 text-start">
+                              <div className="form-group mb-3">
+                                <label htmlFor="">QC (IR) No :</label>
+                                <input
+                                  type="text"
+                                  className="form-control mt-2"
+                                />
+                              </div>
 
-                                  <div className="form-group mb-3">
-                                    <label htmlFor="">PO No:</label>                                                                                                       
-                                    <input
-                                      type="text"
-                                      className="form-control mt-2"
-                                    />
-                                  </div> 
+                              <div className="form-group mb-3">
+                                <label htmlFor="">Vendor Heat Code :</label>
+                                <input
+                                  type="text"
+                                  className="form-control mt-2"
+                                />
+                              </div>
 
-                                   <div className="form-group mb-3">
-                                    <label htmlFor="">PO No:</label>                                                                                                       
-                                    <input
-                                      type="text"
-                                      className="form-control mt-2"
-                                    />
-                                  </div>                                                                                         
+                               <div className="form-group mb-3">
+                                <label htmlFor="">Lot Accept / Reject :</label>
+                                <select className="form-select">
+                                  <option> Accpect </option>
+                                  <option> Reject </option>
+                                </select>
+                              </div>
 
-                              {/* <div className="row text-start">
-                                <div className="col-md-4">
-                                  <div className="form-group mb-3">
-                                    <label htmlFor="PreparedBy">
-                                      Prepared by:
-                                    </label>
-                                  </div>
-                                </div>
-                                <div className="col-md-8">
-                                  <div className="form-group mb-3">
-                                    <input
-                                      type="text"
-                                      id="PreparedBy"
-                                      name="PreparedBy"
-                                      className="form-control"
-                                      placeholder="Enter Prepared by"
-                                      value={formData.PreparedBy}
-                                      onChange={handleChange}
-                                    />
-                                  </div>
-                                </div>
-                              </div> */}
+                               <div className="form-group mb-3">
+                                <label htmlFor="">Control Plan No :</label>
+                                <input
+                                  type="text"
+                                  className="form-control mt-2"
+                                />
+                              </div>
+
+                               <div className="form-group mb-3">
+                                <label htmlFor="">Total Col() :</label>
+                                <input
+                                  type="text"
+                                  className="form-control mt-2"
+                                />
+                              </div>                            
                             </div>
 
-                            {/* <div className="col-md-4">
-                              <div className="row text-start">
-                                <div className="col-md-4">
-                                  <div className="form-group mb-3">
-                                    <label
-                                      className="form-check-label"
-                                      htmlFor="PoDate"
-                                    >
-                                      PO Date:
-                                    </label>
-                                    <span className="text-danger">*</span>
-                                  </div>
-                                </div>
-                                <div className="col-md-8">
-                                  <div className="form-group mb-3">
-                                    <input
-                                      type="Date"
-                                      name="PoDate"
-                                      className="form-control"
-                                      id="PoDate"
-                                      value={formData.PoDate}
-                                      onChange={handleChange}
-                                    />
-                                  </div>
-                                </div>
+                             <div className="col-md-4 text-start">
+                              <div className="form-group mb-3">
+                                <label htmlFor="">QC (IR) Date :</label>
+                                <input
+                                  type="Date"
+                                  className="form-control mt-2"
+                                />
                               </div>
 
-                              <div className="row text-start">
-                                <div className="col-md-4">
-                                  <div className="form-group mb-3">
-                                    <label
-                                      className="form-check-label"
-                                      htmlFor="EnquiryDate"
-                                    >
-                                      Enquiry Date:
-                                    </label>
-                                    <span className="text-danger">*</span>
-                                  </div>
-                                </div>
-                                <div className="col-md-8">
-                                  <div className="form-group mb-3">
-                                    <input
-                                      type="date"
-                                      id="EnquiryDate"
-                                      name="EnquiryDate"
-                                      className="form-control"
-                                      placeholder="Select Enquiry Date"
-                                      value={formData.EnquiryDate}
-                                      onChange={handleChange}
-                                    />
-                                  </div>
-                                </div>
+                              <div className="form-group mb-3">
+                                <label htmlFor="">Vendor TC No :</label>
+                                <input
+                                  type="text"
+                                  className="form-control mt-2"
+                                />
                               </div>
 
-                              <div className="row text-start">
-                                <div className="col-md-4">
-                                  <div className="form-group mb-3">
-                                    <label
-                                      className="form-check-label"
-                                      htmlFor="QuotDate"
-                                    >
-                                      Quot Date:
-                                    </label>
-                                    <span className="text-danger">*</span>
-                                  </div>
-                                </div>
-                                <div className="col-md-8">
-                                  <div className="form-group mb-3">
-                                    <input
-                                      type="date"
-                                      id="QuotDate"
-                                      name="QuotDate"
-                                      className="form-control"
-                                      placeholder="Select Quot Date"
-                                      value={formData.QuotDate}
-                                      onChange={handleChange}
-                                    />
-                                  </div>
-                                </div>
+                               <div className="form-group mb-3">
+                                <label htmlFor="">Sample Qty :</label>
+                               <input
+                                  type="text"
+                                  className="form-control mt-2"
+                                />
                               </div>
 
-                              <div className="row text-start">
-                                <div className="col-md-4">
-                                  <div className="form-group mb-3">
-                                    <label
-                                      className="form-check-label"
-                                      htmlFor="PaymentRemark"
-                                    >
-                                      Payment Remark:
-                                    </label>
-                                  </div>
-                                </div>
-                                <div className="col-md-8">
-                                  <div className="form-group mb-3">
-                                    <input
-                                      type="text"
-                                      id="PaymentRemark"
-                                      name="PaymentRemark"
-                                      className="form-control"
-                                      placeholder="Enter Payment Remark"
-                                      value={formData.PaymentRemark}
-                                      onChange={handleChange}
-                                    />
-                                  </div>
-                                </div>
+                               <div className="form-group mb-3">
+                                <label htmlFor="">Wise Size :</label>
+                                <input
+                                  type="text"
+                                  className="form-control mt-2"
+                                />
                               </div>
 
-                              <div className="row text-start">
-                                <div className="col-md-4">
-                                  <div className="form-group mb-3">
-                                    <label
-                                      className="form-check-label"
-                                      htmlFor="DeliveryType"
-                                    >
-                                      Delivery Type/Period:
-                                    </label>
-                                  </div>
-                                </div>
-                                <div className="col-md-8">
-                                  <div className="form-group mb-3">
-                                    <input
-                                      type="text"
-                                      id="DeliveryType"
-                                      name="DeliveryType"
-                                      className="form-control"
-                                      placeholder="Enter Delivery Type/Period"
-                                      value={formData.DeliveryType}
-                                      onChange={handleChange}
-                                    />
-                                  </div>
-                                </div>
+                               <div className="form-group mb-3">
+                                <label htmlFor="">Col From No :</label>
+                                <input
+                                  type="text"
+                                  className="form-control mt-2"
+                                />
+                              </div>                            
+                            </div>
+
+                             <div className="col-md-4 text-start">
+                              <div className="form-group mb-3">
+                                <label htmlFor="">(ISO) Format No :</label>
+                                <input
+                                  type="Date"
+                                  className="form-control mt-2"
+                                />
                               </div>
 
-                              <div className="row text-start">
-                                <div className="col-md-4">
-                                  <div className="form-group mb-3">
-                                    <label
-                                      className="form-check-label"
-                                      htmlFor="DeliveryNote"
-                                    >
-                                      Delivery/Note:
-                                    </label>
-                                  </div>
-                                </div>
-                                <div className="col-md-8">
-                                  <div className="form-group mb-3">
-                                    <input
-                                      type="text"
-                                      id="DeliveryNote"
-                                      name="DeliveryNote"
-                                      className="form-control"
-                                      placeholder="Enter Delivery Note"
-                                      value={formData.DeliveryNote}
-                                      onChange={handleChange}
-                                    />
-                                  </div>
-                                </div>
+                              <div className="form-group mb-3">
+                                <label htmlFor="">(ISO) Rev No :</label>
+                                <input
+                                  type="text"
+                                  className="form-control mt-2"
+                                />
                               </div>
 
-                              <div className="row text-start">
-                                <div className="col-md-4">
-                                  <div className="form-group mb-3">
-                                    <label
-                                      className="form-check-label"
-                                      htmlFor="IndentNo"
-                                    >
-                                      Indent No/Note:
-                                    </label>
-                                  </div>
-                                </div>
-                                <div className="col-md-8">
-                                  <div className="form-group mb-3">
-                                    <input
-                                      type="text"
-                                      id="IndentNo"
-                                      name="IndentNo"
-                                      className="form-control"
-                                      placeholder="Enter Indent No/Note"
-                                      value={formData.IndentNo}
-                                      onChange={handleChange}
-                                    />
-                                  </div>
-                                </div>
-                              </div>
+                               <div className="form-group mb-3">
+                                <label htmlFor="">(ISO) Rev Date :</label>
+                               <input
+                                  type="date"
+                                  className="form-control mt-2"
+                                />
+                              </div>                              
 
-                              <div className="row text-start">
-                                <div className="col-md-4">
-                                  <div className="form-group mb-3">
-                                    <label
-                                      className="form-check-label"
-                                      htmlFor="ApprovedBy"
-                                    >
-                                      Approved by:
-                                    </label>
-                                  </div>
-                                </div>
-                                <div className="col-md-8">
-                                  <div className="form-group mb-3">
-                                    <input
-                                      type="text"
-                                      id="ApprovedBy"
-                                      name="ApprovedBy"
-                                      className="form-control"
-                                      placeholder="Enter Approved by"
-                                      value={formData.ApprovedBy}
-                                      onChange={handleChange}
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                            </div> */}
-
-                            {/* <div className="col-md-4">
-                              <div className="row text-start">
-                                <div className="col-md-4">
-                                  <div className="form-group mb-3">
-                                    <label
-                                      className="form-check-label"
-                                      htmlFor="Time"
-                                    >
-                                      Time:
-                                    </label>
-                                  </div>
-                                </div>
-                                <div className="col-md-8">
-                                  <div className="form-group mb-3">
-                                    <input
-                                      type="text"
-                                      id="Time"
-                                      name="Time"
-                                      className="form-control"
-                                      placeholder="Enter Time"                                     
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className="row text-start">
-                                <div className="col-md-4">
-                                  <div className="form-group mb-3">
-                                    <label
-                                      className="form-check-label"
-                                      htmlFor="PoFor"
-                                    >
-                                      PO For:
-                                    </label>
-                                  </div>
-                                </div>
-                                <div className="col-md-8">
-                                  <div className="form-group mb-3">
-                                    <input
-                                      type="text"
-                                      id="PoFor"
-                                      name="PoFor"
-                                      className="form-control"
-                                      placeholder="Enter PO For"
-                                      value={formData.PoFor}
-                                      onChange={handleChange}
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className="row text-start">
-                                <div className="col-md-4">
-                                  <div className="form-group mb-3">
-                                    <label
-                                      className="form-check-label"
-                                      htmlFor="Freight"
-                                    >
-                                      Freight:
-                                    </label>
-                                  </div>
-                                </div>
-                                <div className="col-md-6">
-                                  <div className="form-group mb-3">
-                                    <input
-                                      type="text"
-                                      id="Freight"
-                                      name="Freight"
-                                      className="form-control"
-                                      placeholder="Enter Freight"
-                                      value={formData.Freight}
-                                      onChange={handleChange}
-                                    />
-                                  </div>
-                                </div>
-                                <div className="col-md-1">
-                                  <button
-                                    type="button"
-                                    className="po1btn"
-                                    onClick={handleAddClick}
-                                  >
-                                    <FaPlus />
-                                  </button>
-                                </div>
-                                <div className="col-md-1">
-                                  <button
-                                    type="button"
-                                    className="po1btn"
-                                    onClick={handleRefreshClick}
-                                  >
-                                    <FaSync />
-                                  </button>
-                                </div>
-                              </div>
-
-                              <div className="row text-start">
-                                <div className="col-md-4">
-                                  <div className="form-group mb-3">
-                                    <label
-                                      className="form-check-label"
-                                      htmlFor="PoRateType"
-                                    >
-                                      PO Rate Type:
-                                    </label>
-                                  </div>
-                                </div>
-                                <div className="col-md-8">
-                                  <div className="form-group mb-3">
-                                    <input
-                                      type="text"
-                                      id="PoRateType"
-                                      name="PoRateType"
-                                      className="form-control"
-                                      placeholder="Enter PO Rate Type"
-                                      value={formData.PoRateType}
-                                      onChange={handleChange}
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className="row text-start">
-                                <div className="col-md-4">
-                                  <div className="form-group mb-3">
-                                    <label
-                                      className="form-check-label"
-                                      htmlFor="ContactPerson"
-                                    >
-                                      Contact Person:
-                                    </label>
-                                  </div>
-                                </div>
-                                <div className="col-md-8">
-                                  <div className="form-group mb-3">
-                                    <input
-                                      type="text"
-                                      id="ContactPerson"
-                                      name="ContactPerson"
-                                      className="form-control"
-                                      placeholder="Enter Contact Person"
-                                      value={formData.ContactPerson}
-                                      onChange={handleChange}
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className="row text-start">
-                                <div className="col-md-4">
-                                  <div className="form-group mb-3">
-                                    <label
-                                      className="form-check-label"
-                                      htmlFor="PoValidityDate"
-                                    >
-                                      PO Validity Date:
-                                    </label>
-                                    <span className="text-danger">*</span>
-                                  </div>
-                                </div>
-                                <div className="col-md-8">
-                                  <div className="form-group mb-3">
-                                    <input
-                                      type="date"
-                                      id="PoValidityDate"
-                                      name="PoValidityDate"
-                                      className="form-control"
-                                      placeholder="Select PO Validity Date"
-                                      value={formData.PoValidityDate}
-                                      onChange={handleChange}
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className="row text-start">
-                                <div className="col-md-4">
-                                  <div className="form-group mb-3">
-                                    <label
-                                      className="form-check-label"
-                                      htmlFor="PoEffectiveDate"
-                                    >
-                                      PO Effective Date:
-                                    </label>
-                                    <span className="text-danger">*</span>
-                                  </div>
-                                </div>
-                                <div className="col-md-8">
-                                  <div className="form-group mb-3">
-                                    <input
-                                      type="date"
-                                      id="PoEffectiveDate"
-                                      name="PoEffectiveDate"
-                                      className="form-control"
-                                      placeholder="Select PO Effective Date"
-                                      value={formData.PoEffectiveDate}
-                                      onChange={handleChange}
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className="row text-start">
-                                <div className="col-md-4">
-                                  <div className="form-group mb-3">
-                                    <label
-                                      className="form-check-label"
-                                      htmlFor="TransportName"
-                                    >
-                                      Transport Name:
-                                    </label>
-                                  </div>
-                                </div>
-                                <div className="col-md-8">
-                                  <div className="form-group mb-3">
-                                    <input
-                                      type="text"
-                                      id="TransportName"
-                                      name="TransportName"
-                                      className="form-control"
-                                      placeholder="Enter Transport Name"
-                                      value={formData.TransportName}
-                                      onChange={handleChange}
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                            </div> */}
+                               <div className="form-group mb-3">
+                                <label htmlFor="">Col TO No :</label>
+                                <input
+                                  type="text"
+                                  className="form-control mt-2"
+                                />
+                              </div>                            
+                            </div>                           
 
                           </div>
                         </div>

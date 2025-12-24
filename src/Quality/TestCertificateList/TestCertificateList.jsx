@@ -32,8 +32,8 @@ const TestCertificateList = () => {
                 toggleSideNav={toggleSideNav}
               />
               <main className={`main-content ${sideNavOpen ? "shifted" : ""}`}>
-                <div className="TestCertificateList mt-5">
-                  <div className="TestCertificateList-header mb-4 text-start">
+                <div className="TestCertificateList">
+                  <div className="TestCertificateList-header mb-2 text-start">
                     <div className="row align-items-center">
                       <div className="col-md-4">
                         <h5 className="header-title"> (TC) Test CertificateList List </h5>
@@ -47,7 +47,7 @@ const TestCertificateList = () => {
                   </div>
 
                   {/* Filter Section */}
-                  <div className="TestCertificateList-filter mb-4">
+                  <div className="TestCertificateList-filter mb-2">
                     <div className="row text-start">
                       
                       <div className="col-md-1">
@@ -89,16 +89,13 @@ const TestCertificateList = () => {
                             <label htmlFor="Checkbox" className="form-check-label">PO No: </label>
                         </div>
                         <input type="text" placeholder=" " className="form-control" />
-                      </div>   
-            
-                
+                      </div>                  
 
                       <div className="col-md-1 mt-4">               
                          <button className="btn btn-primary">Search</button>          
                       </div>
 
-                    </div>
-                   
+                    </div>                  
                   </div>
 
                   {/* Table Section */}

@@ -537,7 +537,7 @@ function App() {
         <Route path="/PurchaseErp" element={<PurchaseErp />} />
         <Route path="/PurchaseERPGRN" element={<PurchaseERPGRN />} />
         <Route path="/OutwardInward" element={<OutwardInward />} />
-        <Route path="/Companysetup" element={<Companysetup />} />
+        {/* <Route path="/Companysetup" element={<Companysetup />} /> */}
         <Route path="/WebconfigFile" element={<ErpWebConfig />} />{" "}
         <Route path="/ErpFinancialYear" element={<ErpFinancialYear />} />{" "}
         <Route path="/Document-start" element={<DocumentStart />} />{" "}

@@ -45,8 +45,8 @@ const CustomerComplaintList = () => {
                 toggleSideNav={toggleSideNav}
               />
               <main className={`main-content ${sideNavOpen ? "shifted" : ""}`}>
-                <div className="CustomerComplaintList mt-5">
-                  <div className="CustomerComplaintList-header mb-4 text-start">
+                <div className="CustomerComplaintList">
+                  <div className="CustomerComplaintList-header mb-2 text-start">
                     <div className="row align-items-center">
                       <div className="col-md-4">
                         <h5 className="header-title">Customer Complaint List : </h5>
@@ -78,7 +78,7 @@ const CustomerComplaintList = () => {
                     </div>
                   </div>
 
-                  <div className="CustomerComplaintList-main mt-5">
+                  <div className="CustomerComplaintList-main">
                      
                   <div className="row text-start">
                      

@@ -34,8 +34,8 @@ const SetUpApproval = () => {
                 toggleSideNav={toggleSideNav}
               />
               <main className={`main-content ${sideNavOpen ? "shifted" : ""}`}>
-                <div className="ProductionReport mt-5">
-                  <div className="ProductionReport-header mb-4 text-start">
+                <div className="ProductionReport">
+                  <div className="ProductionReport-header mb-2 text-start">
                     <div className="row align-items-center">
                       <div className="col-md-6">
                         <h5 className="header-title"> Set Up Approval Parameter </h5>
@@ -49,7 +49,7 @@ const SetUpApproval = () => {
                   </div>
 
                   {/* Filter Section */}
-                  <div className="ProductionReport-filter mb-4">
+                  <div className="ProductionReport-filter mb-2">
                     <div className="row text-start">
                       
                       <div className="col-md-2">
@@ -71,6 +71,7 @@ const SetUpApproval = () => {
                           
                         </select>
                       </div>
+                      
                       <div className="col-md-2">
                         <label>Group :</label>
                         <select className="form-select" >
@@ -98,6 +99,7 @@ const SetUpApproval = () => {
                       <div className="col-md-1 mt-4">               
                          <button className="btn btn-primary">Add</button>          
                       </div>
+
                       <div className="col-md-2 mt-4">               
                          <button className="btn btn-primary">Copy Parameter</button>          
                       </div>

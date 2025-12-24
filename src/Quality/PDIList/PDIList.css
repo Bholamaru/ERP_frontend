@@ -18,10 +18,10 @@
   
   /* Filter Section */
   .PDIList-filter {
-   
-    padding: 20px;
-   
-   
+     background-color: #f8f9fa; /* Light background for header */
+    border-bottom: 1px solid #dee2e6; /* Border for header */
+    padding: 15px; /* Padding around header */
+    border-radius: 5px;
    
   }
   
@@ -29,7 +29,16 @@
     font-weight: bold;
   }
   
+  
   /* Table Styling */
+  .PDIList-Main {
+     background-color: #f8f9fa; /* Light background for header */
+    border-bottom: 1px solid #dee2e6; /* Border for header */
+    padding: 15px; /* Padding around header */
+    border-radius: 5px;
+   
+  }
+
   .PDIList-Main .table {
     width: 100%;
     border-collapse: collapse;

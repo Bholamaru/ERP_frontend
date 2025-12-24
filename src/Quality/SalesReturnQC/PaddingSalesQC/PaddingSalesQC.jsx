@@ -33,8 +33,8 @@ const PaddingSalesQC = () => {
             />
     
             <main className={`main-content ${sideNavOpen ? "shifted" : ""}`}>
-                <div className="PaddingSalesQC mt-5">
-                  <div className="PaddingSalesQC-header mb-4 text-start">
+                <div className="PaddingSalesQC">
+                  <div className="PaddingSalesQC-header mb-2 text-start">
                   <div className="row align-items-center">
                     <div className="col-md-4">
                       <h5 className="header-title">Pendding Sales Return QC List </h5>
@@ -48,7 +48,7 @@ const PaddingSalesQC = () => {
                   </div>
 
                   {/* Filter Section */}
-                  <div className="PaddingSalesQC-filter mb-4 mt-5">
+                  <div className="PaddingSalesQC-filter">
                     <div className="row text-start">
                       
                     <div className="col-sm-6 col-md-2 col-lg-1">
@@ -92,7 +92,6 @@ const PaddingSalesQC = () => {
                         <input type="text" placeholder="" className="form-control" />
                       </div>
 
-
                       <div className="col-6 col-md-1 mt-4">
                     
                           <button type="button" className="btn btn-primary">
@@ -102,6 +101,7 @@ const PaddingSalesQC = () => {
 
                     </div>
                   </div>
+                  
                 </div>
               </main>
           </div>

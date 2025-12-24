@@ -39,8 +39,8 @@ const TestReportList = () => {
                 toggleSideNav={toggleSideNav}
               />
               <main className={`main-content ${sideNavOpen ? "shifted" : ""}`}>
-                <div className="TestReportList mt-5">
-                  <div className="TestReportList-header mb-4 text-start">
+                <div className="TestReportList">
+                  <div className="TestReportList-header mb-2 text-start">
                     <div className="row align-items-center">
                       <div className="col-md-4">
                         <h5 className="header-title">Test Report List : </h5>
@@ -56,7 +56,7 @@ const TestReportList = () => {
                     </div>
                   </div>
 
-                  <div className="TestReportList-main mt-5">
+                  <div className="TestReportList-main">
                      
                   <div className="row text-start">
                      
@@ -69,8 +69,8 @@ const TestReportList = () => {
                             <input type="date" className="form-control"/>
                       </div> 
                     
-                      <div className="col-md-1 mt-4">
-                           <button type="button" className="btn btn-primary w-100" >
+                      <div className="col-md-2 mt-4">
+                           <button type="button" className="btn btn-primary" >
                               Search
                            </button> 
                         </div>

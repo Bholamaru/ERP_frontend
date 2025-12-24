@@ -16,7 +16,7 @@ const CustomerComplaintAuth = () => {
   const navigate = useNavigate();
 
   const handleCoustoterComplaintEntry = () => {
-    navigate("/CustomerComplaintEntry"); 
+    navigate("/CustomerComplaintEntry");
   };
 
   useEffect(() => {
@@ -39,65 +39,72 @@ const CustomerComplaintAuth = () => {
                 toggleSideNav={toggleSideNav}
               />
               <main className={`main-content ${sideNavOpen ? "shifted" : ""}`}>
-                <div className="CustomerComplaintAuth mt-5">
-                  <div className="CustomerComplaintAuth-header mb-4 text-start">
+                <div className="CustomerComplaintAuth">
+                  <div className="CustomerComplaintAuth-header mb-2 text-start">
                     <div className="row align-items-center">
                       <div className="col-md-4">
-                        <h5 className="header-title">Customer Complaint Authorization : </h5>
+                        <h5 className="header-title">
+                          Customer Complaint Authorization :{" "}
+                        </h5>
                       </div>
-                      
-                     
                       <div className="col-md-8  text-end">
-                        <button type="button" className="btn" onClick={handleCoustoterComplaintEntry} >
-                        Customer Complaint New
+                        <button
+                          type="button"
+                          className="btn"
+                          onClick={handleCoustoterComplaintEntry}
+                        >
+                          Customer Complaint New
                         </button>
-                        <button type="button" className="btn" >
-                         Export Excel
+                        <button type="button" className="btn">
+                          Export Excel
                         </button>
-
                       </div>
                     </div>
                   </div>
 
-                  <div className="CustomerComplaintAuth-main mt-5">
-                     
-                  <div className="row text-start">
-                     
+                  <div className="CustomerComplaintAuth-main">
+                    <div className="row text-start">
                       <div className="col-md-2">
-                            <label htmlFor="">Plant :</label>
-                            <select name="" id="" className="form-control">
-                                <option value="">Sharp</option>
-                            </select>
+                        <label htmlFor="">Plant :</label>
+                        <select name="" id="" className="form-control">
+                          <option value="">Sharp</option>
+                        </select>
                       </div>
                       <div className="col-md-2">
-                            <label htmlFor="">From :</label>
-                            <input type="date" className="form-control"/>
+                        <label htmlFor="">From :</label>
+                        <input type="date" className="form-control" />
                       </div>
                       <div className="col-md-2">
-                            <label htmlFor="">To :</label>
-                            <input type="date" className="form-control"/>
-                      </div>
-                     
-                      <div className="col-md-2">
-                            <label htmlFor="">CustName :</label>
-                            <input type="text" placeholder="Enter Name" className="form-control"/>
+                        <label htmlFor="">To :</label>
+                        <input type="date" className="form-control" />
                       </div>
                       <div className="col-md-2">
-                            <label htmlFor="">Item :</label>
-                            <input type="text" placeholder="Select Item" className="form-control"/>
+                        <label htmlFor="">CustName :</label>
+                        <input
+                          type="text"
+                          placeholder="Enter Name"
+                          className="form-control"
+                        />
+                      </div>
+                      <div className="col-md-2">
+                        <label htmlFor="">Item :</label>
+                        <input
+                          type="text"
+                          placeholder="Select Item"
+                          className="form-control"
+                        />
                       </div>
                       <div className="col-md-2 mt-4">
-                           <button type="button" className="btn btn-primary w-100" >
-                              Save
-                           </button> 
-                        </div>
-
+                        <button type="button" className="btn btn-primary w-100">
+                          Save
+                        </button>
+                      </div>
                     </div>
-                    
                   </div>
+                  
                 </div>
-            </main>
-           </div>
+              </main>
+            </div>
           </div>
         </div>
       </div>
@@ -105,5 +112,4 @@ const CustomerComplaintAuth = () => {
   );
 };
 
-
-export default CustomerComplaintAuth
+export default CustomerComplaintAuth;

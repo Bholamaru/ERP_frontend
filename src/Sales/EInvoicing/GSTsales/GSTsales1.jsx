@@ -38,8 +38,8 @@ const GSTsales1 = () => {
                 toggleSideNav={toggleSideNav}
               />
               <main className={`main-content ${sideNavOpen ? "shifted" : ""}`}>
-                <div className="GSTsales mt-5">
-                  <div className="GSTsales-header mb-4 text-start">
+                <div className="GSTsales">
+                  <div className="GSTsales-header mb-2 text-start">
                     <div className="row align-items-center">
                       <div className="col-md-3">
                         <h5 className="header-title">Pending Invoice List For E-Invoice</h5>
@@ -51,7 +51,7 @@ const GSTsales1 = () => {
                       <div className="col-md-2">
                         <label className="checkbox-label">
                           <input type="checkbox" id="general" />
-                          IRN WIth Eway
+                          IRN With Eway
                         </label>
                       </div>
                       <div className="col-md-1 cancelirn">       
@@ -113,7 +113,7 @@ const GSTsales1 = () => {
   </div>
 </div>
 
-                  <div className="GSTsales-main mt-5">
+                  <div className="GSTsales-main mt-2">
                      <div className="row text-start">
                      <div className="col-md-1">
                             <label htmlFor="">Type:</label>
@@ -150,7 +150,8 @@ const GSTsales1 = () => {
                         </div>
                      </div>
                   </div>
-                  <div className="GSTsales-main mt-5">
+
+                  <div className="GSTsales-main mt-2">
                     <div className="GSTsales-second">
                       <ul className="nav nav-tabs" id="GSTsalesTabs" role="tablist" >
                         <li className="nav-item" role="presentation">
@@ -165,7 +166,7 @@ const GSTsales1 = () => {
                         </li>
                       </ul>
 
-                      <div className="tab-content mt-4"  id="GSTsalesTabsContent">
+                      <div className="tab-content mt-2"  id="GSTsalesTabsContent">
 
                         <div  className="tab-pane fade show active" id="shift" role="tabpanel" >
                            <div className="table table-bordered table-responsive container-fuild">
@@ -222,7 +223,6 @@ const GSTsales1 = () => {
                                   </th>
                                 </tr>
                               </thead>
-
                               <tbody>
                                <tr>
                                 <td></td>
@@ -248,16 +248,16 @@ const GSTsales1 = () => {
                         </div>
 
                         <div className="tab-pane fade" id="machineIdle" role="tabpanel" >
-                              <div className="GSTsales-header mb-4 text-start">
+                              <div className="GSTsales-header mb-2 text-start">
                                     <div className="row align-items-center">
-                                        <div className="col-md-3">
+                                        <div className="col-md-6">
                                         <h5 className="header-title cllllr">Pending Invoice List For E-Invoice</h5>
                                         </div>     
                                     </div>
 
-                                    <div className="row align-items-center mt-4">  
-                                       <div className="col-md-1">
-                                        <button type="button" className="btn btn-primary w-100" >
+                                    <div className="row align-items-center mt-2">  
+                                       <div className="col-md-2">
+                                        <button type="button" className="btn btn-primary" >
                                             Generate IRN
                                         </button> 
                                         </div>

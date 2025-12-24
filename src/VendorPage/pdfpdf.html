@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Supplier Registration / Evaluation Form</title>
+
+    <!-- Bootstrap 5 -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        background: #f5f5f5;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #000;
+      }
+
+      .pdf-wrapper {
+        width: 1100px;
+        margin: 30px auto;
+        background: #fff;
+        padding: 20px 25px;
+        border: 1px solid #000;
+      }
+
+      .top-header {
+        text-align: center;
+        font-weight: bold;
+        line-height: 1.4;
+      }
+
+      .top-header .company {
+        font-size: 18px;
+      }
+
+      .top-header .address {
+        font-size: 14px;
+      }
+
+      .doc-meta {
+        border: 1px solid #000;
+        padding: 6px;
+        font-size: 13px;
+      }
+
+      .section-title {
+        font-weight: bold;
+        margin-top: 12px;
+        margin-bottom: 6px;
+        font-size: 14px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+
+      table th,
+      table td {
+        border: 1px solid #000;
+        padding: 6px;
+        vertical-align: top;
+      }
+
+      table th {
+        font-weight: bold;
+        text-align: center;
+      }
+
+      .label {
+        font-weight: bold;
+        width: 25%;
+      }
+
+      .value {
+        height: 28px;
+      }
+
+      .small-text {
+        font-size: 12px;
+      }
+
+      .signature-box {
+        height: 60px;
+      }
+
+      .mt-20 {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="pdf-wrapper">
+
+        <!-- =========================
+     PDF HEADER (EXACT DESIGN)
+========================= -->
+
+<table style="width:100%; border-collapse:collapse; font-family: Arial, Helvetica, sans-serif;">
+  <tr>
+    <!-- LEFT -->
+    <td style="width:25%; border:1px solid #000; padding:8px; font-size:13px; vertical-align:top;">
+      <strong>Sharp Engineers.</strong><br>
+      A-31, MIDC Waluj,<br>
+      Aurangabad – 431136.
+    </td>
+
+    <!-- CENTER -->
+    <td style="width:50%; border:1px solid #000; padding:8px; text-align:center; font-size:18px; font-weight:bold;">
+      External Provider (Supplier)Registration/Evaluation<br>
+      Form
+    </td>
+
+    <!-- RIGHT -->
+    <td style="width:25%; border:1px solid #000; padding:8px; font-size:13px; vertical-align:top;">
+      <strong>F/PUR/01</strong><br>
+      Rev.00<br>
+      Date:01.02.2021
+    </td>
+  </tr>
+</table>
+
+
+      <!-- HEADER -->
+      <!-- <div class="row">
+        <div class="col-9 top-header">
+          <div class="company">Sharp Engineers.</div>
+          <div class="address">
+            A-31, MIDC Waluj,<br />
+            Aurangabad – 431136.
+          </div>
+          <div class="mt-2">
+            External Provider (Supplier) Registration / Evaluation Form
+          </div>
+        </div>
+        <div class="col-3 doc-meta">
+          <div><strong>Form No:</strong> F/PUR/01</div>
+          <div><strong>Rev:</strong> 00</div>
+          <div><strong>Date:</strong> 01.02.2021</div>
+        </div>
+      </div> -->
+
+      <!-- BASIC DETAILS -->
+      <table class="mt-20">
+        <tr>
+          <td class="label">1. Name of the Company in full</td>
+          <td class="value"></td>
+        </tr>
+        <tr>
+          <td class="label">2. Address – Office</td>
+          <td class="value"></td>
+        </tr>
+        <tr>
+          <td class="label">3. Address – Works</td>
+          <td class="value"></td>
+        </tr>
+        <tr>
+          <td class="label">4. Telephone / Mobile Number</td>
+          <td class="value"></td>
+        </tr>
+        <tr>
+          <td class="label">5. E-Mail</td>
+          <td class="value"></td>
+        </tr>
+        <tr>
+          <td class="label">6. Contact Person with Designation</td>
+          <td class="value"></td>
+        </tr>
+        <tr>
+          <td class="label">7. Weekly Holiday</td>
+          <td class="value"></td>
+        </tr>
+        <tr>
+          <td class="label">8. Type of Company</td>
+          <td class="value">
+            Proprietary / Partnership / Pvt. Ltd / Public Ltd
+          </td>
+        </tr>
+      </table>
+
+      <!-- FINANCIAL STABILITY -->
+      <div class="section-title">9. Financial Stability</div>
+      <div class="section-title mt-20">
+        9(a). Turnover in last financial year
+      </div>
+      <table>
+        <tr>
+          <th>Sr.</th>
+          <th class="text-center">Year</th>
+          <th>Turnover (₹ Cr)</th>
+          <th>Remarks</th>
+        </tr>
+        <tr>
+          <td class="text-center">1</td>
+          <td class="text-center">2018–2019</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="text-center">2019–2020</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="text-center">2020–2021</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="text-center">2021–2022</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="text-center">2022–2023</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="text-center">2023–2024</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="text-center">2024–2025</td>
+          <td></td>
+          <td></td>
+        </tr>
+      </table>
+
+      <!-- TOP CUSTOMERS -->
+      <div class="section-title mt-20">
+        9(b). Name of your top customers and Turnover
+      </div>
+
+      <table>
+        <tr>
+          <th>S.No.</th>
+          <th>Name of Customer</th>
+          <th>% of Business / Turnover (₹ Cr)</th>
+          <th>Automotive</th>
+          <th>Non-Automotive</th>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </table>
+
+      <!-- RESOURCES -->
+      <div class="section-title mt-20">10. Available Resources</div>
+      <div class="section-title mt-20">
+        (a). Machine and Other Equipment Details.
+      </div>
+
+      <table>
+        <tr>
+          <th>Sr.</th>
+          <th>Name of Machine / Equipment</th>
+          <th>Qty</th>
+          <th>Capacity</th>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </table>
+
+      <div class="section-title mt-20">
+        (b). Equipment/ Inspection & Testing Equipment available:
+      </div>
+
+      <table>
+        <tr>
+          <th>Sr.</th>
+          <th>Name of Machine / Equipment</th>
+          <th>Qty</th>
+          <th>Calibration done on</th>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </table>
+
+      <!-- MANPOWER -->
+      <div class="section-title mt-20">
+        (c). Manpower per Shift : Shift Details: General / 1st / 2nd / 3rd
+      </div>
+
+      <table>
+        <tr>
+          <th>Sr.No.</th>
+          <th>Department</th>
+          <th>Manager / Supervisor</th>
+          <th>Operative</th>
+        </tr>
+        <tr>
+          <td>1</td>  
+          <td>Administration / HRD</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>Marketing</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>Production</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>Quality</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>Maintenance</td>
+          <td></td>
+          <td></td>
+        </tr>
+      </table>
+
+
+      <!-- =========================
+     11 to 17 : SYSTEM & PROCESS DETAILS
+========================= -->
+
+<table class="mt-20">
+  <tr>
+    <td colspan="2" class="fw-bold">
+      11. Scope of Supply / Service (Material / Product or Service):
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" style="height:40px;"></td>
+  </tr>
+
+  <tr>
+    <td colspan="2" class="fw-bold">
+      12. Design and Development Capability: Yes / No
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="small-text">
+      If Yes, please attached procedure / SOP
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" style="height:30px;"></td>
+  </tr>
+
+  <tr>
+    <td colspan="2" class="fw-bold">
+      13. Change Management Process Followed: Yes / No
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="small-text">
+      If Yes, please attached procedure or SOP
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" style="height:30px;"></td>
+  </tr>
+
+  <tr>
+    <td colspan="2" class="fw-bold">
+      14. Business Continuity Planning / Contingency planning Available: Yes / No
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="small-text">
+      If Yes, please attached the document available.
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" style="height:30px;"></td>
+  </tr>
+
+  <tr>
+    <td colspan="2" class="fw-bold">
+      15. Logistic / Transportation Available: Yes / No
+      <span class="fw-normal">(Outsourced or Factory own vehicle)</span>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" style="height:30px;"></td>
+  </tr>
+
+  <tr>
+    <td colspan="2" class="fw-bold">
+      16. GSTIN No:
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="small-text">
+      (Please attached Registration Copy xerox)
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" style="height:30px;"></td>
+  </tr>
+
+  <tr>
+    <td colspan="2" class="fw-bold">
+      17. Quality Management System
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="small-text">
+      Certification (ISO or IATF) (If any): Please attached Valid certificate xerox copy dully signed
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" class="text-center fw-bold">
+      Certification: ISO 9001 / IATF 16949 / ISO 14000 / others
+    </td>
+  </tr>
+</table>     
+
+    <!-- =========================
+     CERTIFICATION / APPROVAL / OFFICE USE
+========================= -->
+
+<table class="">
+  <tr>
+    <td style="width:50%;" class="fw-bold">
+      Certificate No:
+    </td>
+    <td style="width:50%;" class="fw-bold">
+      Valid Up to:
+    </td>
+  </tr>
+  <tr>
+    <td style="height:30px;"></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td colspan="2" class="fw-bold">
+      IF Not Certified Please give Timeline for Certification along with Road Map – Target Date:
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" style="height:35px;"></td>
+  </tr>
+
+  <tr>
+    <td colspan="2" class="fw-bold">
+      Signature of the authorized representative
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" style="height:45px;"></td>
+  </tr>
+
+  <tr>
+    <td colspan="2" class="fw-bold">
+      Name &amp; Designation:
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" style="height:30px;"></td>
+  </tr>
+
+  <tr>
+    <td colspan="2" class="text-center fw-bold">
+      For Office use (Sharp Engineers.) only
+    </td>
+  </tr>
+
+  <tr>
+    <td colspan="2" class="fw-bold">
+      Remarks : Approved / Not Approved
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" style="height:30px;"></td>
+  </tr>
+
+  <tr>
+    <td style="width:50%;" class="fw-bold">
+      Evaluated by:
+    </td>
+    <td style="width:50%;" class="fw-bold">
+      Approved By:
+    </td>
+  </tr>
+  <tr>
+    <td style="height:30px;"></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td colspan="2" class="fw-bold">
+      Evaluation Date:
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" style="height:25px;"></td>
+  </tr>
+</table>
+     
+    </div>
+  </body>
+</html>

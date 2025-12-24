@@ -38,8 +38,8 @@ const SetupList = () => {
                 toggleSideNav={toggleSideNav}
               />
               <main className={`main-content ${sideNavOpen ? "shifted" : ""}`}>
-                <div className="ProductionEntry mt-5">
-                  <div className="ProductionEntry-header mb-4 text-start">
+                <div className="ProductionEntry">
+                  <div className="ProductionEntry-header mb-2 text-start">
                     <div className="row align-items-center">
                       <div className="col-md-6">
                         <h5 className="header-title">Set Up Approval List</h5>
@@ -56,7 +56,7 @@ const SetupList = () => {
                     </div>
                   </div>
 
-                  <div className="ProductionEntry-main mt-5">
+                  <div className="ProductionEntry-main mt-2">
         
                     <div className="row g-3 text-start">
                       <div className="col-sm-6 col-md-2 col-lg-2">

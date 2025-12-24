@@ -10,58 +10,73 @@ import "react-toastify/dist/ReactToastify.css";
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [year, setYear] = useState("");
+  const [financialYears, setFinancialYears] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [year, setYear] = useState(""); // Selected year
-  const [financialYears, setFinancialYears] = useState([]); // List of financial years
   const navigate = useNavigate();
 
-
-  // Fetch financial years on component mount
+  /* =============================
+     Fetch Financial Years
+  ============================== */
   useEffect(() => {
     const fetchFinancialYears = async () => {
       try {
         const data = await getFinancialYears();
-        setFinancialYears(data); // Populate the dropdown
+        setFinancialYears(data || []);
       } catch (error) {
         console.error("Error fetching financial years:", error);
+        toast.error("Failed to load financial years");
       }
     };
 
     fetchFinancialYears();
   }, []);
 
+  /* =============================
+     Login Submit
+  ============================== */
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!year) {
+      toast.warning("Please select financial year");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      // Call the loginUser function with username, password, and selected year
       const data = await loginUser(username, password, year);
 
-      if (data.message === "Login successful") {
-        // Store the full year and Shortyear in localStorage
+      if (data?.message === "Login successful") {
+        /* 🔑 SAVE AUTH DATA */
         localStorage.setItem("accessToken", data.access);
-        console.log(data)
         localStorage.setItem("refreshToken", data.refresh);
         localStorage.setItem("username", data.username);
         localStorage.setItem("year", data.year);
         localStorage.setItem("Shortyear", data.Shortyear);
-        localStorage.setItem("permissions", JSON.stringify(data.permissions));
 
-        // Redirect to dashboard or another page
+        /* 🔥 MOST IMPORTANT FIX — SAVE PERMISSIONS */
+        localStorage.setItem(
+          "permissions",
+          JSON.stringify(data.permissions || {})
+        );
+
+        /* OPTIONAL: debug once */
+        console.log("Saved permissions:", data.permissions);
+
         navigate("/dashboard");
       } else {
-        toast.error(data.message || "Login failed");
+        toast.error(data?.message || "Login failed");
       }
     } catch (error) {
-      toast.error(error || "An error occurred during login");
+      console.error("Login error:", error);
+      toast.error("Invalid username or password");
     } finally {
       setIsLoading(false);
     }
   };
-
-
 
   return (
     <div className="home-login">
@@ -73,24 +88,21 @@ const Login = () => {
               <form onSubmit={handleSubmit}>
                 <h6>Produlink</h6>
                 <p>
-                  Enter your Username and <br /> Password to access the
-                  admin panel.
+                  Enter your Username and <br /> Password to access the admin
+                  panel.
                 </p>
+
                 <div className="form1">
+                  {/* Financial Year */}
                   <div className="mb-3">
-                    <label htmlFor="year" className="form-label">
-                      Year
-                    </label>
+                    <label className="form-label">Year</label>
                     <select
                       className="form-control"
-                      id="year"
                       value={year}
                       onChange={(e) => setYear(e.target.value)}
                       required
                     >
-                      <option value="" disabled>
-                        Select Year
-                      </option>
+                      <option value="">Select Year</option>
                       {financialYears.map((fy) => (
                         <option key={fy.id} value={fy.ShortName}>
                           {fy.ShortName}
@@ -98,40 +110,42 @@ const Login = () => {
                       ))}
                     </select>
                   </div>
+
+                  {/* Username */}
                   <div className="mb-3">
-                    <label htmlFor="username" className="form-label">
-                      Username
-                    </label>
+                    <label className="form-label">Username</label>
                     <input
                       type="text"
                       className="form-control"
-                      id="username"
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       required
                     />
                   </div>
+
+                  {/* Password */}
                   <div className="mb-3">
-                    <label htmlFor="password" className="form-label">
-                      Password
-                    </label>
+                    <label className="form-label">Password</label>
                     <input
                       type="password"
                       className="form-control"
-                      id="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
                     />
                   </div>
                 </div>
-                <div className="mb-3">
-                  <button type="submit" className="homebtn w-100" disabled={isLoading}>
-                    {isLoading ? "Logging in..." : "Login"}
-                  </button>
-                </div>
+
+                <button
+                  type="submit"
+                  className="homebtn w-100"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Logging in..." : "Login"}
+                </button>
               </form>
-              <div className="outer text-center">
+
+              <div className="outer text-center mt-3">
                 <p>Powered by Clumpcoder</p>
               </div>
             </div>
@@ -139,7 +153,7 @@ const Login = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

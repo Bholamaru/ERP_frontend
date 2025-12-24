@@ -34,8 +34,8 @@ const PenddingInvoiceListPDI = () => {
                 toggleSideNav={toggleSideNav}
               />
               <main className={`main-content ${sideNavOpen ? "shifted" : ""}`}>
-                <div className="PDIList mt-5">
-                  <div className="PDIList-header mb-4 text-start">
+                <div className="PDIList">
+                  <div className="PDIList-header mb-2 text-start">
                     <div className="row align-items-center">
                       <div className="col-md-6">
                         <h5 className="header-title">  Pending Invoice List For - Pre Dispatch Inspection </h5>
@@ -49,7 +49,7 @@ const PenddingInvoiceListPDI = () => {
                   </div>
 
                   {/* Filter Section */}
-                  <div className="PDIList-filter mb-4">
+                  <div className="PDIList-filter mb-2">
                     <div className="row text-start">
                       
                       <div className="col-md-2">
@@ -89,8 +89,7 @@ const PenddingInvoiceListPDI = () => {
                          <button className="btn btn-primary">Search</button>          
                       </div>
 
-                    </div>
-                   
+                    </div>                   
                   </div>
 
                   {/* Table Section */}
@@ -129,178 +128,7 @@ const PenddingInvoiceListPDI = () => {
                             <td> <TbMapNorth /> </td>
                             <td> <WiDirectionRight /> </td>
                         </tr>
-                      </tbody>
-                      <tbody>
-                        {/* Example Row */}
-                        <tr>
-                          <td>2</td>
-                            <td>SHARP</td>
-                            <td>GST</td>
-                            <td>242517347</td>
-                            <td>02/12/24</td>
-                            <td>COOO5 | ENDURENCE TECHNOLOGIES LTD (I) </td>
-                            <td>FG1177</td>
-                            <td>F2DZ05702B</td>
-                            <td>OIL LOOK COLLER (JF3T)</td>
-                            <td>300</td>
-                            <td> <TbMapNorth /> </td>
-                            <td> <WiDirectionRight /> </td>
-                        </tr>
-                      </tbody>
-                      <tbody>
-                        {/* Example Row */}
-                        <tr>
-                          <td>3</td>
-                            <td>SHARP</td>
-                            <td>GST</td>
-                            <td>242517346</td>
-                            <td>02/12/24</td>
-                            <td>C0013 | PREWER ENGINEERS </td>
-                            <td>FG1124</td>
-                            <td>F2DZ025025_XC</td>
-                            <td>BRAKE STOPPER (K74A)LH</td>
-                            <td>660</td>
-                            <td> <TbMapNorth /> </td>
-                            <td> <WiDirectionRight /> </td>
-                        </tr>
-                      </tbody>
-                      <tbody>
-                        {/* Example Row */}
-                        <tr>
-                          <td>4</td>
-                            <td>SHARP</td>
-                            <td>GST</td>
-                            <td>242517346</td>
-                            <td>02/12/24</td>
-                            <td>C0013 | PREWER ENGINEERS </td>
-                            <td>FG1125</td>
-                            <td>F2DZ030020_XB</td>
-                            <td>COVER MOUNT (K74A)RH</td>
-                            <td>660</td>
-                            <td> <TbMapNorth /> </td>
-                            <td> <WiDirectionRight /> </td>
-                        </tr>
-                      </tbody>
-                      <tbody>
-                        {/* Example Row */}
-                        <tr>
-                          <td>5</td>
-                            <td>SHARP</td>
-                            <td>GST</td>
-                            <td>242517345</td>
-                            <td>02/12/24</td>
-                            <td>COOO5 | ENDURENCE TECHNOLOGIES LTD (H) </td>
-                            <td>FG1158</td>
-                            <td>S2MX00212B</td>
-                            <td>STEEL BUSH (212)</td>
-                            <td>2000</td>
-                            <td> <TbMapNorth /> </td>
-                            <td> <WiDirectionRight /> </td>
-                        </tr>
-                      </tbody>
-                      <tbody>
-                        {/* Example Row */}
-                        <tr>
-                          <td>6</td>
-                            <td>SHARP</td>
-                            <td>GST</td>
-                            <td>242517344</td>
-                            <td>02/12/24</td>
-                            <td>COOO5 | ENDURENCE TECHNOLOGIES LTD (U) </td>
-                            <td>FG1106</td>
-                            <td>550BZ05802</td>
-                            <td>CAP OIL LOCK -PRFH006 (H)</td>
-                            <td>2000</td>
-                            <td> <TbMapNorth /> </td>
-                            <td> <WiDirectionRight /> </td>
-                        </tr>
-                      </tbody>
-                      <tbody>
-                        {/* Example Row */}
-                        <tr>
-                          <td>7</td>
-                            <td>SHARP</td>
-                            <td>GST</td>
-                            <td>242517343</td>
-                            <td>02/12/24</td>
-                            <td>COOO5 | ENDURENCE TECHNOLOGIES LTD (U) </td>
-                            <td>FG1380</td>
-                            <td>520PAD0102</td>
-                            <td>UPPER LATTER</td>
-                            <td>4000</td>
-                            <td> <TbMapNorth /> </td>
-                            <td> <WiDirectionRight /> </td>
-                        </tr>
-                      </tbody>
-                      <tbody>
-                        {/* Example Row */}
-                        <tr>
-                          <td>8</td>
-                            <td>SHARP</td>
-                            <td>GST</td>
-                            <td>242517342</td>
-                            <td>02/12/24</td>
-                            <td>COOO5 | ENDURENCE TECHNOLOGIES LTD (U) </td>
-                            <td>FG1092</td>
-                            <td>520DZ00212</td>
-                            <td>FORK BOLT K-60(D5181012)</td>
-                            <td>3780</td>
-                            <td> <TbMapNorth /> </td>
-                            <td> <WiDirectionRight /> </td>
-                        </tr>
-                      </tbody>
-                      <tbody>
-                        {/* Example Row */}
-                        <tr>
-                          <td>9</td>
-                            <td>SHARP</td>
-                            <td>GST</td>
-                            <td>242517341</td>
-                            <td>02/12/24</td>
-                            <td>COOO5 | ENDURENCE TECHNOLOGIES LTD (H) </td>
-                            <td>FG1068</td>
-                            <td>520MX00112</td>
-                            <td>STEEL BUSH (R)</td>
-                            <td>4000</td>
-                            <td> <TbMapNorth /> </td>
-                            <td> <WiDirectionRight /> </td>
-                        </tr>
-                      </tbody>
-                      <tbody>
-                        {/* Example Row */}
-                        <tr>
-                          <td>10</td>
-                            <td>SHARP</td>
-                            <td>GST</td>
-                            <td>242517340</td>
-                            <td>02/12/24</td>
-                            <td>COOO5 | ENDURENCE TECHNOLOGIES LTD (H) </td>
-                            <td>FG1152</td>
-                            <td>5500Z05202</td>
-                            <td>FORK BOLT PRFH-006</td>
-                            <td>990</td>
-                            <td> <TbMapNorth /> </td>
-                            <td> <WiDirectionRight /> </td>
-                        </tr>
-                      </tbody>
-                      <tbody>
-                        {/* Example Row */}
-                        <tr>
-                          <td>11</td>
-                            <td>SHARP</td>
-                            <td>GST</td>
-                            <td>242517339</td>
-                            <td>02/12/24</td>
-                            <td>COOO5 | ENDURENCE TECHNOLOGIES LTD (H) </td>
-                            <td>FG1152</td>
-                            <td>5500Z05202</td>
-                            <td>FORK BOLT PRFH-006</td>
-                            <td>1980</td>
-                            <td> <TbMapNorth /> </td>
-                            <td> <WiDirectionRight /> </td>
-                        </tr>
-                      </tbody>
-                      
+                      </tbody>                                          
                     </table>
                     </div>
                   </div>

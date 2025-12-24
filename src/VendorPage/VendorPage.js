@@ -21,9 +21,9 @@ const VendorPage = () => {
     short_name: "",
     email: "",
     password: "",
-    password2:"",
+    password2: "",
     city: "",
-    country:"India",
+    country: "India",
     address: "",
     website: "",
     contact_no: "",
@@ -31,7 +31,7 @@ const VendorPage = () => {
     director_name: "",
     pin_code: "",
     state: "",
-    state_no_numeric: "",  
+    state_no_numeric: "",
     VAT_TIN: "",
     CST_TIN: "",
     C_Excise_Range: "",
@@ -44,7 +44,7 @@ const VendorPage = () => {
     Export_House_No: "",
     Udyog_Aadhar_No: "",
     Vat_Tin_Date: "",
-    Cst_Tin_Date:"",
+    Cst_Tin_Date: "",
     Subject_To: "",
     Division: "",
     GST_No: "",
@@ -82,7 +82,7 @@ const VendorPage = () => {
     setActiveTab("data2");
     console.log("Active tab after update:", "data2");
   };
-  
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -159,11 +159,11 @@ const VendorPage = () => {
                 >
                   <div className="Vendorpage1">
                     <div className="container-fluid">
-                    <div className="Vender-header mb-4 text-start">
-                    <div className="row align-items-center">
-                     
-                      <div className="col-md-8 text-start">
-                      <button className="btn" type="button">
+                      <div className="Vender-header mb-4 text-start">
+                        <div className="row align-items-center">
+
+                          <div className="col-md-8 text-start">
+                            <button className="btn" type="button">
                               Company Setup
                             </button>
                             <button className="btn" type="button">
@@ -172,15 +172,15 @@ const VendorPage = () => {
                             <button className="btn" type="button">
                               On D1 12/07/2022 2:57 PM
                             </button>
-                      </div>
-                     
-                      <div className="col-md-4 col-12 text-end">
+                          </div>
+
+                          <div className="col-md-4 col-12 text-end">
                             <button className="btn">General Setting</button>
                           </div>
-                     
-                    </div>
-                  </div>
-                  
+
+                        </div>
+                      </div>
+
                     </div>
                     <div className="VendorPageMain">
                       <div className="container-fluid text-start" id="shivi">
@@ -192,9 +192,8 @@ const VendorPage = () => {
                           >
                             <li className="nav-item" role="presentation">
                               <button
-                                className={`nav-link ${
-                                  activeTab === "general" ? "active" : ""
-                                }`}
+                                className={`nav-link ${activeTab === "general" ? "active" : ""
+                                  }`}
                                 id="pills-general-tab"
                                 data-bs-toggle="pill"
                                 data-bs-target="#pills-general"
@@ -209,9 +208,8 @@ const VendorPage = () => {
                             </li>
                             <li className="nav-item" role="presentation">
                               <button
-                                className={`nav-link ${
-                                  activeTab === "data2" ? "active" : ""
-                                }`}
+                                className={`nav-link ${activeTab === "data2" ? "active" : ""
+                                  }`}
                                 id="pills-data2-tab"
                                 data-bs-toggle="pill"
                                 data-bs-target="#pills-data2"
@@ -226,9 +224,8 @@ const VendorPage = () => {
                             </li>
                             <li className="nav-item" role="presentation">
                               <button
-                                className={`nav-link ${
-                                  activeTab === "logoImage" ? "active" : ""
-                                }`}
+                                className={`nav-link ${activeTab === "logoImage" ? "active" : ""
+                                  }`}
                                 id="pills-logoImage-tab"
                                 data-bs-toggle="pill"
                                 data-bs-target="#pills-logoImage"
@@ -243,9 +240,8 @@ const VendorPage = () => {
                             </li>
                             <li className="nav-item" role="presentation">
                               <button
-                                className={`nav-link ${
-                                  activeTab === "eInvoice" ? "active" : ""
-                                }`}
+                                className={`nav-link ${activeTab === "eInvoice" ? "active" : ""
+                                  }`}
                                 id="pills-Invoice-tab"
                                 data-bs-toggle="pill"
                                 data-bs-target="#pills-Invoice"
@@ -259,11 +255,11 @@ const VendorPage = () => {
                               </button>
                             </li>
                           </ul>
+                          
                           <div className="tab-content" id="pills-tabContent">
                             <div
-                              className={`tab-pane fade ${
-                                activeTab === "general" ? "show active" : ""
-                              }`}
+                              className={`tab-pane fade ${activeTab === "general" ? "show active" : ""
+                                }`}
                               id="pills-general"
                               role="tabpanel"
                               aria-labelledby="pills-general-tab"
@@ -276,10 +272,10 @@ const VendorPage = () => {
                               />
                             </div>
                             <div
-                               className={`tab-pane fade ${activeTab === "data2" ? "show active" : ""}`}
-                               id="pills-data2"
-                               role="tabpanel"
-                               aria-labelledby="pills-data2-tab"
+                              className={`tab-pane fade ${activeTab === "data2" ? "show active" : ""}`}
+                              id="pills-data2"
+                              role="tabpanel"
+                              aria-labelledby="pills-data2-tab"
                             >
                               <Data2
                                 formData={formData}
@@ -290,9 +286,8 @@ const VendorPage = () => {
                               />
                             </div>
                             <div
-                              className={`tab-pane fade ${
-                                activeTab === "logoImage" ? "show active" : ""
-                              }`}
+                              className={`tab-pane fade ${activeTab === "logoImage" ? "show active" : ""
+                                }`}
                               id="pills-logoImage"
                               role="tabpanel"
                               aria-labelledby="pills-logoImage-tab"
@@ -304,9 +299,8 @@ const VendorPage = () => {
                               />
                             </div>
                             <div
-                              className={`tab-pane fade ${
-                                activeTab === "Invoice" ? "show active" : ""
-                              }`}
+                              className={`tab-pane fade ${activeTab === "Invoice" ? "show active" : ""
+                                }`}
                               id="pills-Invoice"
                               role="tabpanel"
                               aria-labelledby="pills-Invoice-tab"

@@ -41,8 +41,8 @@ const FirstPieceApporval = () => {
                 toggleSideNav={toggleSideNav}
               />
               <main className={`main-content ${sideNavOpen ? "shifted" : ""}`}>
-                <div className="FirstPieceApporval mt-5">
-                  <div className="FirstPieceApporval-header mb-4 text-start">
+                <div className="FirstPieceApporval">
+                  <div className="FirstPieceApporval-header mb-2 text-start">
                     <div className="row align-items-center">
                       <div className="col-md-3">
                         <h5 className="header-title">First 5 Piece Inspection</h5>
@@ -56,8 +56,6 @@ const FirstPieceApporval = () => {
                       <div className="col-md-1">
                          <input type="text" className="fpahead" placeholder="2425000001" />
                       </div>
-
-
                       <div className="col-md-6 text-end">
                         <button type="button" className="btn" onClick={handleNavigate}>
                           Setup Apporval Parameter
@@ -69,7 +67,7 @@ const FirstPieceApporval = () => {
                     </div>
                   </div>
 
-                  <div className="FirstPieceApporval-main mt-5">
+                  <div className="FirstPieceApporval-main">
                     <div className="row text-start">
                       {/* First Column */}
                       <div className="col-md-4">

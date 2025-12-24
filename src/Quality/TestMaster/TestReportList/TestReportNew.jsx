@@ -38,8 +38,8 @@ const TestReportNew = () => {
                 toggleSideNav={toggleSideNav}
               />
               <main className={`main-content ${sideNavOpen ? "shifted" : ""}`}>
-                <div className="TestReportList mt-5">
-                  <div className="TestReportList-header mb-4 text-start">
+                <div className="TestReportList">
+                  <div className="TestReportList-header text-start">
                     <div className="row align-items-center">
                       <div className="col-md-3">
                         <h5 className="header-title">Test Report New : </h5>
@@ -59,7 +59,7 @@ const TestReportNew = () => {
                     </div>
                   </div>
 
-                  <div className="TestReportList-main mt-5">
+                  <div className="TestReportList-main">
                      
                   <div className="row text-start">
                       <div className="col-md-4">

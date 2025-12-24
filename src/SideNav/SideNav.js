@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from "react"
 import { Link } from "react-router-dom"
 import { FaHome } from "react-icons/fa"
@@ -15,8 +13,13 @@ import { SiSalesforce } from "react-icons/si";
 
 const SideNav = ({ sideNavOpen, toggleSideNav }) => {
   const [openDropdowns, setOpenDropdowns] = useState({})
-  const permissions = JSON.parse(localStorage.getItem("permissions"))
+  // const permissions = JSON.parse(localStorage.getItem("permissions"))
+  const permissions =
+  JSON.parse(localStorage.getItem("permissions")) || {}
 
+  console.log("Current Permissions from LocalStorage:", permissions);
+
+  
   const handleDropdownToggle = (dropdown) => {
     setOpenDropdowns((prev) => ({
       ...prev,
@@ -41,14 +44,18 @@ const SideNav = ({ sideNavOpen, toggleSideNav }) => {
 
         <ul className="nav-list">
           {/* Show ERP Setting only if user has permission */}
-          {permissions && permissions.VendorsUserManagement?.length > 0 && (
-            <li className="vdnrbbnns" style={{ marginLeft: "15px" }}>
-              <Link to="/mainpage">
-                <FaHome />
-                Vendors
-              </Link>
-            </li>
-          )}
+       {/* Vendors – FIRST */}
+  {permissions?.VendorsUserManagement?.length > 0 && (
+    <li className="vdnrbbnns" style={{ marginLeft: "15px" }}>
+      <Link to="/mainpage">
+        <FaHome />
+        <span>Vendors</span>
+      </Link>
+    </li>
+  )}
+
+
+
 
           {/* //////////////////////////////    ERPSetting       /////////////////////////// */}
           {permissions && permissions.ERPSetting?.length > 0 && (

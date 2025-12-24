@@ -48,8 +48,8 @@ const PDIList = () => {
                 toggleSideNav={toggleSideNav}
               />
               <main className={`main-content ${sideNavOpen ? "shifted" : ""}`}>
-                <div className="PDIList mt-5">
-                  <div className="PDIList-header mb-4 text-start">
+                <div className="PDIList">
+                  <div className="PDIList-header mb-2 text-start">
                     <div className="row align-items-center">
                       <div className="col-md-4">
                         <h5 className="header-title"> ( PDI ) - Pre Dispatch Inspection </h5>
@@ -151,26 +151,24 @@ const PDIList = () => {
 
 
                   {/* Filter Section */}
-                  <div className="PDIList-filter mb-4">
+                  <div className="PDIList-filter mb-2">
                     <div className="row text-start">
                       
-                      <div className="col-md-1">
+                      <div className="col-md-2">
                         <label>From Date</label>
                         <input type="date" className="form-control" />
                       </div>
-                      <div className="col-md-1">
+                      <div className="col-md-2">
                         <label>To Date</label>
                         <input type="date" className="form-control" />
                       </div>
-
-                      <div className="col-md-1 margin-5">
+                      <div className="col-md-2 margin-5">
                         <label>Plant</label>
                         <select className="form-select">
                           <option value="SHARP">SHARP</option>
                           {/* Add more options as needed */}
                         </select>
                       </div>
-
                       <div className="col-md-2">
                       <div className="form-check">
                             <input type="checkbox" className="form-check-input" id="Checkbox" />
@@ -178,7 +176,6 @@ const PDIList = () => {
                         </div>
                         <input type="text"  placeholder="Cust Name" className="form-control"/>
                       </div>
-
                       <div className="col-sm-6 col-md-2 col-lg-2">
                       <div className="form-check">
                             <input type="checkbox" className="form-check-input" id="Checkbox" />
@@ -187,7 +184,7 @@ const PDIList = () => {
                         <input type="text" placeholder="Item Code " className="form-control" />
                       </div>
 
-                      <div className="col-sm-6 col-md-2 col-lg-1">
+                      <div className="col-sm-6 col-md-2 col-lg-2">
                       <div className="form-check">
                             <input type="checkbox" className="form-check-input" id="Checkbox" />
                             <label htmlFor="Checkbox" className="form-check-label">PDI No: </label>
@@ -195,7 +192,7 @@ const PDIList = () => {
                         <input type="text" placeholder=" " className="form-control" />
                       </div>
 
-                      <div className="col-sm-6 col-md-2 col-lg-1">
+                      <div className="col-sm-6 col-md-2 col-lg-2">
                       <div className="form-check">
                             <input type="checkbox" className="form-check-input" id="Checkbox" />
                             <label htmlFor="Checkbox" className="form-check-label">Inv. No: </label>
@@ -205,12 +202,11 @@ const PDIList = () => {
             
                 
 
-                      <div className="col-md-1 mt-4">               
+                      <div className="col-md-2 mt-4">               
                          <button className="btn btn-primary">Search</button>          
                       </div>
 
-                    </div>
-                   
+                    </div>                   
                   </div>
 
                   {/* Table Section */}

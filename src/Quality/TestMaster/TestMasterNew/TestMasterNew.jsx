@@ -38,8 +38,8 @@ const TestMasterNew = () => {
                 toggleSideNav={toggleSideNav}
               />
               <main className={`main-content ${sideNavOpen ? "shifted" : ""}`}>
-                <div className="TestMasterNew mt-5">
-                  <div className="TestMasterNew-header mb-4 text-start">
+                <div className="TestMasterNew">
+                  <div className="TestMasterNew-header mb-2 text-start">
                     <div className="row align-items-center">
                       <div className="col-md-4">
                         <h5 className="header-title">Test Master  : </h5>
@@ -53,7 +53,7 @@ const TestMasterNew = () => {
                     </div>
                   </div>
 
-                  <div className="TestMasterNew-main mt-5">
+                  <div className="TestMasterNew-main">
                      
                   <div className="row text-start">
                       <div className="col-md-4">

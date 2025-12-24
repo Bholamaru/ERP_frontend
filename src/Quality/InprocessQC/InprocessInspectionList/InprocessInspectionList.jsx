@@ -34,8 +34,8 @@ const InprocessInspectionList = () => {
               toggleSideNav={toggleSideNav}
             />
             <main className={`main-content ${sideNavOpen ? "shifted" : ""}`}>
-              <div className="InprocessInspectionList mt-5">
-                <div className="InprocessInspectionList-header mb-4 text-start">
+              <div className="InprocessInspectionList">
+                <div className="InprocessInspectionList-header mb-2 text-start">
                   <div className="row align-items-center">
                     <div className="col-md-4">
                       <h5 className="header-title">Inprocess Inspection List </h5>
@@ -51,9 +51,9 @@ const InprocessInspectionList = () => {
                   </div>
                 </div>
                
-                <div className="InprocessInspectionList-Main mt-5">
+                <div className="InprocessInspectionList-Main ">
                     <div className="container-fluid">
-                  <div className="row g-3 text-start mt-3">
+                  <div className="row g-2 text-start">
 
                       <div className="col-sm-6 col-md-2 col-lg-1">
                           <label>Plant :</label>
@@ -72,7 +72,7 @@ const InprocessInspectionList = () => {
                           <input type="date" className="form-control" />
                         </div>
                        
-                      <div className="col-sm-6 col-md-2 col-lg-1">
+                      <div className="col-sm-6 col-md-3 col-lg-2">
                        <div className="form-check">
                             <input type="checkbox" className="form-check-input" id="Checkbox" />
                             <label htmlFor="Checkbox" className="form-check-label"> Item Code: </label>
@@ -80,7 +80,7 @@ const InprocessInspectionList = () => {
                         <input type="text"  placeholder="Item Code" className="form-control"/>
                       </div>
 
-                      <div className="col-sm-6 col-md-2 col-lg-1">
+                      <div className="col-sm-6 col-md-3 col-lg-2">
                       <div className="form-check">
                             <input type="checkbox" className="form-check-input" id="Checkbox" />
                             <label htmlFor="Checkbox" className="form-check-label">Prod No: </label>
@@ -96,8 +96,7 @@ const InprocessInspectionList = () => {
                         <input type="text" placeholder="" className="form-control" />
                       </div>
 
-
-                      <div className="col-6 col-md-1">
+                      <div className="col-6 col-md-2">
                       <div className="form-check">
                             <input type="checkbox" className="form-check-input" id="machineUtilizeCheckbox" />
                             <label htmlFor="machineUtilizeCheckbox" className="form-check-label"> LastOption: </label>
@@ -106,13 +105,11 @@ const InprocessInspectionList = () => {
                             Search
                           </button>
                         </div>
-
                       </div>
-
                     </div>
                   </div>
 
-             <div className="table-responsive mt-5">
+             <div className="InprocessInspectionList-table table-responsive mt-2">
                     <table className="table table-bordered table-striped">
                       <thead>
                         <tr>
@@ -139,7 +136,6 @@ const InprocessInspectionList = () => {
 
                         </tr>
                       </thead>
-
                       <tbody>
                         {/* Example data row */}
                         <tr>
@@ -164,209 +160,7 @@ const InprocessInspectionList = () => {
                           <td> <FaEye /></td>
                           <td><MdMarkEmailRead/></td>
                         </tr>
-                      </tbody>
-                        
-                      <tbody>
-                        {/* Example data row */}
-                        <tr>
-                          <td>2</td>
-                          <td>24-25</td>
-                          <td>PRCOQC142523913</td>
-                          <td>02/12/24</td>
-                          <td>242536534 <br/> 02/12/24 </td>
-                          <td>FG1263 <br/> F2BZ057128</td>
-                          <td>CAP OIL LOCK J1D FF</td>
-                          <td>10</td>
-                          <td>PARTING & DRILLING</td>
-                          <td>PDFG1263</td>
-                          <td>694</td>
-                          <td>0</td>
-                          <td>6</td>
-                          <td>700</td>
-                          <td>A58430</td>
-                          <td>Anupam</td>
-                          <td><FaEdit/></td>
-                          <td> <MdDeleteForever /> </td>
-                          <td> <FaEye /></td>
-                          <td><MdMarkEmailRead/></td>
-                        </tr>
-                      </tbody>
-                      <tbody>
-                        {/* Example data row */}
-                        <tr>
-                          <td>3</td>
-                          <td>24-25</td>
-                          <td>PRCOQC142523912</td>
-                          <td>02/12/24</td>
-                          <td>242536567 <br/> 02/12/24 </td>
-                          <td>FG1106 <br/> 550BZ05802</td>
-                          <td>CAP OIL LOCK -PRFH006</td>
-                          <td>10</td>
-                          <td>PARTING & DRILLING</td>
-                          <td>PDFG1106</td>
-                          <td>854</td>
-                          <td>0</td>
-                          <td>6</td>
-                          <td>860</td>
-                          <td>E244209</td>
-                          <td>Anupam</td>
-                          <td><FaEdit/></td>
-                          <td> <MdDeleteForever /> </td>
-                          <td> <FaEye /></td>
-                          <td><MdMarkEmailRead/></td>
-                        </tr>
-                      </tbody>
-                      <tbody>
-                        {/* Example data row */}
-                        <tr>
-                          <td>4</td>
-                          <td>24-25</td>
-                          <td>PRCOQC142523911</td>
-                          <td>02/12/24</td>
-                          <td>242536566 <br/> 02/12/24 </td>
-                          <td>FG1106 <br/> 550BZ05802</td> 
-                          <td>CAP OIL LOCK -PRFH006</td>
-                          <td>10</td>
-                          <td>PARTING & DRILLING</td>
-                          <td>PDFG1106</td>
-                          <td>550</td>
-                          <td>4</td>
-                          <td>6</td>
-                          <td>560</td>
-                          <td>E244209</td>
-                          <td>Anupam</td>
-                          <td><FaEdit/></td>
-                          <td> <MdDeleteForever /> </td>
-                          <td> <FaEye /></td>
-                          <td><MdMarkEmailRead/></td>
-                        </tr>
-                      </tbody>
-                      <tbody>
-                        {/* Example data row */}
-                        <tr>
-                          <td>5</td>
-                          <td>24-25</td>
-                          <td>PRCOQC142523910</td>
-                          <td>02/12/24</td>
-                          <td>242536565 <br/> 02/12/24 </td>
-                          <td>FG1106 <br/> 550BZ05802</td>
-                          <td>CAP OIL LOCK -PRFH006</td>
-                          <td>10</td>
-                          <td>PARTING & DRILLING</td>
-                          <td>PDFG1106</td>
-                          <td>702</td>
-                          <td>0</td>
-                          <td>5</td>
-                          <td>707</td>
-                          <td>E244209</td>
-                          <td>Anupam</td>
-                          <td><FaEdit/></td>
-                          <td> <MdDeleteForever /> </td>
-                          <td> <FaEye /></td>
-                          <td><MdMarkEmailRead/></td>
-                        </tr>
-                      </tbody>
-                      <tbody>
-                        {/* Example data row */}
-                        <tr>
-                          <td>6</td>
-                          <td>24-25</td>
-                          <td>PRCOQC142523909</td>
-                          <td>02/12/24</td>
-                          <td>242536564 <br/> 02/12/24 </td>
-                          <td>FG1106 <br/> 550BZ05802</td>            
-                          <td>CAP OIL LOCK -PRFH006</td>
-                          <td>10</td>
-                          <td>PARTING & DRILLING</td>
-                          <td>PDFG1106</td>
-                          <td>809</td>
-                          <td>4</td>
-                          <td>5</td>
-                          <td>818</td>
-                          <td>E244209</td>
-                          <td>Anupam</td>
-                          <td><FaEdit/></td>
-                          <td> <MdDeleteForever /> </td>
-                          <td> <FaEye /></td>
-                          <td><MdMarkEmailRead/></td>
-                        </tr>
-                      </tbody>
-                      <tbody>
-                        {/* Example data row */}
-                        <tr>
-                          <td>7</td>
-                          <td>24-25</td>
-                          <td>PRCOQC142523908</td>
-                          <td>02/12/24</td>
-                          <td>242536563 <br/> 02/12/24 </td>
-                          <td>FG1106 <br/> 550BZ05802</td>
-                          <td>CAP OIL LOCK -PRFH006</td>
-                          <td>10</td>
-                          <td>PARTING & DRILLING</td>
-                          <td>PDFG1106</td>
-                          <td>769</td>
-                          <td>0</td>
-                          <td>4</td>
-                          <td>773</td>
-                          <td>E244209</td>
-                          <td>Anupam</td>
-                          <td><FaEdit/></td>
-                          <td> <MdDeleteForever /> </td>
-                          <td> <FaEye /></td>
-                          <td><MdMarkEmailRead/></td>
-                        </tr>
-                      </tbody>
-                      <tbody>
-                        {/* Example data row */}
-                        <tr>
-                          <td>8</td>
-                          <td>24-25</td>
-                          <td>PRCOQC142523907</td>
-                          <td>02/12/24</td>
-                          <td>242536562 <br/> 02/12/24 </td>
-                          <td>FG1106 <br/> 550BZ05802</td>
-                          <td>CAP OIL LOCK -PRFH006</td>
-                          <td>10</td>
-                          <td>PARTING & DRILLING</td>
-                          <td>PDFG1106</td>
-                          <td>599</td>
-                          <td>3</td>
-                          <td>11</td>
-                          <td>613</td>
-                          <td>E244209</td>
-                          <td>Anupam</td>
-                          <td><FaEdit/></td>
-                          <td> <MdDeleteForever /> </td>
-                          <td> <FaEye /></td>
-                          <td><MdMarkEmailRead/></td>
-                        </tr>
-                      </tbody>
-                      <tbody>
-                        {/* Example data row */}
-                        <tr>
-                          <td>9</td>
-                          <td>24-25</td>
-                          <td>PRCOQC142523906</td>
-                          <td>02/12/24</td>
-                          <td>242536561 <br/> 02/12/24 </td>
-                          <td>FG1106 <br/> 550BZ05802</td>
-                          <td>CAP OIL LOCK -PRFH006</td>
-                          <td>10</td>
-                          <td>PARTING & DRILLING</td>
-                          <td>PDFG1106</td>
-                          <td>707</td>
-                          <td>5</td>
-                          <td>3</td>
-                          <td>715</td>
-                          <td>E244209</td>
-                          <td>Anupam</td>
-                          <td><FaEdit/></td>
-                          <td> <MdDeleteForever /> </td>
-                          <td> <FaEye /></td>
-                          <td><MdMarkEmailRead/></td>
-                        </tr>
-                      </tbody>
-            
+                      </tbody>                     
                     </table>
              </div>
 

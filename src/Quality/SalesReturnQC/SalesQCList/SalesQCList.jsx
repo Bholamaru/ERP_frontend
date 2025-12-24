@@ -32,8 +32,8 @@ const SalesQCList = () => {
                 toggleSideNav={toggleSideNav}
               />
               <main className={`main-content ${sideNavOpen ? "shifted" : ""}`}>
-                <div className="SalesQCList mt-5">
-                  <div className="SalesQCList-header mb-4 text-start">
+                <div className="SalesQCList">
+                  <div className="SalesQCList-header mb-2 text-start">
                     <div className="row align-items-center">
                       <div className="col-md-6">
                         <h5 className="header-title"> Sales Return QC List </h5>
@@ -56,7 +56,7 @@ const SalesQCList = () => {
                   </div>
 
                   {/* Filter Section */}
-                  <div className="SalesQCList-filter mb-4 mt-5">
+                  <div className="SalesQCList-filter">
                     <div className="row text-start">
                       
                       <div className="col-md-1">
@@ -113,7 +113,7 @@ const SalesQCList = () => {
                   </div>
 
                   {/* Table Section */}
-                  <div className="SalesQCList-Main mt-5">
+                  <div className="SalesQCList-Main mt-2">
                   <div className="table-responsive">
                     <table className="table table-bordered">
                       <thead>

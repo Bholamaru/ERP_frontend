@@ -39,10 +39,10 @@ const CustomerComplaintEntry = () => {
                 toggleSideNav={toggleSideNav}
               />
               <main className={`main-content ${sideNavOpen ? "shifted" : ""}`}>
-                <div className="CustomerComplaintEntry mt-5">
-                  <div className="CustomerComplaintEntry-header mb-4 text-start">
+                <div className="CustomerComplaintEntry">
+                  <div className="CustomerComplaintEntry-header mb-2 text-start">
                     <div className="row align-items-center">
-                      <div className="col-md-3">
+                      <div className="col-md-4">
                         <h5 className="header-title">New. Complaint Entry  &nbsp;&nbsp;&nbsp; Plant : </h5>
                       </div>
                       <div className="col-md-1">
@@ -51,7 +51,7 @@ const CustomerComplaintEntry = () => {
                             </select>
                       </div>
                      
-                      <div className="col-md-8   text-end">
+                      <div className="col-md-7  text-end">
                         <button type="button" className="btn" onClick={handleCoustoterComplaintList}>
                         Customer Complaint List
                         </button>
@@ -59,9 +59,10 @@ const CustomerComplaintEntry = () => {
                     </div>
                   </div>
 
-                  <div className="CustomerComplaintEntry-main mt-5">
+                  <div className="CustomerComplaintEntry-main">
                      
                   <div className="row text-start">
+
                       <div className="col-md-3">
                         <div className="row mb-2">
                           <div className="col-4 mt-2">
@@ -152,6 +153,7 @@ const CustomerComplaintEntry = () => {
                         </div>
                       </div>
                     </div>
+
                     <div className="row text-start">
                       <div className="col-md-4">
                         {/* Date & Time */}
@@ -229,6 +231,7 @@ const CustomerComplaintEntry = () => {
                         </div>
                       </div>
                     </div>
+
                     <div className="row text-start">
                       <div className="col-md-4">
                         <div className="row mb-2">
@@ -252,6 +255,7 @@ const CustomerComplaintEntry = () => {
                         </div>
                       </div>
                     </div>
+
                     <div className="row text-start">
                       <div className="col-md-4">
                         <div className="row mb-2">
@@ -275,6 +279,7 @@ const CustomerComplaintEntry = () => {
                         </div>
                       </div>
                     </div>
+                    
                     <div className="row text-start">
                       <div className="col-md-4">
                         <div className="row mb-2">
@@ -322,6 +327,7 @@ const CustomerComplaintEntry = () => {
                         </div>
                       </div>
                     </div>
+
                     <div className="row text-start">
                       <div className="col-md-4">
                         <div className="row mb-2">
@@ -348,6 +354,7 @@ const CustomerComplaintEntry = () => {
                         </div>
                       </div>
                     </div>
+
                     <div className="row text-start">
                       <div className="col-md-4">
                         <div className="row mb-2">
@@ -403,9 +410,9 @@ const CustomerComplaintEntry = () => {
                       </div>
                     </div>
                      
-                    <div className="row text-start">
-                        <div className="col-md-3">
-                           <button type="button" className="btn btn-primary w-100" >
+                    <div className="row mt-2 text-start">
+                        <div className="col-md-2">
+                           <button type="button" className="btn btn-primary" >
                               Save Complaint
                            </button> 
                         </div>
