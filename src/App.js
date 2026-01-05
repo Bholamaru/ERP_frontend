@@ -8,7 +8,6 @@ import Dashboard from "./Dashboard/Dashboard";
 import VendorPage from "./VendorPage/VendorPage";
 import Login from "./Login/Login.jsx"
 
-
 /////////////////////////// Masters ///////////////////////////////
 
 import MasterState from "./components/Master/MasterState";
@@ -251,11 +250,8 @@ import RMStock from "./StoreMaster/StockReport/RMStockReport/RMStock.jsx";
 import ConsumableStock from "./StoreMaster/StockReport/ConsumableStockReport/ConsumableStock.jsx";
 import FGStock from "./StoreMaster/StockReport/FGStockReport/FGStock.jsx";
 
-
 import SubcontractStock from "./StoreMaster/SubconGRN/SubcontractStock/SubcontractStock.jsx";
 import OurVendorStock from "./StoreMaster/SubconGRN/SubcontractStock/OurVendorStock.jsx";
-
-
 
 ////////////////////////////// Production /////////////////////////////////
 
@@ -340,7 +336,7 @@ import TestReportList from "./Quality/TestMaster/TestReportList/TestReportList.j
 import TestReportNew from "./Quality/TestMaster/TestReportList/TestReportNew.jsx";
 import TestMasterNew from "./Quality/TestMaster/TestMasterNew/TestMasterNew.jsx";
 import TestMasterList from "./Quality/TestMaster/TestMasterList/TestMasterList.jsx";
-
+import SubconJobworkInwardQC from "./Quality/SubconJobwork/PaddingQCInward/SubconJobworkInwardQC/SubconJobworkInwardQC.jsx";
 
 
 /////////////////////////////////////     Sales       ////////////////////////////////////
@@ -435,6 +431,10 @@ function App() {
         <Route path="/item-master" element={<ItemMaster />} />
         <Route path="/add-new-item" element={<AddNewItem />} />
         <Route path="/item-master-gernal" element={<ItemMasterGernal />} />
+         <Route 
+          path="/item-master-gernal/:id" 
+          element={<ItemMasterGernal />} 
+        />
         {/* <Route path="/item-master-query" element={<ItemMasterQuery />} />  */}
         <Route path="/Work-center-master" element={<WorkCenterMaster />} />
         <Route path="/business-partner" element={<BusinessPartner />} />
@@ -446,6 +446,10 @@ function App() {
         <Route path="/task-master" element={<TaskMaster />} />
         <Route path="/Cut-wise" element={<Cutwise />} />
         <Route path="/Supplier-Customer-Master" element={<SupplierCustomerMaster />} />
+        <Route 
+          path="/Supplier-Customer-Master/:id" 
+          element={<SupplierCustomerMaster />} 
+        />
         <Route path="/vender-list" element={<VenderListSupplier />} />
         <Route path="/bom-routing" element={<BomRouting />} />
         <Route path="/bill-material" element={<BillMaterial />} />
@@ -565,11 +569,20 @@ function App() {
 
         <Route path="/new-indent" element={<Newindent />} />
         <Route path="/new-purchase-order" element={<NewPurchaseOrder />} />
+         <Route 
+          path="/new-purchase-order/:id" 
+          element={<NewPurchaseOrder />} 
+        />
         <Route path="/new-jobwork-order" element={<NewJobworkPurchase />} />
+        <Route 
+          path="/new-jobwork-order/:id" 
+          element={<NewJobworkPurchase />} 
+        />
         <Route path="/pendingpo" element={<PendingPo />} />
         <Route path="/pendingindent" element={<PendingIndent />} />
         <Route path="/Purchse-Mrn" element={<PurchaseMrn />} />
         <Route path="/Purchse-order-status" element={<PurchseOrderStatus />} />
+        <Route path="/Rfo" element={<Rfo />} />
         <Route path="/Rfo" element={<Rfo />} />
         <Route path="/Quoto-Comparison-Statement" element={<QuotoComparisonStatement />} />
         <Route path="/Quoto-Comparison-Pending" element={<QuotoComparisonPending />} />
@@ -601,10 +614,15 @@ function App() {
 
 
 
+
         {/* ///////////////////////////////////////Store//////////////////////////////////////// */}
 
         <Route path="Gate-Inward-Entry" element={<GateInwardEntry />} />
         <Route path="New-Gate-Entry" element={<NewGateInward />} />
+        <Route 
+          path="/New-Gate-Entry/:id" 
+          element={<NewGateInward />} 
+        />
         <Route path="Pending-Asn-List" element={<PendingAsnList />} />
         <Route path="PDL-List" element={<PDL />} />
         <Route path="Vendor-Bill-List" element={<VendorBillList />} />
@@ -613,6 +631,11 @@ function App() {
         <Route path="New-Mrn" element={<NewMrn />} />
         <Route path="Tool-MRN" element={<ToolMrn />} />
         <Route path="Purchase-Grn" element={<PurchaseGrn />} />
+ <Route 
+          path="/Purchase-Grn/:id" 
+          element={<PurchaseGrn />} 
+        />
+
         <Route path="Grn-List" element={<GrnList />} />
         <Route path="Inward-challan" element={<InwardChallan1 />} />
         <Route path="Jobwork-Inward-Challan" element={<JobworkInwardChallan />} />
@@ -685,9 +708,12 @@ function App() {
         <Route path="RMStock" element={<RMStock />} />
         <Route path="ConsumableStock" element={<ConsumableStock />} />
         <Route path="FGStock" element={<FGStock />} />
-
+        
         <Route path="SubcontractStock" element={<SubcontractStock />} />
         <Route path="OurVendorStock" element={<OurVendorStock />} />
+
+
+
 
         {/* /////////////////////////////////////Production////////////////////////////////////// */}
 
@@ -707,6 +733,7 @@ function App() {
         <Route path="/ScrapRejectionEntry" element={<ScrapRejectionEntry />} />
         <Route path="/FGScrapRejectionReport" element={<FGScrapRejectionReport />} />
         <Route path="/PoList" element={<PoList />} />
+       
         <Route path="/JobworkList" element={<JobworkList />} />
         <Route path="/BreakdownTimeEntry" element={<BreakdownTimeEntry />} />
         <Route path="/BreakdownTimeReport" element={<BreakdownTimeReport />} />
@@ -776,7 +803,7 @@ function App() {
         <Route path="TestReportNew" element={<TestReportNew />} />
         <Route path="TestMasterNew" element={<TestMasterNew />} />
         <Route path="TestMasterList" element={<TestMasterList />} />
-
+<Route path="SubconJobworkInwardQC" element={<SubconJobworkInwardQC />} />
 
 
         {/* //////////////////////////////     Sales       /////////////////////////// */}

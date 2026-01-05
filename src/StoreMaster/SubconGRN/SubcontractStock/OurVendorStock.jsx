@@ -36,7 +36,7 @@ const OurVendorStock = () => {
 
         try {
           const res = await fetch(
-            `http://127.0.0.1:8000/Store/api/SubcornStock/?q=${vendorName}`
+            `https://erp-render.onrender.com/Store/api/SubcornStock/?q=${vendorName}`
           );
           const data = await res.json();
           console.log("VendorList API Response:", data); 
@@ -80,7 +80,7 @@ const OurVendorStock = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://127.0.0.1:8000/Store/vender-stock/?q=${encodeURIComponent(
+        `https://erp-render.onrender.com/Store/vender-stock/?q=${encodeURIComponent(
           vendorName
         )}&start=${fromDate}&end=${toDate}`
       );

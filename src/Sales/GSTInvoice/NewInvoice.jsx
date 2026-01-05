@@ -5,21 +5,222 @@ import NavBar from "../../NavBar/NavBar.js";
 import SideNav from "../../SideNav/SideNav.js";
 import { FaPlus } from "react-icons/fa6";
 import { FaRegCircleQuestion } from "react-icons/fa6";
-import Cached from "@mui/icons-material/Cached.js";
-import { useNavigate } from 'react-router-dom';
+// import Cached from "@mui/icons-material/Cached.js";
+import { useNavigate } from "react-router-dom";
 import "./NewInvoice.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const NewInvoice = () => {
   const [sideNavOpen, setSideNavOpen] = useState(false);
-  const navigate = useNavigate();  
+  const navigate = useNavigate();
   const [isChecked, setIsChecked] = useState(false);
+  const [items, setItems] = useState([]); // Dropdown list
+  const [selectedItemObj, setSelectedItemObj] = useState(null); // Full object store
+  const [itemSearchTerm, setItemSearchTerm] = useState(""); // Input text for ITEMS
+  const [tableData, setTableData] = useState([]); // Table rows
+
+  // --- NEW: Form State ---
+ const [formData, setFormData] = useState({
+    invoice_no: "",
+    series_type: "",
+    invoice_date: "",
+    invoice_time: "",
+    payment_date: "",
+    note: "",
+    date_of_removal: "",
+    time: "",
+    mode_of_trans: "By Road",
+    freight: "",
+    vehical_no: "",
+    transporter: "",
+    bill_to: "",
+    ship_to: "",
+    addr_code: "",
+    l_r_gc_note: "",
+    place_of_supply: "",
+    eway_bill_date: "",
+    eway_bill_no: "",
+    destenation_code: "",
+    note_remark: "",
+    pdi_no: "",
+    bank: "",
+    d_c_no: "",
+    d_c_date: "",
+    delivery_terms: "",
+  });
+
+  // 1. Fetch Items for Dropdown (on Mount)
+useEffect(() => {
+  const fetchItems = async () => {
+    try {
+      const res = await fetch("https://erp-render.onrender.com/Sales/newsalesorder/");
+      const data = await res.json();
+
+      // 🔥 FLATTEN sales order -> items
+      const flatItems = data.flatMap(order =>
+        order.item.map(itm => ({
+          ...itm,
+          customer: order.customer,
+          cust_po: order.cust_po,
+          plant: order.plant,
+          ship_to: order.ship_to,
+        }))
+      );
+
+      setItems(flatItems);
+    } catch (err) {
+      toast.error("Item load failed");
+    }
+  };
+
+  fetchItems();
+}, []);
+
+
+  // 2. Handle Item Selection and Fetch Stock
+const handleItemSelect = async (e) => {
+  const itemCode = e.target.value;
+  setItemSearchTerm(itemCode);
+
+  // sales order item se match
+  const itemObj = items.find(i => i.item_code === itemCode);
+  if (!itemObj) return;
+
+  try {
+    // 🔥 stock API same rahegi
+    const res = await fetch(
+      `https://erp-render.onrender.com/Sales/wip/stock/get/?q=${itemCode}`
+    );
+    const data = await res.json();
+
+    setSelectedItemObj({
+      ...itemObj,
+
+      // stock related (optional – table me chahe to use karo)
+      stock: data?.last_operation?.prod_qty ?? 0,
+      op_no: data?.last_operation?.OPNo ?? "",
+      operation_name: data?.last_operation?.Operation ?? "",
+
+      // safety mapping (agar backend se aaye)
+      part_code: data?.last_operation?.part_code ?? "",
+      part_no: data?.last_operation?.part_no ?? itemCode,
+      Name_Description:
+        data?.last_operation?.Name_Description ??
+        itemObj.item_description,
+    });
+
+    toast.info(`Selected: ${itemCode}`);
+  } catch (error) {
+    console.error("Stock fetch error:", error);
+
+    // 🔁 fallback (agar stock API fail ho)
+    setSelectedItemObj({
+      ...itemObj,
+      stock: 0,
+    });
+
+    toast.warning("Stock data not available");
+  }
+
+
+  console.log("Selected Item:", itemObj);
+
+};
+
+
+
+  // 3. Add to Table
+  const handleAddItem = () => {
+    if (!selectedItemObj) {
+      toast.error("Please select an item first");
+      return;
+    }
+    setTableData((prev) => [...prev, selectedItemObj]);
+    setItemSearchTerm("");
+    setSelectedItemObj(null);
+    toast.success("Item added to table!");
+  };
+
+
+  // --- 1. Fetch Invoice Number on Series Selection ---
+  const handleSeriesChange = async (e) => {
+    const selectedSeries = e.target.value;
+    setFormData((prev) => ({ ...prev, series_type: selectedSeries }));
+
+    if (selectedSeries === "GST Invoice") {
+      try {
+        const response = await fetch(
+          "https://erp-render.onrender.com/Sales/create/invoice_no"
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setFormData((prev) => ({
+            ...prev,
+            invoice_no: data.Invoice_no,
+          }));
+          toast.success(`Invoice No: ${data.Invoice_no} generated`);
+        } else {
+          toast.error("Failed to generate invoice number");
+        }
+      } catch (error) {
+        console.error("API Error:", error);
+        toast.error("Error generating invoice number");
+      }
+    } else {
+      setFormData((prev) => ({ ...prev, invoice_no: "" }));
+    }
+  };
+
+ const handleChange = (e) => {
+    const { name, value, id } = e.target;
+    const fieldName = name || id;
+    setFormData((prev) => ({ ...prev, [fieldName]: value }));
+  };
+
+  // --- 2. Save Invoice (POST) ---
+  const handleGenerateInvoice = async () => {
+    if (!formData.series_type || !formData.invoice_no) {
+      toast.error("Please select series and generate invoice number first");
+      return;
+    }
+
+    try {
+      const response = await fetch("https://erp-render.onrender.com/Sales/invoice/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        toast.success("Invoice Generated Successfully!");
+        setFormData({
+          ...formData,
+          invoice_no: "",
+          series_type: "",
+        });
+
+        const seriesSelect = document.getElementById("seriesSelect");
+        if (seriesSelect) seriesSelect.value = "Select";
+
+        setTimeout(() => {
+          navigate("/InvoiceList");
+        }, 1500);
+      } else {
+        toast.error("Failed to generate invoice");
+      }
+    } catch (error) {
+      console.error("API Error:", error);
+      toast.error("Error generating invoice: " + error.message);
+    }
+  };
 
   const handleCheckboxChange = (e) => {
     setIsChecked(e.target.checked);
   };
 
   const handleButtonClick = () => {
-    navigate('/NewinvoiceGST'); 
+    navigate("/NewinvoiceGST");
   };
   const toggleSideNav = () => {
     setSideNavOpen((prevState) => !prevState);
@@ -33,8 +234,48 @@ const NewInvoice = () => {
     }
   }, [sideNavOpen]);
 
+  const [customers, setCustomers] = useState([]);
+  const [customerSearchTerm, setCustomerSearchTerm] = useState("");
+
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        if (!customerSearchTerm) {
+          setCustomers([]);
+          return;
+        }
+
+        const response = await fetch(
+          `https://erp-render.onrender.com/Sales/items/customers-list/?q=${customerSearchTerm}`
+        );
+
+        if (response.ok) {
+          const result = await response.json();
+          setCustomers(result.data || []);
+        }
+      } catch (error) {
+        console.error("Customer fetch error:", error);
+      }
+    };
+
+    const delayDebounce = setTimeout(fetchCustomers, 300);
+    return () => clearTimeout(delayDebounce);
+  }, [customerSearchTerm]);
+
+
   return (
-    <div className="NewInvoiceMaster">
+    <div className="NewInvoice">
+       <ToastContainer 
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <div className="container-fluid">
         <div className="row">
           <div className="col-md-12">
@@ -45,27 +286,40 @@ const NewInvoice = () => {
                 toggleSideNav={toggleSideNav}
               />
               <main className={`main-content ${sideNavOpen ? "shifted" : ""}`}>
-                <div className="NewInvoice mt-5">
-                  <div className="NewInvoice-header mb-4 text-start">
+                <div className="NewInvoice">
+                  <div className="NewInvoice-header mb-2 text-start">
                     <div className="row align-items-center">
                       <div className="col-md-2">
                         <h5 className="header-title">New Invoice</h5>
                       </div>
+
                       <div className="col-md-1">Plant</div>
                       <div className="col-md-1">
                         <select>
                           <option>ProduLink</option>
                         </select>
                       </div>
+
                       <div className="col-md-1">Series</div>
                       <div className="col-md-1">
-                        <select>
-                          <option>GST Invoice</option>
+                        <select
+                          className="form-control"
+                          onChange={handleSeriesChange}
+                        >
+                          <option value="">Select</option>
+                          <option value="GST Invoice">GST Invoice</option>
                         </select>
                       </div>
                       <div className="col-md-1">
-                        <input type="text" placeholder="InvoiceNo:" className="w-100" />
+                        <input
+                          type="text"
+                          placeholder="InvoiceNo:"
+                          className="w-100"
+                          value={formData.invoice_no || ""}
+                          readOnly
+                        />
                       </div>
+
                       <div className="col-md-1">InvoiceType:</div>
                       <div className="col-md-1">
                         <select>
@@ -81,14 +335,18 @@ const NewInvoice = () => {
                       </div>
 
                       <div className="col-md-3 text-end">
-                        <button type="button" className="btn" onClick={handleButtonClick}>
+                        <button
+                          type="button"
+                          className="btn"
+                          onClick={handleButtonClick}
+                        >
                           Invoice V2
                         </button>
                       </div>
                     </div>
                   </div>
 
-                  <div className="NewInvoice-main mt-5">
+                  <div className="NewInvoice-Main mt2">
                     <div className="NewInvoice-tabs">
                       <ul
                         className="nav nav-tabs"
@@ -120,8 +378,9 @@ const NewInvoice = () => {
                           </button>
                         </li>
                       </ul>
+
                       <div
-                        className="tab-content mt-4"
+                        className="tab-content mt-2"
                         id="productionEntryTabsContent"
                       >
                         <div
@@ -130,42 +389,215 @@ const NewInvoice = () => {
                           role="tabpanel"
                         >
                           <div className="row text-start">
-                                <div className="col-2">
-                                  <label htmlFor="prod-no">Select Cust:</label>
-                                </div>
-                                <div className="col-3">
-                                  <input type="text" placeholder="Enter Name.." className="form-control" />
-                                </div>
-                                <div className="col-2">
-                                 <button className="btn w-50">Search</button>
-                                </div>
+                            <div className="col-2">
+                              <label htmlFor="customer-search">
+                                Select Cust:
+                              </label>
+                            </div>
+                            <div className="col-3">
+                              <input
+                                type="text"
+                                list="customer-options"
+                                className="form-control"
+                                placeholder="Enter Customer Name"
+                                value={customerSearchTerm}
+                                onChange={(e) => setCustomerSearchTerm(e.target.value)}
+                              />
+                              <datalist id="customer-options">
+                                {customers.map((cust) => (
+                                  <option
+                                    key={cust.id}
+                                    value={cust.Name}
+                                  />
+                                ))}
+                              </datalist>
+                            </div>
+                            <div className="col-2">
+                              <button
+                                className="btn w-50"
+                                onClick={() => {
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    bill_to: customerSearchTerm,
+                                  }));
+                                  alert("Customer Selected: " + customerSearchTerm);
+                                }}
+                              >
+                                Search
+                              </button>
+
+                            </div>
                           </div>
-                          <div className="row text-start">
-                                <div className="col-2">
-                                  <label htmlFor="prod-no">Select PO:</label>
-                                </div>
-                                <div className="col-3">
-                                        <select name="" id="" className="form-control">
-                                            <option value="">Select an Option</option>
-                                        </select>
-                                </div>
-                                <div className="col-1">
-                                 <button className="btn w-100">Clear</button>
-                                </div>
-                                <div className="col-2">
-                                 <button className="btn w-50"> View SO</button>
-                                </div>
+
+                          <div className="row mt-2 text-start">
+                            <div className="col-2">
+                              <label htmlFor="prod-no">Select PO:</label>
+                            </div>
+                            <div className="col-3">
+                              <select name="" id="" className="form-control">
+                                <option value="">Select an Option</option>
+                              </select>
+                            </div>
+                            <div className="col-1 mt-2">
+                              <button className="btn">Clear</button>
+                            </div>
+                            <div className="col-2 mt-2">
+                              <button className="btn w-50"> View SO</button>
+                            </div>
                           </div>
-                          <div className="row text-start">
-                                <div className="col-2">
-                                  <label htmlFor="prod-no">Select Item :</label>
-                                </div>
-                                <div className="col-3">
-                                  <input type="text" placeholder="Enter Item Code.." className="form-control" />
-                                </div>
-                                <div className="col-2">
-                                 <button className="btn w-50">Add</button>
-                                </div>
+
+                          {/* SEARCH SECTION */}
+                          <div className="row text-start mb-3">
+                            <div className="col-2">
+                              <label htmlFor="prod-no">Select Item :</label>
+                            </div>
+                            <div className="col-3">
+                            <input
+  type="text"
+  placeholder="Enter Item Code / Desc"
+  className="form-control"
+  list="item-list"
+  value={itemSearchTerm}
+  onInput={handleItemSelect}   // 🔥 onChange ❌ → onInput ✅
+/>
+
+<datalist id="item-list">
+  {items.map((item, index) => (
+    <option
+      key={index}
+      value={item.item_code}
+    >
+      {item.item_code} - {item.item_description}
+    </option>
+  ))}
+</datalist>
+
+                            </div>
+                            <div className="col-2">
+                              <button
+                                className="btn btn-primary w-50"
+                                onClick={handleAddItem}
+                              >
+                                Add
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="table-responsive mt-2">
+                            <table className="table table-bordered">
+                              <thead>
+                                <tr>
+                                  <th>Sr.</th>
+                                  <th>PO No | Date</th>
+                                  <th>Stock</th>
+                                  <th>Description</th>
+                                  <th>Rate</th>
+                                  <th>PO Qty</th>
+                                  <th>Bal.Qty</th>
+                                  <th>Inv.Qty</th>
+                                  <th>Pkg Qty</th>
+                                  <th>Type Of Packing</th>
+                                  <th>Del</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {tableData.length > 0 ? (
+                                  tableData.map((row, index) => (
+                                    <tr key={index}>
+                                      <td>{index + 1}</td>
+                                      <td>
+                                        {row.part_no} <br /> Pr No. :{" "}
+                                        {row.Part_Code}
+                                      </td>
+                                      <td>
+                                        Part No : {row.last_operation?.part_no}
+                                        <br />
+                                        Part Code : {row.last_operation?.part_code}
+                                        <br />
+                                        Name Description : {row.last_operation?.Name_Description}
+                                        <br />
+                                        OP No. : {row.last_operation?.OPNo}
+                                        <br />
+                                        <span style={{ fontSize: "12px", color: "gray" }}>
+                                          Operation : {row.last_operation?.Operation}
+                                        </span>
+                                        <br />
+                                        Prod Qty :<strong>{row.last_operation?.prod_qty ?? 0}</strong>
+                                        <br />
+                                      </td>
+                                      <td>
+                                        <textarea
+                                          defaultValue={row.Name_Description}
+                                          className="form-control-sm w-100"
+                                        ></textarea>
+                                        <br />{" "}
+                                        <span>
+                                          HSN Code : {row.HSN_SAC_Code}
+                                        </span>
+                                      </td>
+                                      <td className="text-start">
+                                       Rate :  {row.rate}
+                                       
+                                        <br />
+                                        Disc: <br /> Pkg Charges: <br />
+                                        Trans Charges: <br />
+                                        <span style={{ color: "blue" }}>
+                                          Rate Type:
+                                        </span>
+                                        <br /> Amort Rate :
+                                      </td>
+                                      <td>{/* PO Qty */}</td>
+                                      <td>{/* Bal Qty */}</td>
+                                      <td>
+                                        <input
+                                          type="text"
+                                          className="w-100"
+                                          placeholder="Qty"
+                                        />
+                                        <br />
+                                        Per Pcs Wt: <br />
+                                        <input
+                                          type="text"
+                                          className="w-100"
+                                          placeholder="Weight"
+                                          defaultValue={row.Finish_Weight}
+                                        />
+                                        <br />
+                                        <span style={{ color: "blue" }}>
+                                          Per Unit: {row.Unit_Code}
+                                        </span>
+                                      </td>
+                                      <td>
+                                        <input type="text" className="w-100" />
+                                      </td>
+                                      <td>
+                                        <textarea className="w-100"></textarea>
+                                      </td>
+                                      <td>
+                                        <button
+                                          className="btn btn-danger btn-sm"
+                                          onClick={() =>
+                                            setTableData(
+                                              tableData.filter(
+                                                (_, i) => i !== index
+                                              )
+                                            )
+                                          }
+                                        >
+                                          X
+                                        </button>
+                                      </td>
+                                    </tr>
+                                  ))
+                                ) : (
+                                  <tr>
+                                    <td colSpan="11" className="text-center">
+                                      No items added
+                                    </td>
+                                  </tr>
+                                )}
+                              </tbody>
+                            </table>
                           </div>
                         </div>
 
@@ -174,655 +606,557 @@ const NewInvoice = () => {
                           id="taxes"
                           role="tabpanel"
                         >
-                         <div className="row text-start">
-                            {/* First Column */}
+                          <div className="row text-start">
+                            {/* Column 1 */}
                             <div className="col-md-4">
-                              {/* Prod. No */}
                               <div className="row mb-2">
                                 <div className="col-4">
-                                  <label htmlFor="invoice-no">Invoice No :</label>
+                                  <label>Invoice No:</label>
                                 </div>
-                                <div className="col-3">
+                                <div className="col-8 d-flex gap-1">
                                   <input
-                                    id="invoice-no"
+                                    name="series_display"
+                                    value={formData.series_type || ""}
                                     className="form-control"
+                                    readOnly
+                                    placeholder="Series"
                                   />
-                                </div>
-                                <div className="col-3">
                                   <input
-                                    id="invoice-no"
-                                    placeholder="232400001"
+                                    name="invoice_no"
+                                    value={formData.invoice_no || ""}
                                     className="form-control"
-                                  />
-                                </div>
-                                <div className="col-2">
-                                  <input
-                                    id="invoice-no"
-                                    className="form-control"
+                                    placeholder="No."
+                                    readOnly
                                   />
                                 </div>
                               </div>
-
-                              {/* Payment */}
                               <div className="row mb-2">
                                 <div className="col-4">
-                                  <label htmlFor="payment">
-                                    Payment Date :
-                                  </label>
-                                </div>
-                                <div className="col-3">
-                                  <input type="Date" id="payment"
-                                    className="form-control"/>
-                                </div>
-                                <div className="col-2">
-                                  <label htmlFor="payment">
-                                    Note :
-                                  </label>
-                                </div>
-                                <div className="col-3">
-                                  <input type="text" id="payment"
-                                    className="form-control"/>
-                                </div>
-                              </div>
-
-                              {/* Mode of trans */}
-                              <div className="row mb-2">
-                                <div className="col-4">
-                                  <label htmlFor="unit-machine">
-                                    Mode of Trans :
-                                  </label>
-                                </div>
-                                <div className="col-2">
-                                  <input type="text" placeholder="By Road" id="modeoftrans"
-                                    className="form-control"/>
-                                </div>
-                                <div className="col-2">
-                                  <label htmlFor="unit-machine">
-                                    Freight:
-                                  </label>
-                                </div>
-                                <div className="col-4 d-flex align-items-center">
-                                  <select className="form-control flex-grow-1">
-                                    <option>  Select  </option>
-                                  </select>
-                                  <button type="button" className="btn">
-                                    <Cached />
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="btn btn-outline-secondary ml-2"
-                                  >
-                                    <FaPlus />
-                                  </button>
-                                </div>
-                              </div>
-
-                              {/* Item */}
-                              <div className="row mb-2">
-                                <div className="col-4">
-                                  <label htmlFor="item">Bill TO  :</label>
-                                </div>
-                                <div className="col-8 d-flex align-items-center">
-                                   <input type="text" placeholder="" id="billto"
-                                    className="form-control"/>
-                                  <button
-                                    type="button"
-                                    className="btn btn-outline-secondary ml-2"
-                                  >
-                                    Search
-                                  </button>
-                                </div>
-                              </div>
-
-                              {/* Ship tp */}
-                              <div className="row mb-2">
-                                <div className="col-4">
-                                  <label htmlFor="shipto">Ship TO :</label>
-                                </div>
-                                <div className="col-8 d-flex align-items-center">
-                                   <input type="text" placeholder="" id="billto"
-                                    className="form-control"/>
-                                  <button
-                                    type="button"
-                                    className="btn btn-outline-secondary ml-2"
-                                  >
-                                    Search
-                                  </button>
-                                </div>
-                              </div>
-
-                              {/* Bill Date. */}
-                              <div className="row mb-2">
-                                <div className="col-4">
-                                  <label htmlFor="eway-bill">Eway Bill Date :</label>
-                                </div>
-                                <div className="col-6">
-                                  <input
-                                    id="eway-bill"
-                                    type="date"
-                                    className="form-control"
-                                  />
-                                </div>
-                              </div>
-
-                              {/* Prod. Qty */}
-                              <div className="row mb-2">
-                                <div className="col-4">
-                                  <label htmlFor="note-remark">
-                                    Note/Remark:
-                                  </label>
-                                </div>
-                                <div className="col-6">
-                                    <textarea name="" className="form-control" id="note-remark"></textarea>
-                                </div>
-                              </div>
-
-                              <div className="row mb-2">
-                                <div className="col-4">
-                                  <label htmlFor="unit-machine">
-                                    PDI No :
-                                  </label>
-                                </div>
-                                <div className="col-2">
-                                  <input type="text" placeholder="" id="modeoftrans"
-                                    className="form-control"/>
-                                </div>
-                                <div className="col-2">
-                                  <label htmlFor="unit-machine">
-                                    Bank:
-                                  </label>
-                                </div>
-                                <div className="col-4 d-flex align-items-center">
-                                  <select className="form-control flex-grow-1">
-                                    <option>  Select  </option>
-                                  </select>
-                                  <button type="button" className="btn">
-                                    <Cached />
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="btn btn-outline-secondary ml-2"
-                                  >
-                                    <FaPlus />
-                                  </button>
-                                </div>
-                              </div>
-
-                            </div>
-
-                            {/* Second Column */}
-                            <div className="col-md-4">
-                              {/* Date & Time */}
-                              <div className="row mb-2">
-                                <div className="col-4">
-                                  <label htmlFor="date">Invoice Date :</label>
+                                  <label>Payment Date:</label>
                                 </div>
                                 <div className="col-8">
                                   <input
-                                    id="time"
+                                    type="date"
+                                    name="payment_date"
+                                    value={formData.payment_date}
+                                    onChange={handleChange}
+                                    className="form-control"
+                                  />
+                                </div>
+                              </div>
+                              <div className="row mb-2">
+                                <div className="col-4">
+                                  <label>Mode of Trans:</label>
+                                </div>
+                                <div className="col-8 d-flex gap-1">
+                                  <input
+                                    type="text"
+                                    name="mode_of_trans"
+                                    value={formData.mode_of_trans}
+                                    onChange={handleChange}
+                                    className="form-control"
+                                  />
+                                  <select
+                                    name="freight"
+                                    value={formData.freight}
+                                    onChange={handleChange}
+                                    className="form-control"
+                                  >
+                                    <option value="">Freight</option>
+                                  </select>
+                                </div>
+                              </div>
+                              <div className="row mb-2">
+                                <div className="col-4">
+                                  <label>Bill TO:</label>
+                                </div>
+                                <div className="col-8 d-flex gap-1">
+                                  <input
+                                    name="bill_to"
+                                    value={formData.bill_to}
+                                    onChange={handleChange}
+                                    className="form-control"
+                                  />
+                                  <button
+                                    type="button"
+                                    className="btn btn-outline-secondary"
+                                  >
+                                    Search
+                                  </button>
+                                </div>
+                              </div>
+                              <div className="row mb-2">
+                                <div className="col-4">
+                                  <label>Ship TO:</label>
+                                </div>
+                                <div className="col-8 d-flex gap-1">
+                                  <input
+                                    name="ship_to"
+                                    value={formData.ship_to}
+                                    onChange={handleChange}
+                                    className="form-control"
+                                  />
+                                  <button
+                                    type="button"
+                                    className="btn btn-outline-secondary"
+                                  >
+                                    Search
+                                  </button>
+                                </div>
+                              </div>
+                              <div className="row mb-2">
+                                <div className="col-4">
+                                  <label>Eway Bill Date:</label>
+                                </div>
+                                <div className="col-8">
+                                  <input
+                                    type="date"
+                                    name="eway_bill_date"
+                                    value={formData.eway_bill_date}
+                                    onChange={handleChange}
+                                    className="form-control"
+                                  />
+                                </div>
+                              </div>
+                              <div className="row mb-2">
+                                <div className="col-4">
+                                  <label>Note/Remark:</label>
+                                </div>
+                                <div className="col-8">
+                                  <textarea
+                                    name="note_remark"
+                                    value={formData.note_remark}
+                                    onChange={handleChange}
+                                    className="form-control"
+                                  ></textarea>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Column 2 */}
+                            <div className="col-md-4">
+                              <div className="row mb-2">
+                                <div className="col-4">
+                                  <label>Invoice Date:</label>
+                                </div>
+                                <div className="col-8">
+                                  <input
                                     type="datetime-local"
+                                    name="invoice_date"
+                                    value={formData.invoice_date}
+                                    onChange={handleChange}
                                     className="form-control"
                                   />
                                 </div>
                               </div>
-
-                              {/* Supervisor */}
                               <div className="row mb-2">
                                 <div className="col-4">
-                                  <label htmlFor="dateremoval">
-                                    Date Of Removal :
-                                  </label>
+                                  <label>Removal Date:</label>
                                 </div>
                                 <div className="col-8">
                                   <input
-                                    id="dateremoval"
                                     type="date"
+                                    name="date_of_removal"
+                                    value={formData.date_of_removal}
+                                    onChange={handleChange}
                                     className="form-control"
                                   />
                                 </div>
                               </div>
-
-                              {/* Machine Speed */}
                               <div className="row mb-2">
                                 <div className="col-4">
-                                  <label htmlFor="vehicle">Vehicle No:</label>
+                                  <label>Vehicle No:</label>
                                 </div>
-                                <div className="col-8 d-flex align-items-center">
-                                 <input
-                                    id="vehicle"
-                                    className="form-control"
-                                  />
-                                   <button type="button" className="btn btn-outline-secondary">
-                                   <FaPlus />
-                                  </button>
-                                </div>
-                              </div>
-
-                              {/* Prod Time */}
-                              <div className="row mb-2">
-                                <div className="col-4">
-                                  <label htmlFor="addrcode">Addr Code:</label>
-                                </div>
-                                <div className="col-8 d-flex">
-                                <select className="form-control flex-grow-1">
-                                    <option>   </option>
-                                  </select>
-                                   <button type="button" className="btn btn-outline-secondary mb-4">
-                                   <FaRegCircleQuestion />
-                                  </button>
-                                </div>
-                              </div>
-
-                              <div className="row mb-2">
-                                <div className="col-4">
-                                  <label htmlFor="addrcode">Addr Code:</label>
-                                </div>
-                                <div className="col-8 d-flex">
-                                <select className="form-control flex-grow-1">
-                                    <option>   </option>
-                                  </select>
-                                   <button type="button" className="btn btn-outline-secondary mb-4">
-                                   <FaRegCircleQuestion />
-                                  </button>
-                                </div>
-                              </div>
-
-                              <div className="row mb-2">
-                                <div className="col-4">
-                                  <label htmlFor="ewaybill">Eway Bill No:</label>
-                                </div>
-                                <div className="col-8 d-flex">
+                                <div className="col-8 d-flex gap-1">
                                   <input
-                                    id="ewaybill"
+                                    name="vehical_no"
+                                    value={formData.vehical_no}
+                                    onChange={handleChange}
                                     className="form-control"
-                                   />
+                                  />
+                                  <button
+                                    type="button"
+                                    className="btn btn-outline-secondary"
+                                  >
+                                    <FaPlus />
+                                  </button>
                                 </div>
                               </div>
-
                               <div className="row mb-2">
                                 <div className="col-4">
-                                  <label htmlFor="delivey"> Delivey Terms:</label>
+                                  <label>Addr Code:</label>
                                 </div>
-                                <div className="col-8 d-flex">
-                                    <textarea name="" id="delivey" className="form-control"></textarea>
+                                <div className="col-8 d-flex gap-1">
+                                  <select
+                                    name="addr_code"
+                                    value={formData.addr_code}
+                                    onChange={handleChange}
+                                    className="form-control"
+                                  >
+                                    <option value=""></option>
+                                  </select>
+                                  <button
+                                    type="button"
+                                    className="btn btn-outline-secondary"
+                                  >
+                                    <FaRegCircleQuestion />
+                                  </button>
                                 </div>
                               </div>
-
                               <div className="row mb-2">
                                 <div className="col-4">
-                                  <label htmlFor="dcno">D.C. NO:</label>
+                                  <label>Eway Bill No:</label>
                                 </div>
-                                <div className="col-8 d-flex">
-                                    <input type="text" id="dcno" className="form-control" />
+                                <div className="col-8">
+                                  <input
+                                    name="eway_bill_no"
+                                    value={formData.eway_bill_no}
+                                    onChange={handleChange}
+                                    className="form-control"
+                                  />
                                 </div>
                               </div>
-
+                              <div className="row mb-2">
+                                <div className="col-4">
+                                  <label>Delivery Terms:</label>
+                                </div>
+                                <div className="col-8">
+                                  <textarea
+                                    name="delivery_terms"
+                                    value={formData.delivery_terms}
+                                    onChange={handleChange}
+                                    className="form-control"
+                                  ></textarea>
+                                </div>
+                              </div>
+                              <div className="row mb-2">
+                                <div className="col-4">
+                                  <label>D.C. Date:</label>
+                                </div>
+                                <div className="col-8">
+                                  <input
+                                    type="date"
+                                    name="d_c_date"
+                                    value={formData.d_c_date}
+                                    onChange={handleChange}
+                                    className="form-control"
+                                  />
+                                </div>
+                              </div>
                             </div>
 
-                            {/* Third Column */}
+                            {/* Column 3 */}
                             <div className="col-md-4">
-                              {/* Shift */}
                               <div className="row mb-2">
                                 <div className="col-4">
-                                  <label htmlFor="invoicetime">Invoice Time :</label>
+                                  <label>Invoice Time:</label>
                                 </div>
                                 <div className="col-8">
-                                 <input type="time" id="invoicetime" className="form-control"/>
-                                </div>
-                              </div>
-                              <div className="row mb-2">
-                                <div className="col-4">
-                                  <label htmlFor="invoicetime"> Time :</label>
-                                </div>
-                                <div className="col-8">
-                                 <input type="time" id="invoicetime" className="form-control"/>
-                                </div>
-                              </div>
-
-                              {/* transporter */}
-                              <div className="row mb-2">
-                                <div className="col-4">
-                                  <label htmlFor="transporter">Transporter :</label>
-                                </div>
-                                <div className="col-8 d-flex">
                                   <input
-                                    id="transporter"
+                                    type="time"
+                                    name="invoice_time"
+                                    value={formData.invoice_time}
+                                    onChange={handleChange}
                                     className="form-control"
                                   />
-                                   <button type="button" className="btn btn-outline-secondary mb-3">
-                                   <FaPlus />
+                                </div>
+                              </div>
+                              <div className="row mb-2">
+                                <div className="col-4">
+                                  <label>Time:</label>
+                                </div>
+                                <div className="col-8">
+                                  <input
+                                    type="time"
+                                    name="time"
+                                    value={formData.time}
+                                    onChange={handleChange}
+                                    className="form-control"
+                                  />
+                                </div>
+                              </div>
+                              <div className="row mb-2">
+                                <div className="col-4">
+                                  <label>Transporter:</label>
+                                </div>
+                                <div className="col-8 d-flex gap-1">
+                                  <input
+                                    name="transporter"
+                                    value={formData.transporter}
+                                    onChange={handleChange}
+                                    className="form-control"
+                                  />
+                                  <button
+                                    type="button"
+                                    className="btn btn-outline-secondary"
+                                  >
+                                    <FaPlus />
                                   </button>
                                 </div>
                               </div>
-
                               <div className="row mb-2">
                                 <div className="col-4">
-                                  <label htmlFor="shift">L/R GC Note:</label>
+                                  <label>L/R GC Note:</label>
                                 </div>
                                 <div className="col-8">
-                                 <input type="text" className="form-control" />
-                                </div>
-                              </div>
-
-                              <div className="row mb-2">
-                                <div className="col-4">
-                                  <label htmlFor="shift">Place Of Supply:</label>
-                                </div>
-                                <div className="col-8">
-                                 <input type="text" className="form-control" />
-                                </div>
-                              </div>
-
-                              <div className="row mb-2">
-                                <div className="col-4">
-                                  <label htmlFor="ewaybill">Eway Bill No:</label>
-                                </div>
-                                <div className="col-8 d-flex">
                                   <input
-                                    id="ewaybill" placeholder="0"
+                                    name="l_r_gc_note"
+                                    value={formData.l_r_gc_note}
+                                    onChange={handleChange}
                                     className="form-control"
-                                   />
+                                  />
                                 </div>
                               </div>
-
                               <div className="row mb-2">
                                 <div className="col-4">
-                                  <label htmlFor="delivey"> Destination Code:</label>
+                                  <label>Place Supply:</label>
                                 </div>
-                                <div className="col-8 d-flex">
-                                   <input type="text" className="form-control"/>
+                                <div className="col-8">
+                                  <input
+                                    name="place_of_supply"
+                                    value={formData.place_of_supply}
+                                    onChange={handleChange}
+                                    className="form-control"
+                                  />
                                 </div>
                               </div>
-
                               <div className="row mb-2">
                                 <div className="col-4">
-                                  <label htmlFor="dcno">D.C. Date:</label>
+                                  <label>Dest. Code:</label>
                                 </div>
-                                <div className="col-8 d-flex">
-                                    <input type="date" id="dcno" className="form-control" />
+                                <div className="col-8">
+                                  <input
+                                    name="destenation_code"
+                                    value={formData.destenation_code}
+                                    onChange={handleChange}
+                                    className="form-control"
+                                  />
+                                </div>
+                              </div>
+                              <div className="row mb-2">
+                                <div className="col-4">
+                                  <label>D.C. NO:</label>
+                                </div>
+                                <div className="col-8">
+                                  <input
+                                    name="d_c_no"
+                                    value={formData.d_c_no}
+                                    onChange={handleChange}
+                                    className="form-control"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="table-container border p-2">
+                            {/* Row 1 */}
+                            <div className="row align-items-center mb-2">
+                              <div className="col-md-3 d-flex justify-content-between">
+                                <label>Base Value</label>
+                                <input
+                                  className="form-control form-control-sm w-50"
+                                  placeholder="0"
+                                />
+                              </div>
+
+                              <div className="col-md-3 d-flex justify-content-between">
+                                <label>Assessable Value</label>
+                                <input
+                                  className="form-control form-control-sm w-50"
+                                  placeholder="0"
+                                />
+                              </div>
+
+                              <div className="col-md-3">
+                                <div className="d-flex align-items-center gap-1">
+                                  <label className="me-auto">Pack & Fwrd</label>
+                                  <input
+                                    className="form-control form-control-sm w-25"
+                                    placeholder="%"
+                                  />
+                                  <input
+                                    className="form-control form-control-sm w-50"
+                                    placeholder="0"
+                                  />
                                 </div>
                               </div>
 
+                              <div className="col-md-3">
+                                <strong>Total Amortisation : 0</strong>
+                              </div>
                             </div>
 
+                            {/* Row 2 */}
+                            <div className="row align-items-center mb-2">
+                              <div className="col-md-3 d-flex justify-content-between">
+                                <label>Disc Amt</label>
+                                <input
+                                  className="form-control form-control-sm w-50"
+                                  placeholder="0"
+                                />
+                              </div>
+
+                              <div className="col-md-3 d-flex justify-content-between">
+                                <label>CGST 00%</label>
+                                <input
+                                  className="form-control form-control-sm w-50"
+                                  placeholder="0"
+                                />
+                              </div>
+
+                              <div className="col-md-3">
+                                <div className="d-flex align-items-center gap-1">
+                                  <label className="me-auto">
+                                    Transport Crg
+                                  </label>
+                                  <input
+                                    className="form-control form-control-sm w-25"
+                                    placeholder="%"
+                                  />
+                                  <input
+                                    className="form-control form-control-sm w-50"
+                                    placeholder="0"
+                                  />
+                                </div>
+                              </div>
+
+                              <div className="col-md-3">
+                                <label>CGST : 0</label>
+                              </div>
+                            </div>
+
+                            {/* Row 3 */}
+                            <div className="row align-items-center mb-2">
+                              <div className="col-md-3 d-flex justify-content-between">
+                                <label>Rev. Base Crg</label>
+                                <select className="form-select form-select-sm w-50">
+                                  <option>NO</option>
+                                  <option>YES</option>
+                                </select>
+                              </div>
+
+                              <div className="col-md-3 d-flex justify-content-between">
+                                <label>SGST 00%</label>
+                                <input
+                                  className="form-control form-control-sm w-50"
+                                  placeholder="0"
+                                />
+                              </div>
+
+                              <div className="col-md-3">
+                                <div className="d-flex align-items-center gap-1">
+                                  <label className="me-auto">Freight Crg</label>
+                                  <input
+                                    className="form-control form-control-sm w-25"
+                                    placeholder="%"
+                                  />
+                                  <input
+                                    className="form-control form-control-sm w-50"
+                                    placeholder="0"
+                                  />
+                                </div>
+                              </div>
+
+                              <div className="col-md-3">
+                                <label>SGST : 0</label>
+                              </div>
+                            </div>
+
+                            {/* Row 4 */}
+                            <div className="row align-items-center mb-2">
+                              <div className="col-md-3 d-flex justify-content-between">
+                                <label>Rev Crg Amt</label>
+                                <input
+                                  className="form-control form-control-sm w-50"
+                                  placeholder="0"
+                                />
+                              </div>
+
+                              <div className="col-md-3 d-flex justify-content-between">
+                                <label>IGST 00%</label>
+                                <input
+                                  className="form-control form-control-sm w-50"
+                                  placeholder="0"
+                                />
+                              </div>
+
+                              <div className="col-md-3">
+                                <div className="d-flex align-items-center gap-1">
+                                  <label className="me-auto">Other Crg</label>
+                                  <input
+                                    className="form-control form-control-sm w-25"
+                                    placeholder="%"
+                                  />
+                                  <input
+                                    className="form-control form-control-sm w-50"
+                                    placeholder="0"
+                                  />
+                                </div>
+                              </div>
+
+                              <div className="col-md-3">
+                                <label>IGST : 0</label>
+                              </div>
+                            </div>
+
+                            {/* Row 5 */}
+                            <div className="row align-items-center">
+                              <div className="col-md-3 d-flex justify-content-between">
+                                <label>TCS</label>
+                                <input
+                                  className="form-control form-control-sm w-50"
+                                  placeholder="0"
+                                />
+                              </div>
+
+                              <div className="col-md-3 d-flex justify-content-between">
+                                <label>UTGST 00%</label>
+                                <input
+                                  className="form-control form-control-sm w-50"
+                                  placeholder="0"
+                                />
+                              </div>
+
+                              <div className="col-md-3 d-flex justify-content-between">
+                                <label>Grand Total</label>
+                                <input
+                                  className="form-control form-control-sm w-50"
+                                  placeholder="0"
+                                />
+                              </div>
+
+                              <div className="col-md-3">
+                                <label>For E-Inv: Ser.Inv. / Inv.Type</label>
+                              </div>
+                            </div>
                           </div>
-
-                          <div className="table-container">
-                    <div className="row">
-
-                         <div className="col-md-3">
-                            <div className="row">
-                                <div className="col-md-8">
-                                   <label>Base Value</label>
-                                </div>
-                                <div className="col-md-4">
-                                    <input type="text" placeholder="0"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-3">
-                            <div className="row">
-                                <div className="col-md-8">
-                                   <label>Assessble Value</label>
-                                </div>
-                                <div className="col-md-4">
-                                    <input type="text" placeholder="0"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-3">
-                            <div className="row">
-                                <div className="col-md-8">
-                                   <label className="d-flex">Pack&Fwrd <input style={{width:"40px"}} type="text" className="w-5" placeholder="0"/>%</label>  
-                                </div>
-                                <div className="col-md-4">
-                                    <input type="text" placeholder="0"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-3">
-                            <div className="row">
-                                <div className="col-md-12">
-                                   <label>Total Amortisation : 0</label>
-                                </div>
-                            </div>
                         </div>
 
-                    </div>
-                    <div className="row">
-
-                         <div className="col-md-3">
-                            <div className="row">
-                                <div className="col-md-8">
-                                   <label>Disc Amt:</label>
-                                </div>
-                                <div className="col-md-4">
-                                    <input type="text" placeholder="0"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-3">
-                            <div className="row">
-                                <div className="col-md-8">
-                                   <label>CGST : 00.00%</label>
-                                </div>
-                                <div className="col-md-4">
-                                    <input type="text" placeholder="0"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-3">
-                            <div className="row">
-                                <div className="col-md-8">
-                                   <label className="d-flex">Transport Crg. <input style={{width:"40px"}} type="text" className="w-5" placeholder="0"/>%</label>
-                                </div>
-                                <div className="col-md-4">
-                                    <input type="text" placeholder="0"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-3">
-                            <div className="row">
-                                <div className="col-md-12">
-                                   <label>CGST : 0</label>
-                                </div>  
-                            </div>
-                        </div>
-
-                    </div>
-                    <div className="row">
-
-                         <div className="col-md-3">
-                            <div className="row">
-                                <div className="col-md-8">
-                                   <label>Rev. Base Crg.</label>
-                                </div>
-                                <div className="col-md-4">
-                                   <select name="" id="">
-                                     <option value="">NO</option>
-                                   </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-3">
-                            <div className="row">
-                                <div className="col-md-8">
-                                   <label>SGST : 00.00%</label>
-                                </div>
-                                <div className="col-md-4">
-                                    <input type="text" placeholder="0"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-3">
-                            <div className="row">
-                                <div className="col-md-8">
-                                   <label className="d-flex">Freight Crg. <input style={{width:"40px"}} type="text" className="w-5" placeholder="0"/>% </label>
-                                </div>
-                                <div className="col-md-4">
-                                    <input type="text" placeholder="0"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-3">
-                            <div className="row">
-                                <div className="col-md-12">
-                                   <label>SGST : 0</label>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div className="row">
-
-                         <div className="col-md-3">
-                            <div className="row">
-                                <div className="col-md-8">
-                                   <label>Rev Crg Amt</label>
-                                </div>
-                                <div className="col-md-4">
-                                    <input type="text" placeholder="0"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-3">
-                            <div className="row">
-                                <div className="col-md-8">
-                                   <label>IGST : 00.00%</label>
-                                </div>
-                                <div className="col-md-4">
-                                    <input type="text" placeholder="0"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-3">
-                            <div className="row">
-                                <div className="col-md-8">
-                                <label className="d-flex">Other Crg. <input style={{width:"40px"}} type="text" className="w-5" placeholder="0"/>% </label>
-                                </div>
-                                <div className="col-md-4">
-                                    <input type="text" placeholder="0"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-3">
-                            <div className="row">
-                                <div className="col-md-12">
-                                   <label>IGST : 0</label>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div className="row">
-
-                         <div className="col-md-3">
-                            <div className="row">
-                                <div className="col-md-8">
-                                   <label>TCS</label>
-                                </div>
-                                <div className="col-md-4">
-                                    <input type="text" placeholder="0"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-3">
-                            <div className="row">
-                                <div className="col-md-8">
-                                   <label>UTGST : 00.00%</label>
-                                </div>
-                                <div className="col-md-4">
-                                    <input type="text" placeholder="0"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-3">
-                            <div className="row">
-                                <div className="col-md-8">
-                                   <label>Grand Total</label>
-                                </div>
-                                <div className="col-md-4">
-                                    <input type="text" placeholder="0"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-3">
-                            <div className="row">
-                                <div className="col-md-12">
-                                   <label>For E-Inv: Ser.inv.  .  . Inv.Type:</label>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                         </div>
-
-                          <div className="row">
-                            <div className="col-md-2">
-                                <button className="btn btn-primary"> Generete Invoice </button>
-                            </div>
-                            <div className="col-md-3 d-flex align-items-center">
-      <input
-        type="checkbox"
-        id="printRate"
-        checked={isChecked}
-        onChange={handleCheckboxChange}
-      />
-      <label htmlFor="printRate" className="ms-2">
-        PrintRate
-      </label>
-    </div>
+                        <div className="row mt-2">
+                          <div className="col-md-2">
+                            <button
+                              className="btn btn-primary w-100"
+                              onClick={handleGenerateInvoice}
+                            >
+                              Generate Invoice
+                            </button>
                           </div>
-
+                          <div className="col-md-3 d-flex align-items-center">
+                            <input
+                              type="checkbox"
+                              id="printRate"
+                              checked={isChecked}
+                              onChange={handleCheckboxChange}
+                            />
+                            <label htmlFor="printRate" className="ms-2">
+                              PrintRate
+                            </label>
+                          </div>
                         </div>
                       </div>
-
                     </div>
                   </div>
-
-                       <div className="table-responsive">
-                                <table className="table table-bordered">
-                                <thead>
-                                    <tr>
-                                    <th>Sr.</th>
-                                    <th>PO No | Date</th>
-                                    <th>Stock</th>
-                                    <th>Description</th>
-                                    <th>Rate</th>
-                                    <th>PO Qty</th>
-                                    <th>Bal.Qty</th>
-                                    <th>Inv.Qty</th>
-                                    <th>Pkg Qty</th>
-                                    <th>Type Of Packing</th>
-                                    <th>Del</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Pr No:</td>
-                                        <td>Line No:</td>
-                                        <td><textarea name="" id=""></textarea> <br /> <span>HSN Code :</span> </td>
-                                        <td className="text-start"><input type="text" className="" /> <br />
-                                                Disc:  <br />  Pkg Charges: <br />
-                                                Trans Charges: <br /> <span style={{color:"blue"}}>Rate Type: </span>
-                                                <br /> Amort Rate :
-                                        </td>
-                                        <td></td>
-                                        <td></td>
-                                        <td><input type="text" className="w-50"/> <br />
-                                            Per Pcs Wt: <br />
-                                            <input type="text" className="w-50" placeholder="Weight" /><br />
-                                            <span style={{color:"blue"}}>Per Unit: </span>
-                                        </td>
-                                        <td><input type="text" className="w-50"/></td>
-                                        <td><textarea name="" id=""></textarea></td>
-                                        <td><span style={{border:"1px solid black"}}>X</span></td>
-                                    </tr>
-                                </tbody>
-                                </table>
-                      </div>
-
                 </div>
               </main>
             </div>
@@ -833,4 +1167,4 @@ const NewInvoice = () => {
   );
 };
 
-export default NewInvoice
+export default NewInvoice;

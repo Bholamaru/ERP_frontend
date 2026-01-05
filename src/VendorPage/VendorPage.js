@@ -16,14 +16,16 @@ import "react-toastify/dist/ReactToastify.css";
 const VendorPage = () => {
   const [sideNavOpen, setSideNavOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("general");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [formData, setFormData] = useState({
     company_name: "",
     short_name: "",
-    email: "",
+    username:"",
     password: "",
-    password2:"",
+    password2: "",
     city: "",
-    country:"India",
+    country: "India",
     address: "",
     website: "",
     contact_no: "",
@@ -31,7 +33,7 @@ const VendorPage = () => {
     director_name: "",
     pin_code: "",
     state: "",
-    state_no_numeric: "",  
+    state_no_numeric: "",
     VAT_TIN: "",
     CST_TIN: "",
     C_Excise_Range: "",
@@ -44,7 +46,7 @@ const VendorPage = () => {
     Export_House_No: "",
     Udyog_Aadhar_No: "",
     Vat_Tin_Date: "",
-    Cst_Tin_Date:"",
+    Cst_Tin_Date: "",
     Subject_To: "",
     Division: "",
     GST_No: "",
@@ -59,48 +61,23 @@ const VendorPage = () => {
     Tuv_logo: null,
   });
 
-  console.log(formData, "formmdata");
-  const toggleSideNav = () => {
-    setSideNavOpen(!sideNavOpen);
-  };
+  const toggleSideNav = () => setSideNavOpen(!sideNavOpen);
 
   useEffect(() => {
-    if (sideNavOpen) {
-      document.body.classList.add("side-nav-open");
-    } else {
-      document.body.classList.remove("side-nav-open");
-    }
+    document.body.classList.toggle("side-nav-open", sideNavOpen);
   }, [sideNavOpen]);
 
   const handleFormDataChange = (newData) => {
-    setFormData(newData);
+    setFormData((prev) => ({ ...prev, ...newData }));
   };
-
-  const handleNextButtonClick = () => {
-    console.log("Next button clicked");
-    console.log("Active tab before update:", activeTab);
-    setActiveTab("data2");
-    console.log("Active tab after update:", "data2");
-  };
-  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
-  const [errors, setErrors] = useState({});
-  const validate = () => {
-    const newErrors = {};
-    Object.keys(formData).forEach((key) => {
-      if (!formData[key]) {
-        newErrors[key] = "This field is required";
-      }
-    });
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+
+  const handleNextButtonClick = () => {
+    setActiveTab("data2");
   };
 
   const handleNextButtonClick1 = () => {
@@ -108,41 +85,56 @@ const VendorPage = () => {
   };
 
   const handleLogoSubmit = async () => {
-    if (!validate()) {
-      return; // Stop submission if validation fails
+    if (formData.password !== formData.password2) {
+      toast.error("Passwords do not match");
+      return;
     }
+
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      toast.error("Authentication token missing. Please login again.");
+      return;
+    }
+
+    setIsSubmitting(true);
 
     const formDataToSend = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
-      if (value) {
+      if (value !== null && value !== "") {
         formDataToSend.append(key, value);
       }
     });
 
-    // Debugging: log formData contents
-    for (let pair of formDataToSend.entries()) {
-      console.log(`${pair[0]}: ${pair[1]}`);
-    }
-
     try {
       const response = await axios.post(
-        "api/vendor/register/",
+        "https://erp-render.onrender.com/vendor/register/",
         formDataToSend,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
           },
         }
       );
-      console.log("API response:", response.data);
-      toast.success("Data saved successfully!");
+
+      toast.success("Vendor created successfully");
+      console.log("API Response:", response.data);
     } catch (error) {
-      console.error("API error:", error.response?.data || error.message);
-      toast.error("Failed to save data. Please try again.");
+      console.error("Vendor create error:", error);
+
+      if (error.response?.data) {
+        Object.entries(error.response.data).forEach(([key, value]) => {
+          toast.error(`${key}: ${value}`);
+        });
+      } else {
+        toast.error("Failed to create vendor");
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
+
     <>
       <div className="Vendor">
         <div className="container-fluid">
@@ -154,16 +146,13 @@ const VendorPage = () => {
                   sideNavOpen={sideNavOpen}
                   toggleSideNav={toggleSideNav}
                 />
-                <main
-                  className={`main-content ${sideNavOpen ? "shifted" : ""}`}
-                >
+                <main className={`main-content ${sideNavOpen ? "shifted" : ""}`}>
                   <div className="Vendorpage1">
                     <div className="container-fluid">
-                    <div className="Vender-header mb-4 text-start">
-                    <div className="row align-items-center">
-                     
-                      <div className="col-md-8 text-start">
-                      <button className="btn" type="button">
+                      <div className="Vender-header mb-4 text-start">
+                        <div className="row align-items-center">
+                          <div className="col-md-8 text-start">
+                            <button className="btn" type="button">
                               Company Setup
                             </button>
                             <button className="btn" type="button">
@@ -172,29 +161,20 @@ const VendorPage = () => {
                             <button className="btn" type="button">
                               On D1 12/07/2022 2:57 PM
                             </button>
-                      </div>
-                     
-                      <div className="col-md-4 col-12 text-end">
+                          </div>
+                          <div className="col-md-4 col-12 text-end">
                             <button className="btn">General Setting</button>
                           </div>
-                     
-                    </div>
-                  </div>
-                  
+                        </div>
+                      </div>
                     </div>
                     <div className="VendorPageMain">
                       <div className="container-fluid text-start" id="shivi">
                         <div className="row">
-                          <ul
-                            className="nav nav-pills mb-3"
-                            id="pills-tab"
-                            role="tablist"
-                          >
+                          <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist">
                             <li className="nav-item" role="presentation">
                               <button
-                                className={`nav-link ${
-                                  activeTab === "general" ? "active" : ""
-                                }`}
+                                className={`nav-link ${activeTab === "general" ? "active" : ""}`}
                                 id="pills-general-tab"
                                 data-bs-toggle="pill"
                                 data-bs-target="#pills-general"
@@ -209,9 +189,7 @@ const VendorPage = () => {
                             </li>
                             <li className="nav-item" role="presentation">
                               <button
-                                className={`nav-link ${
-                                  activeTab === "data2" ? "active" : ""
-                                }`}
+                                className={`nav-link ${activeTab === "data2" ? "active" : ""}`}
                                 id="pills-data2-tab"
                                 data-bs-toggle="pill"
                                 data-bs-target="#pills-data2"
@@ -226,9 +204,7 @@ const VendorPage = () => {
                             </li>
                             <li className="nav-item" role="presentation">
                               <button
-                                className={`nav-link ${
-                                  activeTab === "logoImage" ? "active" : ""
-                                }`}
+                                className={`nav-link ${activeTab === "logoImage" ? "active" : ""}`}
                                 id="pills-logoImage-tab"
                                 data-bs-toggle="pill"
                                 data-bs-target="#pills-logoImage"
@@ -243,9 +219,7 @@ const VendorPage = () => {
                             </li>
                             <li className="nav-item" role="presentation">
                               <button
-                                className={`nav-link ${
-                                  activeTab === "eInvoice" ? "active" : ""
-                                }`}
+                                className={`nav-link ${activeTab === "eInvoice" ? "active" : ""}`}
                                 id="pills-Invoice-tab"
                                 data-bs-toggle="pill"
                                 data-bs-target="#pills-Invoice"
@@ -261,9 +235,7 @@ const VendorPage = () => {
                           </ul>
                           <div className="tab-content" id="pills-tabContent">
                             <div
-                              className={`tab-pane fade ${
-                                activeTab === "general" ? "show active" : ""
-                              }`}
+                              className={`tab-pane fade ${activeTab === "general" ? "show active" : ""}`}
                               id="pills-general"
                               role="tabpanel"
                               aria-labelledby="pills-general-tab"
@@ -272,27 +244,22 @@ const VendorPage = () => {
                                 formData={formData}
                                 onFormDataChange={handleFormDataChange}
                                 onNextButtonClick={handleNextButtonClick}
-                                errors={errors}
                               />
                             </div>
                             <div
-                               className={`tab-pane fade ${activeTab === "data2" ? "show active" : ""}`}
-                               id="pills-data2"
-                               role="tabpanel"
-                               aria-labelledby="pills-data2-tab"
+                              className={`tab-pane fade ${activeTab === "data2" ? "show active" : ""}`}
+                              id="pills-data2"
+                              role="tabpanel"
+                              aria-labelledby="pills-data2-tab"
                             >
                               <Data2
                                 formData={formData}
                                 handleChange={handleChange}
-                                handleNextButtonClick1={() =>
-                                  handleNextButtonClick1()
-                                }
+                                handleNextButtonClick1={handleNextButtonClick1}
                               />
                             </div>
                             <div
-                              className={`tab-pane fade ${
-                                activeTab === "logoImage" ? "show active" : ""
-                              }`}
+                              className={`tab-pane fade ${activeTab === "logoImage" ? "show active" : ""}`}
                               id="pills-logoImage"
                               role="tabpanel"
                               aria-labelledby="pills-logoImage-tab"
@@ -301,26 +268,24 @@ const VendorPage = () => {
                                 formData={formData}
                                 onFormDataChange={handleFormDataChange}
                                 onSubmit={handleLogoSubmit}
+                                isSubmitting={isSubmitting}
                               />
                             </div>
                             <div
-                              className={`tab-pane fade ${
-                                activeTab === "Invoice" ? "show active" : ""
-                              }`}
+                              className={`tab-pane fade ${activeTab === "eInvoice" ? "show active" : ""}`}
                               id="pills-Invoice"
                               role="tabpanel"
                               aria-labelledby="pills-Invoice-tab"
                             >
-                              {/* invoice */}
                               <Invoice />
-                            </div>{" "}
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </main>
-                <ToastContainer /> {/* Add ToastContainer here */}
+                <ToastContainer position="top-right" autoClose={5000} />
               </div>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://127.0.0.1:8000/Production/";
+const BASE_URL = "https://erp-render.onrender.com/Production/";
 // const BASE_URL = "api/Production/";
 
 export const createWorkOrder = async (data) => {

@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import NavBar from "../../NavBar/NavBar.js";
 import SideNav from "../../SideNav/SideNav.js";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import "./PurchaseGrn.css";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -13,10 +13,15 @@ import {
   postPurchaseGRN,
   getPoDetailsByPoNo,
   fetchItemDetailsByPoAndItem,
+  getGrnById,
+  updatePurchaseGRN,
 } from "../../Service/StoreApi.jsx";
 import { FaEdit, FaTrash } from "react-icons/fa";
 
 const PurchaseGrn = () => {
+  const { id } = useParams();
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [sideNavOpen, setSideNavOpen] = useState(false);
 
   const toggleSideNav = () => {
@@ -46,6 +51,11 @@ const PurchaseGrn = () => {
       ...prevData,
       Series: selectedSeries,
     }));
+
+    // Don't auto-generate GRN number in edit mode
+    if (isEditMode) {
+      return;
+    }
 
     if (selectedSeries === "Purchase GRN") {
       const shortYear = localStorage.getItem("Shortyear");
@@ -80,11 +90,23 @@ const PurchaseGrn = () => {
     Supp_Cust: "",
     Select: "",
     ChallanNo: "",
+    ChallanDate: "",
     InvoiceNo: "",
+    InvoiceDate: "",
     EWayBillNo: "",
+    EWayBillDate: "",
     VehicleNo: "",
+    LrNo: "",
     Transporter: "",
     Plant: "Produlink",
+    GrnDate: "",
+    GrnTime: "",
+    PreparedBy: "",
+    CheckedBy: "",
+    TcNo: "",
+    TcDate: "",
+    Remark: "",
+    PaymentTermDay: "30",
   });
 
   useEffect(() => {
@@ -92,6 +114,69 @@ const PurchaseGrn = () => {
       .then((data) => setGeList(data))
       .catch((err) => console.error("Error loading GE list:", err));
   }, []);
+
+  // Fetch GRN data for editing
+  useEffect(() => {
+    if (id) {
+      setIsEditMode(true);
+      setLoading(true);
+      getGrnById(id)
+        .then((data) => {
+          // Populate form data
+          if (data) {
+            setFormData((prev) => ({
+              ...prev,
+              GrnNo: data.GrnNo || "",
+              Series: data.Series || "",
+              GE_No: data.GateEntryNo || "",
+              Supp_Cust: data.SelectSupplier || "",
+              Select: data.SelectPO || "",
+              ChallanNo: data.ChallanNo || "",
+              ChallanDate: data.ChallanDate || "",
+              InvoiceNo: data.InvoiceNo || "",
+              InvoiceDate: data.InvoiceDate || "",
+              EWayBillNo: data.EWayBillNo || "",
+              EWayBillDate: data.EWayBillDate || "",
+              VehicleNo: data.VehicleNo || "",
+              LrNo: data.LrNo || "",
+              Transporter: data.Transporter || "",
+              Plant: data.Plant || "Produlink",
+              GrnDate: data.GrnDate || "",
+              GrnTime: data.GrnTime || "",
+              PreparedBy: data.PreparedBy || "",
+              CheckedBy: data.CheckedBy || "",
+              TcNo: data.TcNo || "",
+              TcDate: data.TcDate || "",
+              Remark: data.Remark || "",
+              PaymentTermDay: data.PaymentTermDay || "30",
+            }));
+            setGrnNo(data.GrnNo || "");
+
+            // Populate item details if available
+            if (data.NewGrnList && data.NewGrnList.length > 0) {
+              setItemDetails(data.NewGrnList);
+            }
+
+            // Populate GST details if available
+            if (data.GrnGst && data.GrnGst.length > 0) {
+              setGstDetails(data.GrnGst);
+              setOriginalGstDetails(JSON.parse(JSON.stringify(data.GrnGst)));
+            }
+
+            // Populate RefTC details if available
+            if (data.RefTC && data.RefTC.length > 0) {
+              setRefTcDetails(data.RefTC);
+            }
+          }
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error("Error loading GRN data:", err);
+          toast.error("Failed to load GRN data for editing");
+          setLoading(false);
+        });
+    }
+  }, [id]);
 
   const handleGEChange = (e) => {
     const selectedGE = e.target.value;
@@ -315,8 +400,8 @@ const PurchaseGrn = () => {
         ItemDropdown: "Dropdown Option 1",
         HeatNo: "",
         GrnNo: formData.GrnNo,
-        GrnDate: new Date().toISOString().split("T")[0],
-        GrnTime: new Date().toTimeString().split(" ")[0],
+        GrnDate: formData.GrnDate || new Date().toISOString().split("T")[0],
+        GrnTime: formData.GrnTime || new Date().toTimeString().split(" ")[0],
         ChallanNo: formData.ChallanNo,
         ChallanDate: formData.ChallanDate || "",
         InvoiceNo: formData.InvoiceNo,
@@ -337,14 +422,53 @@ const PurchaseGrn = () => {
       };
 
       console.log("Payload to Submit:", payload); // Debug
-      const response = await postPurchaseGRN(payload);
-      console.log("Success Response:", response);
-      toast.success("GRN submitted successfully!");
+      
+      if (isEditMode && id) {
+        // Update existing GRN
+        const response = await updatePurchaseGRN(id, payload);
+        console.log("Update Response:", response);
+        toast.success("GRN updated successfully!");
+      } else {
+        // Create new GRN
+        const response = await postPurchaseGRN(payload);
+        console.log("Success Response:", response);
+        toast.success("GRN submitted successfully!");
+      }
     } catch (error) {
       console.error("GRN submission error:", error);
-      toast.error("Something went wrong. Check the console.");
+      toast.error(isEditMode ? "Failed to update GRN. Check the console." : "Something went wrong. Check the console.");
     }
   };
+
+  if (loading) {
+    return (
+      <div className="NewStorePurchasegrn">
+        <div className="container-fluid">
+          <div className="row">
+            <div className="col-md-12">
+              <div className="Main-NavBar">
+                <NavBar toggleSideNav={toggleSideNav} />
+                <SideNav
+                  sideNavOpen={sideNavOpen}
+                  toggleSideNav={toggleSideNav}
+                />
+                <main className={`main-content ${sideNavOpen ? "shifted" : ""}`}>
+                  <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "50vh" }}>
+                    <div className="text-center">
+                      <div className="spinner-border text-primary" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                      </div>
+                      <p className="mt-3">Loading GRN data...</p>
+                    </div>
+                  </div>
+                </main>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="NewStorePurchasegrn">
@@ -362,7 +486,7 @@ const PurchaseGrn = () => {
                 <div className="Purchasegrn-header mb-4 text-start mt-5">
                   <div className="row align-items-center">
                     <div className="col-md-1">
-                      <h5 className="header-title text-start">New GRN</h5>
+                      <h5 className="header-title text-start">{isEditMode ? "Edit GRN" : "New GRN"}</h5>
                     </div>
                     <div className="col-md-9 mt-4">
                       <div className="row mb-3">
@@ -427,7 +551,7 @@ const PurchaseGrn = () => {
                     </div>
                     <div className="col-md-2 text-end">
                       <Link className="btn" to="/Grn-List">
-                        GM List
+                        GRN List
                       </Link>
                     </div>
                   </div>

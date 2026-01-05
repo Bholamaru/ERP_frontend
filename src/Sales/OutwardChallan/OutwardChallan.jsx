@@ -121,7 +121,7 @@ const OutwardChallan = () => {
     }
     try {
       const res = await fetch(
-        `http://127.0.0.1:8000/Purchase/Fetch_Supplier_Code/?search=${query}`
+        `https://erp-render.onrender.com/Purchase/Fetch_Supplier_Code/?search=${query}`
       );
       const json = await res.json();
       setVenders(json);
@@ -143,15 +143,15 @@ const OutwardChallan = () => {
 
     const keyMapping = {
       Rework: {
-        url: "http://127.0.0.1:8000/Sales/genrate-rework-no",
+        url: "https://erp-render.onrender.com/Sales/genrate-rework-no",
         key: "Rework_no",
       },
       "57F5": {
-        url: "http://127.0.0.1:8000/Sales/generate-challan-no/",
+        url: "https://erp-render.onrender.com/Sales/generate-challan-no/",
         key: "Challan_no",
       },
       Maintenance: {
-        url: "http://127.0.0.1:8000/Sales/generate-challan-no/",
+        url: "https://erp-render.onrender.com/Sales/generate-challan-no/",
         key: "Challan_no",
       },
     };
@@ -187,7 +187,7 @@ const OutwardChallan = () => {
 
   const fetchTransportData = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8000/Sales/transportdetails/");
+      const res = await fetch("https://erp-render.onrender.com/Sales/transportdetails/");
       const resData = await res.json();
       setTransportData(resData);
     } catch (err) {
@@ -197,7 +197,7 @@ const OutwardChallan = () => {
 
   const fetchVehicleDetails = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8000/Sales/vehicaldetails/");
+      const res = await fetch("https://erp-render.onrender.com/Sales/vehicaldetails/");
       const resData = await res.json();
       setVehicleData(resData);
     } catch (err) {
@@ -211,15 +211,15 @@ const fetchItemsForVendor = async (vendorName) => {
     try {
       let url = "";
       if (selectedItemType === "FG") {
-        url = `http://127.0.0.1:8000/Purchase/jobworkpo/FG/items/?supplier=${encodeURIComponent(
+        url = `https://erp-render.onrender.com/Purchase/jobworkpo/FG/items/?supplier=${encodeURIComponent(
           vendorName
         )}`;
       } else if (selectedItemType === "RM") {
-        url = `http://127.0.0.1:8000/Sales/inwardchallanview/?supplier=${encodeURIComponent(
+        url = `https://erp-render.onrender.com/Sales/inwardchallanview/?supplier=${encodeURIComponent(
           vendorName
         )}`;
       } else {
-        url = `http://127.0.0.1:8000/Sales/inwardchallanview/?supplier=${encodeURIComponent(
+        url = `https://erp-render.onrender.com/Sales/inwardchallanview/?supplier=${encodeURIComponent(
           vendorName
         )}`;
       }
@@ -268,7 +268,7 @@ const fetchItemsForVendor = async (vendorName) => {
       
       // ✅ URL Change: Sales hatakar Store kiya hai
       const res = await fetch(
-        `http://127.0.0.1:8000/Store/heat-no/?item_code=${encodeURIComponent(itemCode)}`
+        `https://erp-render.onrender.com/Store/heat-no/?item_code=${encodeURIComponent(itemCode)}`
       );
       
       if (!res.ok) {
@@ -396,7 +396,7 @@ const fetchItemsForVendor = async (vendorName) => {
     };
     console.log("Payload to save:", payload);
     try {
-      const res = await fetch("http://127.0.0.1:8000/Sales/onward-challans/", {
+      const res = await fetch("https://erp-render.onrender.com/Sales/onward-challans/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -418,7 +418,7 @@ const fetchItemsForVendor = async (vendorName) => {
 
     try {
       // API Call
-      const url = `http://127.0.0.1:8000/Sales/heatno/fg/?item=${encodeURIComponent(
+      const url = `https://erp-render.onrender.com/Sales/heatno/fg/?item=${encodeURIComponent(
         itemCode
       )}`;
       console.log("Fetching URL:", url);
@@ -617,7 +617,7 @@ const fetchItemsForVendor = async (vendorName) => {
     try {
       const query = encodeURIComponent(currentItem.store);
       const response = await axios.get(
-        `http://127.0.0.1:8000/Store/heat-no/?selected_value=${query}`
+        `https://erp-render.onrender.com/Store/heat-no/?selected_value=${query}`
       );
       setHeatNoData(response.data.data || []);
       setShowHeatNoDropdown(true);

@@ -5,8 +5,8 @@ import NavBar from "../../NavBar/NavBar.js";
 import SideNav from "../../SideNav/SideNav.js";
 import { Link } from "react-router-dom";
 import "./GateInwardEntry.css";
-import { getgateInward } from "../../Service/StoreApi.jsx";
-import { FaEdit } from "react-icons/fa";
+import { getgateInward, deleteGateInward } from "../../Service/StoreApi.jsx";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 const GateInwardEntry = () => {
   const [sideNavOpen, setSideNavOpen] = useState(false);
@@ -31,9 +31,30 @@ const GateInwardEntry = () => {
     fetchGateInward();
   }, []);
 
-  const fetchGateInward = async () => {
+ const fetchGateInward = async () => {
     const data = await getgateInward();
     setGateInwardData(data.sort((a, b) => b.id - a.id));
+  };
+
+  // --- DELETE FUNCTIONALITY ---
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this entry?"
+    );
+    if (confirmDelete) {
+      try {
+        const response = await deleteGateInward(id);
+        if (response.status === 204 || response.status === 200) {
+          alert("Entry Deleted Successfully");
+          setGateInwardData(gateInwardData.filter((item) => item.id !== id));
+        } else {
+          alert("Failed to delete entry");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Something went wrong!");
+      }
+    }
   };
 
   return (
@@ -188,11 +209,10 @@ const GateInwardEntry = () => {
                               <th>Challan Date</th>
                               <th>Invoice No</th>
                               <th>Invoice Date</th>
-
                               <th>User</th>
-
                               <th>Edit</th>
                               <th>View</th>
+                              <th>Delete</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -236,13 +256,23 @@ const GateInwardEntry = () => {
 
                                   <td>
                                     <a
-                                      href={`http://127.0.0.1:8000${item.View}`}
+                                      href={`https://erp-render.onrender.com/${item.View}`}
                                       target="_blank"
                                       rel="noopener noreferrer"
                                       className="btn btn-sm btn-primary"
                                     >
                                       View
                                     </a>
+                                  </td>
+
+                                 
+                                  <td>
+                                    <button
+                                      className="btn btn-sm btn-danger"
+                                      onClick={() => handleDelete(item.id)}
+                                    >
+                                      <FaTrash />
+                                    </button>
                                   </td>
                                 </tr>
                               ))}

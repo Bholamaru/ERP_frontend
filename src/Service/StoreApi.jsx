@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 
-const Base_Url = "http://127.0.0.1:8000/Store/";
+const Base_Url = "https://erp-render.onrender.com/Store/";
 
 // const Base_Url = "api/Store/"; 
   
@@ -349,6 +349,39 @@ export const getGrnDetails = async () => {
   }
 };
 
+ export const updateGRN = async (id, grn) => {
+    const response = await fetch(`${Base_Url}api/grn-details/${id}/`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(grn),
+    });
+    return await response.json();
+  };
+
+// Get GRN by ID for editing
+export const getGrnById = async (id) => {
+  try {
+    const response = await axios.get(`${Base_Url}grn/edit/${id}/`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching GRN by ID:", error);
+    throw error;
+  }
+};
+
+// Update GRN by ID
+export const updatePurchaseGRN = async (id, payload) => {
+  try {
+    const response = await axios.put(`${Base_Url}grn/edit/${id}/`, payload);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating GRN:", error);
+    throw error;
+  }
+};
+
 
 // Get Next GRN No based on year
 export const getNextGrnNo = async (year) => {
@@ -443,7 +476,32 @@ export const getgateInward = async () => {
   }
 };
 
+// Add this to your StoreApi.jsx file
+export const deleteGateInward = async (id) => {
+  try {
+    // URL match karein apne backend url se
+    const response = await fetch(`https://erp-render.onrender.com/Store/gate/entry/delete/${id}/`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error("Error deleting entry:", error);
+  }
+};
 
 
 
+// Add this function
+export const deleteGrn = async (id) => {
+    try {
+        await axios.delete(`https://erp-render.onrender.com/Store/grn/delete/${id}/`);
+        return true;
+    } catch (error) {
+        console.error("Error deleting GRN:", error);
+        throw error;
+    }
+};
 

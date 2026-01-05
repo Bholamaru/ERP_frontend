@@ -1,6 +1,6 @@
 import React, { useState ,useEffect} from "react";
 import "./VendorPage.css";
-import axios from "axios";
+// import axios from "axios";
 import { fetchStateData ,fetchStateDetails,fetchCountries } from "../Service/Api";
 const General = ({ formData, onFormDataChange, onNextButtonClick }) => {
   const [errors, setErrors] = useState({});
@@ -9,97 +9,97 @@ const General = ({ formData, onFormDataChange, onNextButtonClick }) => {
   const [countries, setCountries] = useState([]);
 
 
-  const handleChange =  async(e) => {
-    const { name, value } = e.target;
-    onFormDataChange({ ...formData, [name]: value });
-    let error = "";
+const handleChange = (e) => {
+  const { name, value } = e.target;
 
-    // Real-time validation
-    switch (name) {
-      case "email":
-        if (!/\S+@\S+\.\S+/.test(value)) {
-          error = "Invalid email format";
-        } else {
-          try {
-            const response = await axios.post("api/vendor/register/", { email: value });
-            if (response.data.exists) {
-              error = "Email is already registered";
-            }
-          } catch (err) {
-            console.error("Error checking email", err);
-          }
-        }
-        break;
-     
-      case "contact_no":
-        if (!/^\+?\d{10,15}$/.test(value)) {
-          error = "Invalid contact number";
-        }
-        break;
-      case "website":
-        if (!/^https?:\/\/[^\s$.?#].[^\s]*$/.test(value)) {
-          error = "Invalid website URL";
-        }
-        break;
-     
+  onFormDataChange({ [name]: value });
 
-        case "password":
-          case "password2":
-            // Check if password and confirm password match
-            if (formData.password !== formData.password2) {
-              error = "Passwords do not match";
-            }
-            break;
-    
-          default:
-            error = !value ? "This field is required" : "";
-            break;
+  setErrors(prev => ({
+    ...prev,
+    [name]: "",   // 🔥 clear error immediately
+  }));
+
+  // field-specific validation
+  let error = "";
+
+  if (!value) {
+    error = "This field is required";
+  }
+
+  if (name === "email" && value) {
+    if (!/\S+@\S+\.\S+/.test(value)) {
+      error = "Invalid email format";
     }
+  }
 
-    setErrors((prevErrors) => ({ ...prevErrors, [name]: error }));
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-    const requiredFields = [
-      "company_name",
-      "short_name",
-      "website",
-      "email",
-      "password",
-      "password2",
-      "contact_no",
-      "footer_message",
-      "director_name",   
-      "address",
-      "pin_code",
-      "city",
-      "country",
-      "state",
-      "state_no_numeric",
-     
-    ];
-
-    requiredFields.forEach((field) => {
-      if (!formData[field]) {
-        newErrors[field] = "This field is required";
-      }
-    });
-
-
-
-  
-
-     if (formData.password !== formData.password2) {
-      newErrors.password2 = "Passwords do not match";
+  if (name === "contact_no" && value) {
+    if (!/^\+?\d{10,15}$/.test(value)) {
+      error = "Invalid contact number";
     }
+  }
 
-  
+  if (name === "website" && value) {
+    if (!/^https?:\/\/[^\s$.?#].[^\s]*$/.test(value)) {
+      error = "Invalid website URL";
+    }
+  }
+
+  if (name === "password" || name === "password2") {
+    const password = name === "password" ? value : formData.password;
+    const password2 = name === "password2" ? value : formData.password2;
+
+    if (password && password2 && password !== password2) {
+      error = "Passwords do not match";
+    }
+  }
+
+  if (error) {
+    setErrors(prev => ({ ...prev, [name]: error }));
+  }
+};
 
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+
+ const validateForm = () => {
+  const newErrors = {};
+  const requiredFields = [
+    "company_name",
+    "short_name",
+    "website",
+    "email",
+    "password",
+    "password2",
+    "contact_no",
+    "footer_message",
+    "director_name",
+    "address",
+    "pin_code",
+    "city",
+    "country",
+    "state",
+  ];
+
+  requiredFields.forEach((field) => {
+    if (!formData[field]?.toString().trim()) {
+      newErrors[field] = "This field is required";
+    }
+  });
+
+  if (
+    formData.password &&
+    formData.password2 &&
+    formData.password !== formData.password2
+  ) {
+    newErrors.password2 = "Passwords do not match";
+  }
+
+  console.log("VALIDATING FORM DATA:", formData);
+  console.log("VALIDATION ERRORS:", newErrors);
+
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
+
 
   const handleNextButtonClick = (e) => {
     e.preventDefault();
@@ -136,32 +136,34 @@ const General = ({ formData, onFormDataChange, onNextButtonClick }) => {
   }, []);
 
   
-  const handleStateChange = async (e) => {
-    const selectedState = e.target.value;
-    onFormDataChange({ ...formData, state: selectedState });
+const handleStateChange = async (e) => {
+  const selectedState = e.target.value;
 
-    try {
-      const stateData = await fetchStateDetails(selectedState);
-      
-      if (stateData) {
-        // Update state code and cities
-        onFormDataChange({
-          ...formData,
-          state: selectedState,
-          state_no_numeric: stateData.code,
-          city: "",  // Reset the city field
-        });
-        setCities(stateData.cities || []);
-      }
-    } catch (error) {
-      console.error(`Error fetching details for state ${selectedState}:`, error);
+  onFormDataChange({ state: selectedState });
+  setErrors(prev => ({ ...prev, state: "" }));
+
+  try {
+    const stateData = await fetchStateDetails(selectedState);
+    if (stateData) {
+      onFormDataChange({
+        state_no_numeric: stateData.code,
+        city: "",
+      });
+      setCities(stateData.cities || []);
     }
-  };
+  } catch (error) {
+    console.error(error);
+  }
+};
 
-  const handleCityChange = (e) => {
-    const selectedCity = e.target.value;
-    onFormDataChange({ ...formData, city: selectedCity });
-  };
+
+
+const handleCityChange = (e) => {
+  const { name, value } = e.target;
+  onFormDataChange({ [name]: value });
+  setErrors(prev => ({ ...prev, [name]: "" }));
+};
+
 
 
   // Country
@@ -234,6 +236,27 @@ const General = ({ formData, onFormDataChange, onNextButtonClick }) => {
                 </div>
                 <div className="row mb-3">
                   <label htmlFor="website" className="col-sm-4 col-form-label">
+                    username
+                  </label>
+                  <div className="col-sm-8">
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="username"
+                      name="username"
+                      value={formData.username}
+                      onChange={handleChange}
+                      placeholder="vendererp"
+                    />
+                    {errors.username && (
+                      <div className="text-danger">{errors.username}</div>
+                    )}
+                  </div>
+                </div>
+
+
+                <div className="row mb-3">
+                  <label htmlFor="website" className="col-sm-4 col-form-label">
                     Website
                   </label>
                   <div className="col-sm-8">
@@ -296,7 +319,7 @@ const General = ({ formData, onFormDataChange, onNextButtonClick }) => {
                   </label>
                   <div className="col-sm-8">
                     <input
-                      type="password2"
+                      type="password"
                       className="form-control"
                       id="password2"
                       name="password2"
