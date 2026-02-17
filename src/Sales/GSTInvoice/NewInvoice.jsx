@@ -15,10 +15,18 @@ const NewInvoice = () => {
   const [sideNavOpen, setSideNavOpen] = useState(false);
   const navigate = useNavigate();
   const [isChecked, setIsChecked] = useState(false);
-  const [items, setItems] = useState([]); // Dropdown list
+  const [items, setItems] = useState([]); // All items list
+  const [customerItems, setCustomerItems] = useState([]); // Items filtered by customer
   const [selectedItemObj, setSelectedItemObj] = useState(null); // Full object store
+  const [selectedItemCode, setSelectedItemCode] = useState(""); // Selected item code
   const [itemSearchTerm, setItemSearchTerm] = useState(""); // Input text for ITEMS
   const [tableData, setTableData] = useState([]); // Table rows
+  const [itemSearchLoading, setItemSearchLoading] = useState(false);
+  const [customers, setCustomers] = useState([]);
+  const [customerSearchTerm, setCustomerSearchTerm] = useState("");
+  const [poList, setPoList] = useState([]);
+  const [selectedPO, setSelectedPO] = useState("");
+  const [poSearchLoading, setPoSearchLoading] = useState(false);
 
   // --- NEW: Form State ---
  const [formData, setFormData] = useState({
@@ -54,7 +62,7 @@ const NewInvoice = () => {
 useEffect(() => {
   const fetchItems = async () => {
     try {
-      const res = await fetch("https://erp-render.onrender.com/Sales/newsalesorder/");
+      const res = await fetch("http://127.0.0.1:8000/Sales/newsalesorder/");
       const data = await res.json();
 
       // 🔥 FLATTEN sales order -> items
@@ -77,20 +85,41 @@ useEffect(() => {
   fetchItems();
 }, []);
 
+  // Fetch and filter items by customer
+  const filterItemsByCustomer = (customerName) => {
+    if (!customerName || !items.length) {
+      setCustomerItems([]);
+      return;
+    }
+    const filtered = items.filter(item => 
+      (item.customer || "").toLowerCase() === customerName.toLowerCase()
+    );
+    setCustomerItems(filtered);
+    console.log(`Found ${filtered.length} items for customer: ${customerName}`);
+  };
+
+  // Auto-filter items when customer changes
+  useEffect(() => {
+    const customerName = formData.bill_to || customerSearchTerm;
+    filterItemsByCustomer(customerName);
+    setSelectedItemCode(""); // Reset item selection
+  }, [formData.bill_to, customerSearchTerm, items]);
+
 
   // 2. Handle Item Selection and Fetch Stock
 const handleItemSelect = async (e) => {
   const itemCode = e.target.value;
-  setItemSearchTerm(itemCode);
+  setSelectedItemCode(itemCode);
 
-  // sales order item se match
-  const itemObj = items.find(i => i.item_code === itemCode);
+  // Find item from filtered customer items
+  const itemObj = customerItems.find(i => i.item_code === itemCode);
   if (!itemObj) return;
 
   try {
+    setItemSearchLoading(true);
     // 🔥 stock API same rahegi
     const res = await fetch(
-      `https://erp-render.onrender.com/Sales/wip/stock/get/?q=${itemCode}`
+      `http://127.0.0.1:8000/Sales/wip/stock/get/?q=${itemCode}`
     );
     const data = await res.json();
 
@@ -121,6 +150,8 @@ const handleItemSelect = async (e) => {
     });
 
     toast.warning("Stock data not available");
+  } finally {
+    setItemSearchLoading(false);
   }
 
 
@@ -137,7 +168,7 @@ const handleItemSelect = async (e) => {
       return;
     }
     setTableData((prev) => [...prev, selectedItemObj]);
-    setItemSearchTerm("");
+    setSelectedItemCode("");
     setSelectedItemObj(null);
     toast.success("Item added to table!");
   };
@@ -151,7 +182,7 @@ const handleItemSelect = async (e) => {
     if (selectedSeries === "GST Invoice") {
       try {
         const response = await fetch(
-          "https://erp-render.onrender.com/Sales/create/invoice_no"
+          "http://127.0.0.1:8000/Sales/create/invoice_no"
         );
         if (response.ok) {
           const data = await response.json();
@@ -186,7 +217,7 @@ const handleItemSelect = async (e) => {
     }
 
     try {
-      const response = await fetch("https://erp-render.onrender.com/Sales/invoice/", {
+      const response = await fetch("http://127.0.0.1:8000/Sales/invoice/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -234,9 +265,6 @@ const handleItemSelect = async (e) => {
     }
   }, [sideNavOpen]);
 
-  const [customers, setCustomers] = useState([]);
-  const [customerSearchTerm, setCustomerSearchTerm] = useState("");
-
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
@@ -246,7 +274,7 @@ const handleItemSelect = async (e) => {
         }
 
         const response = await fetch(
-          `https://erp-render.onrender.com/Sales/items/customers-list/?q=${customerSearchTerm}`
+          `http://127.0.0.1:8000/Sales/items/customers-list/?q=${customerSearchTerm}`
         );
 
         if (response.ok) {
@@ -261,6 +289,66 @@ const handleItemSelect = async (e) => {
     const delayDebounce = setTimeout(fetchCustomers, 300);
     return () => clearTimeout(delayDebounce);
   }, [customerSearchTerm]);
+
+  // Fetch PO data from API
+  const fetchPOList = async (customerName) => {
+    if (!customerName) {
+      setPoList([]);
+      return;
+    }
+
+    try {
+      setPoSearchLoading(true);
+      const response = await fetch(
+        `http://127.0.0.1:8000/Sales/customer/po/?customer=${encodeURIComponent(customerName)}`
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("PO List:", data);
+        // Handle both array and object responses
+        const poArray = Array.isArray(data) ? data : data.data || data.po || [];
+        setPoList(poArray);
+        if (poArray.length > 0) {
+          toast.success(`Found ${poArray.length} PO(s)`);
+        }
+      } else {
+        setPoList([]);
+      }
+    } catch (error) {
+      console.error("PO fetch error:", error);
+      setPoList([]);
+    } finally {
+      setPoSearchLoading(false);
+    }
+  };
+
+  // Auto-fetch POs when customer is selected
+  useEffect(() => {
+    const customerName = formData.bill_to || customerSearchTerm;
+    if (customerName && customerName.trim()) {
+      fetchPOList(customerName);
+    }
+  }, [formData.bill_to, customerSearchTerm]);
+
+  // Handle Select PO button click
+  const handleSelectPO = async () => {
+    const customerName = formData.bill_to || customerSearchTerm;
+    
+    if (!customerName) {
+      toast.error("Please select a customer first");
+      return;
+    }
+
+    fetchPOList(customerName);
+  };
+
+  // Handle Clear button for PO
+  const handleClearPO = () => {
+    setSelectedPO("");
+    setPoList([]);
+    toast.info("PO selection cleared");
+  };
 
 
   return (
@@ -434,15 +522,42 @@ const handleItemSelect = async (e) => {
                               <label htmlFor="prod-no">Select PO:</label>
                             </div>
                             <div className="col-3">
-                              <select name="" id="" className="form-control">
+                              <select 
+                                name="po" 
+                                id="po-select" 
+                                className="form-control"
+                                value={selectedPO}
+                                onChange={(e) => setSelectedPO(e.target.value)}
+                              >
                                 <option value="">Select an Option</option>
+                                {poList.map((po, index) => (
+                                  <option 
+                                    key={index} 
+                                    value={po.cust_po || po.po_no || po.id || po}
+                                  >
+                                    {po.cust_po || po.po_no || po.id} - {po.cust_date || po.po_date || ""}
+                                  </option>
+                                ))}
                               </select>
                             </div>
                             <div className="col-1 mt-2">
-                              <button className="btn">Clear</button>
+                              <button 
+                                type="button"
+                                className="btn"
+                                onClick={handleClearPO}
+                              >
+                                Clear
+                              </button>
                             </div>
                             <div className="col-2 mt-2">
-                              <button className="btn w-50"> View SO</button>
+                              <button 
+                                type="button"
+                                className="btn w-50"
+                                onClick={handleSelectPO}
+                                disabled={poSearchLoading}
+                              >
+                                {poSearchLoading ? "Loading..." : "View SO"}
+                              </button>
                             </div>
                           </div>
 
@@ -452,33 +567,35 @@ const handleItemSelect = async (e) => {
                               <label htmlFor="prod-no">Select Item :</label>
                             </div>
                             <div className="col-3">
-                            <input
-  type="text"
-  placeholder="Enter Item Code / Desc"
-  className="form-control"
-  list="item-list"
-  value={itemSearchTerm}
-  onInput={handleItemSelect}   // 🔥 onChange ❌ → onInput ✅
-/>
-
-<datalist id="item-list">
-  {items.map((item, index) => (
-    <option
-      key={index}
-      value={item.item_code}
-    >
-      {item.item_code} - {item.item_description}
-    </option>
-  ))}
-</datalist>
-
+                              <select 
+                                name="item" 
+                                id="item-select" 
+                                className="form-control"
+                                value={selectedItemCode}
+                                onChange={handleItemSelect}
+                                disabled={itemSearchLoading || customerItems.length === 0}
+                              >
+                                <option value="">
+                                  {customerItems.length === 0 ? 'Select customer first' : 'Select Item'}
+                                </option>
+                                {customerItems.map((item, index) => (
+                                  <option 
+                                    key={index} 
+                                    value={item.item_code}
+                                  >
+                                    {item.item_code} - {item.item_description}
+                                  </option>
+                                ))}
+                              </select>
                             </div>
                             <div className="col-2">
                               <button
+                                type="button"
                                 className="btn btn-primary w-50"
                                 onClick={handleAddItem}
+                                disabled={itemSearchLoading || !selectedItemObj}
                               >
-                                Add
+                                {itemSearchLoading ? "Loading..." : "Add"}
                               </button>
                             </div>
                           </div>
@@ -488,6 +605,7 @@ const handleItemSelect = async (e) => {
                               <thead>
                                 <tr>
                                   <th>Sr.</th>
+                                  <th>Item Code | Description</th>
                                   <th>PO No | Date</th>
                                   <th>Stock</th>
                                   <th>Description</th>
@@ -505,6 +623,10 @@ const handleItemSelect = async (e) => {
                                   tableData.map((row, index) => (
                                     <tr key={index}>
                                       <td>{index + 1}</td>
+                                      <td>
+                                        <strong>Code:</strong> {row.item_code} <br />
+                                        <strong>Desc:</strong> {row.item_description}
+                                      </td>
                                       <td>
                                         {row.part_no} <br /> Pr No. :{" "}
                                         {row.Part_Code}

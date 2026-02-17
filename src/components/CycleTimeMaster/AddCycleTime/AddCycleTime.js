@@ -1,6 +1,6 @@
 "use client"
 
-import { useState ,useEffect} from "react"
+import { useState, useEffect } from "react"
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap/dist/js/bootstrap.bundle.min"
 import "@fortawesome/fontawesome-free/css/all.min.css"
@@ -10,9 +10,10 @@ import "./AddCycleTime.css"
 import { useNavigate } from "react-router-dom"
 import { toast, ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
-import { saveCycleTimeData ,updateCycleTimeData,deleteCycleTimeData,fetchCycleTimeList} from "../../../Service/Api.jsx"
+import { saveCycleTimeData, updateCycleTimeData, deleteCycleTimeData, fetchCycleTimeList } from "../../../Service/Api.jsx"
 
 const AddCycleTime = () => {
+
   const [sideNavOpen, setSideNavOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -72,7 +73,7 @@ const AddCycleTime = () => {
     if (validateForm() && !isSubmitting) {
       try {
         setIsSubmitting(true);
-  
+
         if (editId) {
           await updateCycleTimeData(editId, formData);
           toast.success("Data updated successfully!");
@@ -80,7 +81,7 @@ const AddCycleTime = () => {
           await saveCycleTimeData(formData);
           toast.success("Data saved successfully!");
         }
-  
+
         console.log("formData", formData);
         handleClear(); // Reset form and editId
         loadCycleTime(); // Refresh table data
@@ -92,7 +93,7 @@ const AddCycleTime = () => {
       }
     }
   };
-  
+
 
   const handleClear = () => {
     setFormData({
@@ -111,43 +112,95 @@ const AddCycleTime = () => {
   }
 
   const [cycleTimeList, setCycleTimeList] = useState([]);
-const [editId, setEditId] = useState(null);
-const [currentPage, setCurrentPage] = useState(1);
-const itemsPerPage = 10;
+  const [editId, setEditId] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
-useEffect(() => {
-  loadCycleTime();
-}, []);
+  useEffect(() => {
+    loadCycleTime();
+  }, []);
 
-const loadCycleTime = async () => {
-  try {
-    const data = await fetchCycleTimeList();
-    setCycleTimeList(data.reverse());
-  } catch (err) {
-    console.error("Failed to fetch cycle time", err);
-  }
-};
-const handleEdit = (item) => {
-  setFormData(item);
-  setEditId(item.id);
-};
+  const loadCycleTime = async () => {
+    try {
+      const data = await fetchCycleTimeList();
+      setCycleTimeList(data.reverse());
+    } catch (err) {
+      console.error("Failed to fetch cycle time", err);
+    }
+  };
+  const handleEdit = (item) => {
+    setFormData(item);
+    setEditId(item.id);
+  };
 
-const handleDelete = async (id) => {
-  
+  const handleDelete = async (id) => {
+
     await deleteCycleTimeData(id);
     toast.success("Deleted successfully");
     loadCycleTime();
-  
-};
-const indexOfLastItem = currentPage * itemsPerPage;
-const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-const currentItems = cycleTimeList.slice(indexOfFirstItem, indexOfLastItem);
 
-const totalPages = Math.ceil(cycleTimeList.length / itemsPerPage);
+  };
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = cycleTimeList.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(cycleTimeList.length / itemsPerPage);
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const [selectedItem, setSelectedItem] = useState(null);
+
+
+  let searchTimeout = null;
+
+  const fetchItemByPartNo = (value) => {
+    clearTimeout(searchTimeout);
+
+    if (!value || value.length < 3) {
+      setSearchResults([]);
+      setShowDropdown(false);
+      return;
+    }
+
+    searchTimeout = setTimeout(async () => {
+      try {
+        const response = await fetch(
+          `http://127.0.0.1:8000/All_Masters/cycle/master/item/?part_no=${value}`
+        );
+
+        if (!response.ok) {
+          setSearchResults([]);
+          setShowDropdown(true);
+          return;
+        }
+
+        const data = await response.json();
+       
+        if (data && Array.isArray(data.operations)) {
+          setSearchResults(data.operations);
+          setShowDropdown(true);
+        } else {
+          setSearchResults([]);
+          setShowDropdown(true);
+        }
+
+      } catch (error) {
+        console.error("Search API error", error);
+        setSearchResults([]);
+        setShowDropdown(false);
+      }
+    }, 300);
+  };
+
+
+
+
 
 
   return (
-    <div className="AddCycletimecenter">
+    <div className="AddCycletime">
       <ToastContainer />
       <div className="container-fluid">
         <div className="row">
@@ -157,8 +210,8 @@ const totalPages = Math.ceil(cycleTimeList.length / itemsPerPage);
               <SideNav sideNavOpen={sideNavOpen} toggleSideNav={toggleSideNav} />
               <main className={`main-content ${sideNavOpen ? "shifted" : ""}`}>
                 <div className="AddCycletimermaster">
-                  <div className="AddCycletime">
-                    <div className="AddCycletime-header mb-4 text-start mt-5">
+                  <div className="">
+                    <div className="AddCycletime-header text-start">
                       <div className="row align-items-center">
                         <div className="col-md-5">
                           <h5 className="header-title">Cycle Time Master</h5>
@@ -167,14 +220,15 @@ const totalPages = Math.ceil(cycleTimeList.length / itemsPerPage);
                           <p style={{ color: "green" }}>**Note: Please Enter Time in Seconds</p>
                         </div>
                         <div className="col-md-3 text-md-end text-start mt-2 mt-md-0">
-                          <button className="btn me-2" onClick={handleAddNewCycleTime}>
+                          <button className="vndrbtn me-2" onClick={handleAddNewCycleTime}>
                             Cycle Time Master List
                           </button>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div className="AddCycletimeMain mt-5">
+
+                  <div className="AddCycletime-Main mt-2">
                     <div className="container-fluid">
                       <div className="row text-start centerselect">
                         <div className="col-md-1 col-sm-3 mb-3 mb-sm-0">
@@ -183,19 +237,61 @@ const totalPages = Math.ceil(cycleTimeList.length / itemsPerPage);
                           </label>
                         </div>
                         <div className="col-md-3 col-sm-9 mb-3 mb-sm-0">
-                          <input type="text" className="form-control" id="exampleFormControlInput1" placeholder="" />
+                          <input
+                            type="text"
+                            className="form-control"
+                            value={searchTerm}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              setSearchTerm(value);
+                              fetchItemByPartNo(value);
+                            }}
+                            placeholder="Search Item No"
+                          />
+
+                          {showDropdown && (
+                            <ul className="list-group position-absolute z-3">
+                              {searchResults.length > 0 ? (
+                                searchResults.map((op, index) => (
+                                  <li
+                                    key={index}
+                                    className="list-group-item list-group-item-action"
+                                    onClick={() => {
+                                      setFormData((prev) => ({
+                                        ...prev,
+                                        PartCode: op.part_code,
+                                        MachineType: op.operation,
+                                      }));
+                                      setShowDropdown(false);
+                                    }}
+                                    style={{ cursor: "pointer" }}
+                                  >
+                                    <strong>OP {op.op_no}</strong> | {op.part_code} <br />
+                                    <small className="text-muted">{op.operation}</small>
+                                  </li>
+                                ))
+                              ) : (
+                                <li className="list-group-item text-muted">
+                                  No operations found
+                                </li>
+                              )}
+                            </ul>
+                          )}
+
                         </div>
+
                         <div className="col-md-1 col-sm-12 text-sm-start text-md-start">
-                          <button className="btn mt-1">Search</button>
+                          <button className="vndrbtn mt-1">Search</button>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div className="AddCycleaside mt-5">
+
+                  <div className="AddCycletime-Main mt-2">
                     <div className="container-fluid">
                       <form onSubmit={handleSubmit}>
                         <div className="row text-start">
-                          <div className="col-md-1 col-sm-6 mb-3 mb-sm-0">
+                          <div className="col-md-2 col-sm-6 mb-3 mb-sm-0">
                             <div className="mb-3">
                               <label htmlFor="Plant" className="form-label">
                                 Plant
@@ -210,7 +306,7 @@ const totalPages = Math.ceil(cycleTimeList.length / itemsPerPage);
                               >
                                 <option value="">Select Plant</option>
                                 <option value="Produlink">Produlink</option>
-                                
+
                               </select>
                               {/* {errors.Plant && (
                                 <div className="text-danger">
@@ -219,7 +315,8 @@ const totalPages = Math.ceil(cycleTimeList.length / itemsPerPage);
                               )} */}
                             </div>
                           </div>
-                          <div className="col-md-1 col-sm-6 mb-3 mb-sm-0">
+
+                          <div className="col-md-2 col-sm-6 mb-3 mb-sm-0">
                             <div className="mb-3">
                               <label htmlFor="PartCode" className="form-label">
                                 Part Code
@@ -233,8 +330,14 @@ const totalPages = Math.ceil(cycleTimeList.length / itemsPerPage);
                                 onChange={handleChange}
                               >
                                 <option value="">Select Part Code</option>
-                                <option value="P001">P001</option>
-                                <option value="P002">P002</option>
+                                {Array.isArray(searchResults) &&
+                                  searchResults.map((item, index) => (
+                                    <option key={index} value={item.part_code}>
+                                      OP {item.op_no} - {item.part_code}
+                                    </option>
+                                  ))}
+
+
                               </select>
                               {/* {errors.PartCode && (
                                 <div className="text-danger">
@@ -243,7 +346,8 @@ const totalPages = Math.ceil(cycleTimeList.length / itemsPerPage);
                               )} */}
                             </div>
                           </div>
-                          <div className="col-md-1 col-sm-6 mb-3 mb-sm-0">
+
+                          <div className="col-md-2 col-sm-6 mb-3 mb-sm-0">
                             <div className="mb-3">
                               <label htmlFor="MachineType" className="form-label">
                                 Machine Type
@@ -257,12 +361,13 @@ const totalPages = Math.ceil(cycleTimeList.length / itemsPerPage);
                                 onChange={handleChange}
                               >
                                 <option value="">Select Machine Type</option>
-                                <option value="CENTERLESS GRINDING">CENTERLESS GRINDING</option>
-                                <option value="CNC">CNC</option>
-                                <option value="DRILLING">DRILLING</option>
-                                <option value="GRINDER">GRINDER</option>
-                                <option value="INDUCTION">INDUCTION</option>
-                                <option value="LATHE">LATHE</option>
+                                {Array.isArray(searchResults) &&
+                                  searchResults.map((item, index) => (
+                                    <option key={index} value={item.operation}>
+                                      {item.operation}
+                                    </option>
+                                  ))}
+
                               </select>
                               {/* {errors.MachineType && (
                                 <div className="text-danger">
@@ -271,7 +376,8 @@ const totalPages = Math.ceil(cycleTimeList.length / itemsPerPage);
                               )} */}
                             </div>
                           </div>
-                          <div className="col-md-1 col-sm-6 mb-3 mb-sm-0">
+
+                          <div className="col-md-2 col-sm-6 mb-3 mb-sm-0">
                             <div className="mb-3">
                               <label htmlFor="Machine" className="form-label">
                                 Machine
@@ -291,7 +397,7 @@ const totalPages = Math.ceil(cycleTimeList.length / itemsPerPage);
                               {errors.Machine && <div className="text-danger">{errors.Machine}</div>}
                             </div>
                           </div>
-                          <div className="col-md-1 col-sm-6 mb-3 mb-sm-0">
+                          <div className="col-md-2 col-sm-6 mb-3 mb-sm-0">
                             <div className="mb-3">
                               <label htmlFor="OPTime" className="form-label">
                                 Op Time<span className="text-danger">*</span>
@@ -323,7 +429,7 @@ const totalPages = Math.ceil(cycleTimeList.length / itemsPerPage);
                               {errors.Load_Unload_Time && <div className="text-danger">{errors.Load_Unload_Time}</div>}
                             </div>
                           </div>
-                          <div className="col-md-1 col-sm-6 mb-3 mb-sm-0">
+                          <div className="col-md-2 col-sm-6 mb-3 mb-sm-0">
                             <div className="mb-3">
                               <label htmlFor="MO_Time" className="form-label">
                                 Mo Time<span className="text-danger">*</span>
@@ -339,7 +445,7 @@ const totalPages = Math.ceil(cycleTimeList.length / itemsPerPage);
                               {errors.MO_Time && <div className="text-danger">{errors.MO_Time}</div>}
                             </div>
                           </div>
-                          <div className="col-md-1 col-sm-6 mb-3 mb-sm-0">
+                          <div className="col-md-2 col-sm-6 mb-3 mb-sm-0">
                             <div className="mb-3">
                               <label htmlFor="Total_Time" className="form-label">
                                 Total Time<span className="text-danger">*</span>
@@ -368,8 +474,8 @@ const totalPages = Math.ceil(cycleTimeList.length / itemsPerPage);
                                 className="form-check-input"
                                 id="Time_in_Minutes"
                                 name="Time_in_Minutes"
-                                // checked={formData.Time_in_Minutes}
-                                // onChange={handleChange}
+                              // checked={formData.Time_in_Minutes}
+                              // onChange={handleChange}
                               />
                               <label className="form-label" htmlFor="Time_in_Minutes">
                                 Time in Minutes
@@ -389,96 +495,100 @@ const totalPages = Math.ceil(cycleTimeList.length / itemsPerPage);
                               )} */}
                             </div>
                           </div>
-                          
-                            <div className="col-md-1 col-sm-6 mt-4">
-                              <button type="submit" className="btn me-2" disabled={isSubmitting}>
-                                {isSubmitting ? "Saving..." : "Add"}
-                              </button>
-                              <button type="button" className="btn" onClick={handleClear}>
-                                Clear
-                              </button>
-                            </div>
-                         
+
+                          <div className="col-md-2 col-sm-6 mt-4">
+                            <button type="submit" className="vndrbtn me-2" disabled={isSubmitting}>
+                              {isSubmitting ? "Saving..." : "Add"}
+                            </button>
+                            <button type="button" className="vndrbtn" onClick={handleClear}>
+                              Clear
+                            </button>
+                          </div>
+
                         </div>
                       </form>
                     </div>
                   </div>
-                  <div className="AddCycletable mt-5">
+
+                  <div className="AddCycletime-table mt-2">
                     <div className="container-fluid">
                       <div className="row text-start">
                         <div className="col-md-12">
-                        <table className="table table-bordered">
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Plant</th>
-      <th>Part Code</th>
-      <th>Machine Type</th>
-      <th>Machine</th>
-      <th>Op Time</th>
-      <th>Load/Unload</th>
-      <th>MO Time</th>
-      <th>Total</th>
-      <th>Time in Min</th>
-      <th>Edit</th>
-      <th>Delete</th>
-    </tr>
-  </thead>
-  <tbody>
-    {currentItems.length > 0 ? currentItems.map((item, index) => (
-      <tr key={item.id}>
-        <td>{indexOfFirstItem + index + 1}</td>
-        <td>{item.Plant}</td>
-        <td>{item.PartCode}</td>
-        <td>{item.MachineType}</td>
-        <td>{item.Machine}</td>
-        <td>{item.OPTime}</td>
-        <td>{item.Load_Unload_Time}</td>
-        <td>{item.MO_Time}</td>
-        <td>{item.Total_Time}</td>
-        <td>{item.Time_in_Minutes}</td>
-        <td><button type="btn" style={{"border":"none"}} onClick={() => handleEdit(item)}><i className="fas fa-edit"></i></button></td>
-        <td><button type="btn" style={{"border":"none"}} onClick={() => handleDelete(item.id)}><i className="fas fa-trash"></i></button></td>
-      </tr>
-    )) : (
-      <tr>
-        <td colSpan="12" className="text-center">No Data Found!</td>
-      </tr>
-    )}
-  </tbody>
-</table>
+                          <table className="table table-bordered">
+                            <thead>
+                              <tr>
+                                <th>#</th>
+                                <th>Plant</th>
+                                <th>Part Code</th>
+                                <th>Machine Type</th>
+                                <th>Machine</th>
+                                <th>Op Time</th>
+                                <th>Load/Unload</th>
+                                <th>MO Time</th>
+                                <th>Total</th>
+                                <th>Time in Min</th>
+                                <th>Edit</th>
+                                <th>Delete</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {currentItems.length > 0 ? currentItems.map((item, index) => (
+                                <tr key={item.id}>
+                                  <td>{indexOfFirstItem + index + 1}</td>
+                                  <td>{item.Plant}</td>
+                                  <td>{item.PartCode}</td>
+                                  <td>{item.MachineType}</td>
+                                  <td>{item.Machine}</td>
+                                  <td>{item.OPTime}</td>
+                                  <td>{item.Load_Unload_Time}</td>
+                                  <td>{item.MO_Time}</td>
+                                  <td>{item.Total_Time}</td>
+                                  <td>{item.Time_in_Minutes}</td>
+                                  <td><button type="btn" style={{ "border": "none" }} onClick={() => handleEdit(item)}><i className="fas fa-edit"></i></button></td>
+                                  <td><button type="btn" style={{ "border": "none" }} onClick={() => handleDelete(item.id)}><i className="fas fa-trash"></i></button></td>
+                                </tr>
+                              )) : (
+                                <tr>
+                                  <td colSpan="12" className="text-center">No Data Found!</td>
+                                </tr>
+                              )}
+                            </tbody>
+                          </table>
 
                         </div>
                       </div>
                     </div>
                   </div>
+
                   <div className="pagination mt-5 text-end">
-  <button
-    className="btn btn-light me-2"
-    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-    disabled={currentPage === 1}
-  >
-    Previous
-  </button>
 
-  {Array.from({ length: totalPages }, (_, i) => (
-    <button
-      key={i}
-      className={`btn me-1 ${currentPage === i + 1 ? "btn-dark" : "btn-light"}`}
-      onClick={() => setCurrentPage(i + 1)}
-    >
-      {i + 1}
-    </button>
-  ))}
+                    <button
+                      className="vndrbtn btn-light me-2"
+                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                      disabled={currentPage === 1}
+                    >
+                      Previous
+                    </button>
 
-  <button
-    className="btn btn-light ms-2"
-    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-    disabled={currentPage === totalPages}
-  >
-    Next
-  </button>
-</div>
+                    {Array.from({ length: totalPages }, (_, i) => (
+                      <button
+                        key={i}
+                        className={`vndrbtn me-1 ${currentPage === i + 1 ? "btn-dark" : "btn-light"}`}
+                        onClick={() => setCurrentPage(i + 1)}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+
+                    <button
+                      className="vndrbtn btn-light ms-2"
+                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                      disabled={currentPage === totalPages}
+                    >
+                      Next
+                    </button>
+
+                  </div>
 
                 </div>
               </main>

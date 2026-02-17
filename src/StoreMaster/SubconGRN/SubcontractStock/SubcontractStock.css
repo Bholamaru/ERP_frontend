@@ -174,4 +174,20 @@
 
 
 
+  .list-group {
+  max-height: 200px;
+  overflow-y: auto;
+  position: absolute;
+  z-index: 9999;
+  background: #fff;
+}
+
+.RMStock-main,
+.main-content,
+.container-fluid {
+  overflow: visible !important;
+}
+
+
+
   

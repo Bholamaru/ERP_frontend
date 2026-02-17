@@ -13,6 +13,8 @@ const NewSalesOrder = () => {
   const [sideNavOpen, setSideNavOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [customers, setCustomers] = useState([]);
+  const [soNoLoading, setSoNoLoading] = useState(false);
+  const [soNoError, setSoNoError] = useState(null);
 
   // New States for Items Integration
   const [itemsList, setItemsList] = useState([]); // API items
@@ -31,6 +33,10 @@ const NewSalesOrder = () => {
     sgst: "",
     utgst: "",
     item_wt: "",
+    hsn_code: null,
+    assessable_value: "0.0000",
+    subtotal: "0.00",
+    gr_total: "0.00",
   });
 
   // API  state
@@ -45,6 +51,7 @@ const NewSalesOrder = () => {
     pay_note: "",
     valid_up: "",
     so_date: "",
+    so_no: "",
     po_rec_date: "",
     incoterms: "",
     ship_to: "",
@@ -68,12 +75,12 @@ const NewSalesOrder = () => {
     const fetchData = async () => {
       try {
         const custRes = await fetch(
-          "https://erp-render.onrender.com/Sales/items/customers-list/"
+          "http://127.0.0.1:8000/Sales/items/customers-list/"
         );
         const custData = await custRes.json();
         setCustomers(Array.isArray(custData) ? custData : custData.data || []);
 
-        const itemRes = await fetch("https://erp-render.onrender.com/Sales/items-list/");
+        const itemRes = await fetch("http://127.0.0.1:8000/Sales/items-list/");
         const itemData = await itemRes.json();
         setItemsList(Array.isArray(itemData) ? itemData : itemData.data || []);
       } catch (error) {
@@ -81,6 +88,41 @@ const NewSalesOrder = () => {
       }
     };
     fetchData();
+  }, []);
+
+  // 2. Fetch SO No on component mount
+  useEffect(() => {
+    const fetchSoNo = async () => {
+      try {
+        setSoNoLoading(true);
+        setSoNoError(null);
+        const response = await fetch(
+          "http://127.0.0.1:8000/Sales/generate-so-no/"
+        );
+        if (response.ok) {
+          const data = await response.json();
+          console.log("SO No Response:", data);
+          // Handle different response formats
+          const soNo = data.so_no || data.SO_No || data.soNo || data.data?.so_no || "";
+          setFormData((prev) => ({
+            ...prev,
+            so_no: soNo,
+          }));
+          if (soNo) {
+            toast.success(`SO No: ${soNo} generated`);
+          }
+        } else {
+          setSoNoError("Failed to fetch SO No");
+        }
+      } catch (error) {
+        console.error("SO No fetch error:", error);
+        setSoNoError(error.message);
+        toast.error("Error fetching SO No");
+      } finally {
+        setSoNoLoading(false);
+      }
+    };
+    fetchSoNo();
   }, []);
 
   // Handle Customer Selection & Auto-fill Ship To
@@ -127,11 +169,11 @@ const NewSalesOrder = () => {
         qty: "",
         uom: item.Unit_Code || "NOS",
         hsn: item.HSN_SAC_Code || "",
-         cgst: item.tax_details?.CGST || "",
+        hsn_code: item.HSN_SAC_Code || null,
+        cgst: item.tax_details?.CGST || "",
         sgst: item.tax_details?.SGST || "",
         igst: item.tax_details?.IGST || "",
         utgst: item.tax_details?.UTGST || "",
-              
         item_wt: item.Gross_Weight || "",
       });
     }
@@ -175,6 +217,10 @@ const addItemToTable = () => {
     type: "",
     item_category: "",
     remark: "",
+    hsn_code: currentItem.hsn_code || null,
+    assessable_value: currentItem.assessable_value || "0.0000",
+    subtotal: currentItem.subtotal || "0.00",
+    gr_total: currentItem.gr_total || "0.00",
   };
 
   setOrderItems([...orderItems, newItem]);
@@ -194,6 +240,10 @@ const addItemToTable = () => {
     igst: "",
     utgst: "",
     item_wt: "",
+    hsn_code: null,
+    assessable_value: "0.0000",
+    subtotal: "0.00",
+    gr_total: "0.00",
   });
 };
 
@@ -231,13 +281,21 @@ const handleSaveOrder = async () => {
         type: item.type || "",
         item_category: item.item_category || "",
         remark: item.remark || "",
+        hsn_code: item.hsn_code || null,
+        assessable_value: item.assessable_value || "0.0000",
+        subtotal: item.subtotal || "0.00",
+        cgst: item.cgst || "0.00",
+        sgst: item.sgst || "0.00",
+        igst: item.igst || "0.00",
+        utgst: item.utgst || "0.00",
+        gr_total: item.gr_total || "0.00",
       }))
     };
 
     console.log("Sending Payload:", JSON.stringify(payload, null, 2));
 
     const res = await fetch(
-      "https://erp-render.onrender.com/Sales/newsalesorder/",
+      "http://127.0.0.1:8000/Sales/newsalesorder/",
       {
         method: "POST",
         headers: {
@@ -270,6 +328,7 @@ const handleSaveOrder = async () => {
         pay_note: "",
         valid_up: "",
         so_date: "",
+        so_no: "",
         po_rec_date: "",
         incoterms: "",
         ship_to: "",
@@ -931,6 +990,18 @@ const handleSaveOrder = async () => {
                                 <input type="date" className="form-control" name="so_date" value={formData.so_date} onChange={handleChange} />
                               </div>
                               <div className="col-md-4">
+                                <label>SO No:</label>
+                                <input 
+                                  type="text" 
+                                  className="form-control" 
+                                  value={formData.so_no} 
+                                  readOnly
+                                  disabled
+                                  placeholder="Auto-generated"
+                                />
+                                {soNoError && <small className="text-danger">{soNoError}</small>}
+                              </div>
+                              <div className="col-md-4">
                                 <label>CCN No:</label>
                                 <input
                                   type="text"
@@ -939,10 +1010,6 @@ const handleSaveOrder = async () => {
                                   onChange={handleChange}
                                   className="form-control"
                                 />
-                              </div>
-                              <div className="col-md-2">
-                                <label>Shift:</label>
-                                <input type="date" className="form-control" name="shift" value={formData.shift} onChange={handleChange} />
                               </div>
                             </div>
 

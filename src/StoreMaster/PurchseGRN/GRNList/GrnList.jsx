@@ -246,7 +246,7 @@ return (
                             <button className="btn">
                               {" "}
                               <a
-                                href={`https://erp-render.onrender.com/${item.PDF_Link}`}
+                                href={`http://127.0.0.1:8000/${item.PDF_Link}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                               >

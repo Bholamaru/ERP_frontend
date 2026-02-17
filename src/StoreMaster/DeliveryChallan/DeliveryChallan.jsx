@@ -21,7 +21,7 @@ const DeliveryChallan = () => {
   const [showSupplierList, setShowSupplierList] = useState(false);
   const [filteredSuppliers, setFilteredSuppliers] = useState([]);
   const [items, setItems] = useState([]);
-  const [filteredItems, setFilteredItems] = useState([]);
+  const [filteredItems,] = useState([]);
   const [showItemList, setShowItemList] = useState(false);
 
   function filterSuppiers(items, searchString) {
@@ -52,28 +52,23 @@ const DeliveryChallan = () => {
   }
 
   function filterItems(items, searchString) {
-    // split the input on whitespace, drop empty strings, lowercase
     const keywords = searchString
       .trim()
       .toLowerCase()
       .split(/\s+/)
       .filter(Boolean);
 
-    // if no keywords, hide list and return full list (or empty if you prefer)
     if (keywords.length === 0) {
       setShowItemList(false);
       return items;
     }
 
-    // filter
     const filtered = items.filter((item) => {
       const partNo = item.part_no.toLowerCase();
       const desc = item.Name_Description.toLowerCase();
-      // include this item if ANY keyword matches part_no OR description
       return keywords.some((kw) => partNo.includes(kw) || desc.includes(kw));
     });
 
-    // hide when there’s nothing to show
     setShowItemList(filtered.length > 0);
 
     return filtered;
@@ -82,7 +77,7 @@ const DeliveryChallan = () => {
   const fetchSupplierData = async () => {
     try {
       const res = await fetch(
-        "https://erp-render.onrender.com/Purchase/Fetch_Supplier_Code/"
+        "http://127.0.0.1:8000/Purchase/Fetch_Supplier_Code/"
       );
       const responseData = await res.json();
       setSuppliers(responseData);
@@ -93,7 +88,7 @@ const DeliveryChallan = () => {
 
   const fetchItems = async () => {
     const res = await fetch(
-      "https://erp-render.onrender.com/All_Masters/api/item/summary/",
+      "http://127.0.0.1:8000/All_Masters/api/item/summary/",
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -926,3 +921,7 @@ const DeliveryChallan = () => {
 };
 
 export default DeliveryChallan;
+
+
+
+

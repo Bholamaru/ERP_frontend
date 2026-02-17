@@ -46,7 +46,7 @@ const WIPStock = () => {
 
     try {
       const res = await axios.get(
-        `https://erp-render.onrender.com/Store/api/WIPstockreport/?q=${value}`
+        `http://127.0.0.1:8000/Store/api/WIPstockreport/?q=${value}`
       );
       setSearchResults(res.data.data || []);
     } catch (error) {
@@ -62,7 +62,7 @@ const WIPStock = () => {
 
     try {
       const res = await axios.get(
-        `https://erp-render.onrender.com/Store/api/WIPstockreport/?q=${item.part_no}`
+        `http://127.0.0.1:8000/Store/api/WIPstockreport/?q=${item.part_no}`
       );
 
       const allItems = res.data.data || [];
@@ -90,7 +90,7 @@ const WIPStock = () => {
       const partNo = item.part_no || item.part_code || ""; 
       
       const res = await axios.get(
-        `https://erp-render.onrender.com/Production/item/op/heatqty/?item=${item.part_code}`
+        `http://127.0.0.1:8000/Production/item/op/heatqty/?item=${item.part_code}`
       );
 
       const data = res.data; 

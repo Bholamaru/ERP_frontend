@@ -22,7 +22,7 @@ const JobworkInwardChallan = () => {
 
   const fetchGateEntryData = async () => {
     try {
-      const res = await fetch("https://erp-render.onrender.com/Store/general-details/");
+      const res = await fetch("http://127.0.0.1:8000/Store/general-details/");
       const resData = await res.json();
       console.log(resData);
       setGateEntryData(resData);
@@ -112,14 +112,14 @@ const JobworkInwardChallan = () => {
     const supplier = entryObj?.Supp_Cust?.replace(/^\d+\s*-\s*/, "");
 
     const res = await fetch(
-      "https://erp-render.onrender.com/Sales/supplierview/?supplier=" + supplier
+      "http://127.0.0.1:8000/Sales/supplierview/?supplier=" + supplier
     );
     const resData = await res.json();
     console.log(resData);
     setChallanNumbers(resData.challans);
 
     const res2 = await fetch(
-      "https://erp-render.onrender.com/Store/newjobworkpodetails/?supplier=" + supplier
+      "http://127.0.0.1:8000/Store/newjobworkpodetails/?supplier=" + supplier
     );
     const resData2 = await res2.json();
 

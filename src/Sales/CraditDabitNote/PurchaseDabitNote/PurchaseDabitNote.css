@@ -104,14 +104,11 @@ body {
   .PurchaseDabitNote .tab-content {
     background-color: #f8f9fa;
     padding: 15px;
-    border: none;
-    
+    border: none;    
     border-radius: 0 0 10px 10px;
-
   }
   
  .PurchaseDabitNote-main label {
-    font-weight: bold;
     margin-bottom: 5px;
     display: block;
   }
@@ -121,8 +118,7 @@ body {
     border-radius: 5px;
   }
   
- 
-  
+
  .PurchaseDabitNote-main input.form-control,
  .PurchaseDabitNote-main select.form-control {
     padding: 8px;
